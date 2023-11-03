@@ -5,3 +5,5 @@
 bija ?
 
 nezinu vai 
+
+kas jauns?
