@@ -4,4 +4,4 @@
 
 bija ?
 
-nezinu vai 
+nezinu vai viss gone??
