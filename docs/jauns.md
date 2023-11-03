@@ -4,4 +4,6 @@
 
 bija ?
 
-nezinu vai viss gone??
+nezinu vai 
+
+kas jauns?
