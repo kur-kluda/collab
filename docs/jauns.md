@@ -3,3 +3,5 @@
 - apakšpunkts
 
 bija ?
+
+nezinu vai 
