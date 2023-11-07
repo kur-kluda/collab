@@ -10,9 +10,11 @@ keywords:
 [air quality smart sensor datasheet](https://www.google.com/search?q=air+quality+smart+sensor+datasheet)
 
 # 1:
-[MT 14 datasheet](https://documentation.meraki.com/MT/MT_Datasheets/MT14_Datasheet_-_Indoor_Air_Quality_Monitor)<br />
-[MT 14 chart description](https://documentation.meraki.com/MT/MT_General_Articles/MT_Psychrometric_Chart)<br />
-[(teorija) kā TVOC ietekmē](https://www.advsolned.com/how-tvoc-affects-indoor-air-quality-effects-on-wellbeing-and-health/)<br />
+* [MT 14 datasheet](https://documentation.meraki.com/MT/MT_Datasheets/MT14_Datasheet_-_Indoor_Air_Quality_Monitor)<br />
+
+* [MT 14 chart description](https://documentation.meraki.com/MT/MT_General_Articles/MT_Psychrometric_Chart)<br />
+
+* [(teorija) kā TVOC ietekmē](https://www.advsolned.com/how-tvoc-affects-indoor-air-quality-effects-on-wellbeing-and-health/)<br />
 
 ## 1 attēli:
 ![www advsolned com_how-tvoc-affects-indoor-air-quality-effects-on-wellbeing-and-health_](https://github.com/kur-kluda/collab/assets/85872382/f1429817-8a07-49af-91ac-83811cad92e1)
