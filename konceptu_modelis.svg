@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   viewBox="0 0 319.552 236.96112"
+   width="958.65601"
+   height="710.88336"
+   id="svg22"
+   sodipodi:docname="konceptu_modelis.svg"
+   inkscape:version="1.3-dev (def5eff1, 2022-10-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview22"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.37894668"
+     inkscape:cx="236.18099"
+     inkscape:cy="426.18133"
+     inkscape:window-width="1366"
+     inkscape:window-height="705"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg22" />
+  <!-- svg-source:excalidraw -->
+  <defs
+     id="defs1">
+    <style
+       class="style-fonts"
+       id="style1">
+      @font-face {
+        font-family: &quot;Virgil&quot;;
+        src: url(&quot;https://excalidraw.com/Virgil.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Cascadia&quot;;
+        src: url(&quot;https://excalidraw.com/Cascadia.woff2&quot;);
+      }
+      @font-face {
+        font-family: &quot;Assistant&quot;;
+        src: url(&quot;https://excalidraw.com/Assistant-Regular.woff2&quot;);
+      }
+    </style>
+  </defs>
+  <mask
+     id="mask1" />
+  <g
+     stroke-linecap="round"
+     transform="translate(1.8119202,8.3421199)"
+     id="g1">
+    <path
+       d="m 18.5,0 c 21.66,-0.93 47.53,-0.27 85,0 m -85,0 c 17.28,0.09 35.55,-0.86 85,0 m 0,0 c 11.31,0.01 19.65,6.89 18.5,18.5 M 103.5,0 C 118.02,0.6 124,4.46 122,18.5 m 0,0 c 2.03,14.55 0.42,27.36 0,37 m 0,-37 c 0.27,12.81 1.1,26.34 0,37 m 0,0 C 121.46,69.05 114.01,72.75 103.5,74 M 122,55.5 c 1.54,13.56 -5.98,18.71 -18.5,18.5 m 0,0 c -26.42,0.68 -55.94,-0.05 -85,0 m 85,0 c -22.87,-0.07 -47.54,0.09 -85,0 m 0,0 C 4.46,72.63 -0.92,69.26 0,55.5 M 18.5,74 C 7.14,72.39 1.03,66.26 0,55.5 m 0,0 C -1.34,44.47 -0.79,34.86 0,18.5 m 0,37 C -0.83,41.81 0.65,26.6 0,18.5 m 0,0 C 0.86,5.07 7.54,0.14 18.5,0 M 0,18.5 C 2.13,4.34 5.18,0.27 18.5,0"
+       stroke="#1e1e1e"
+       stroke-width="2"
+       fill="none"
+       id="path1" />
+  </g>
+  <g
+     transform="translate(25.89196,32.84212)"
+     id="g2">
+    <text
+       x="36.91996"
+       y="0"
+       font-family="Virgil, 'Segoe UI Emoji'"
+       font-size="20px"
+       fill="#1e1e1e"
+       text-anchor="middle"
+       style="white-space:pre"
+       direction="ltr"
+       dominant-baseline="text-before-edge"
+       id="text1">Sensors</text>
+  </g>
+  <g
+     stroke-linecap="round"
+     transform="translate(194.13673,1.4527199)"
+     id="g3">
+    <path
+       d="m 22.5,0 c 16.45,1.67 38.07,-1.59 79,0 m -79,0 c 29.68,0.11 60.96,0.46 79,0 m 0,0 c 16.9,0.52 24.24,6.02 22.5,22.5 M 101.5,0 c 16.67,0.33 23.73,9.77 22.5,22.5 m 0,0 c 0.99,16.64 -0.12,30.41 0,45 m 0,-45 c 0.11,14.27 -0.54,26.69 0,45 m 0,0 c 1.34,16.07 -7.34,22.68 -22.5,22.5 M 124,67.5 c 0.47,16.48 -8.18,23.44 -22.5,22.5 m 0,0 c -27.86,-1.18 -56.39,1.46 -79,0 m 79,0 c -29.32,-0.08 -57.39,1.32 -79,0 m 0,0 C 8.35,88.6 0.9,81.13 0,67.5 M 22.5,90 C 6.86,89.86 -1.67,80.93 0,67.5 m 0,0 C 2.08,57.28 1.42,43.55 0,22.5 m 0,45 C 0.04,49.27 0.3,32.21 0,22.5 m 0,0 C 1.85,5.91 6.64,0.24 22.5,0 M 0,22.5 C -0.77,8.32 5.94,1.76 22.5,0"
+       stroke="#1e1e1e"
+       stroke-width="2"
+       fill="none"
+       id="path2" />
+  </g>
+  <g
+     transform="translate(203.42678,33.95272)"
+     id="g4">
+    <text
+       x="52.709953"
+       y="0"
+       font-family="Virgil, 'Segoe UI Emoji'"
+       font-size="20px"
+       fill="#1e1e1e"
+       text-anchor="middle"
+       style="white-space:pre"
+       direction="ltr"
+       dominant-baseline="text-before-edge"
+       id="text3">Pasūtītājs</text>
+  </g>
+  <g
+     stroke-linecap="round"
+     transform="translate(81.03731,146.8968)"
+     id="g5">
+    <path
+       d="m 22.25,0 c 39.82,-0.81 76.1,-0.05 103.5,0 M 22.25,0 c 32.06,-0.11 63.09,-1.11 103.5,0 m 0,0 C 142.04,0.29 149.07,9.39 148,22.25 M 125.75,0 c 15.7,0.42 21.99,8.46 22.25,22.25 m 0,0 c 0.03,18.23 1.56,32.56 0,44.5 m 0,-44.5 c 0.26,16.6 -0.33,32.22 0,44.5 m 0,0 C 148.41,82.87 139.99,89.82 125.75,89 M 148,66.75 c 1.08,13.14 -7.18,21.73 -22.25,22.25 m 0,0 C 102.42,88.88 78.21,88.01 22.25,89 m 103.5,0 c -23.53,0.04 -47.46,0.05 -103.5,0 m 0,0 C 6.86,88.88 -1.45,80.22 0,66.75 M 22.25,89 C 6.32,88.07 -0.57,83.77 0,66.75 m 0,0 C 1.58,52.6 0.4,35.84 0,22.25 m 0,44.5 C 0.62,55.04 -0.73,45.04 0,22.25 m 0,0 C -0.67,8.13 6.06,1.53 22.25,0 M 0,22.25 C -1.81,6.39 5.15,-1.64 22.25,0"
+       stroke="#1e1e1e"
+       stroke-width="2"
+       fill="none"
+       id="path4" />
+  </g>
+  <g
+     transform="translate(114.69735,178.8968)"
+     id="g6">
+    <text
+       x="40.339958"
+       y="0"
+       font-family="Virgil, 'Segoe UI Emoji'"
+       font-size="20px"
+       fill="#1e1e1e"
+       text-anchor="middle"
+       style="white-space:pre"
+       direction="ltr"
+       dominant-baseline="text-before-edge"
+       id="text5">Mērījums</text>
+  </g>
+  <g
+     stroke-linecap="round"
+     id="g8"
+     transform="translate(-758.90023,-299.88409)">
+    <g
+       transform="translate(967.61386,389.99417)"
+       id="g7">
+      <path
+         d="M 1.1,0.25 C 1.47,9.38 1.85,45.88 2.27,55.06 M 0.22,-0.66 C 0.4,8.07 0.64,44.16 1.18,53.16"
+         stroke="#1e1e1e"
+         stroke-width="2"
+         fill="none"
+         id="path6" />
+    </g>
+  </g>
+  <mask
+     id="mask8" />
+  <g
+     stroke-linecap="round"
+     id="g10"
+     transform="translate(-758.90023,-299.88409)">
+    <g
+       transform="translate(871.4773,382.76436)"
+       id="g9">
+      <path
+         d="M 1.02,0.62 C 1.5,10.79 1.82,50.64 1.87,60.93 M 0.1,-0.1 c 0.49,10.3 1.19,52 1.3,62.05"
+         stroke="#1e1e1e"
+         stroke-width="2"
+         fill="none"
+         id="path8" />
+    </g>
+  </g>
+  <mask
+     id="mask10" />
+  <g
+     stroke-linecap="round"
+     id="g12"
+     transform="translate(-758.90023,-299.88409)">
+    <g
+       transform="translate(864.90001,391.39699)"
+       id="g11">
+      <path
+         d="m -0.49,0.5 c 2.41,0 12.76,-0.79 15.43,-1.02 M 0.26,0.29 C 2.8,0.41 13.51,0.28 16.01,0.16"
+         stroke="#1e1e1e"
+         stroke-width="2"
+         fill="none"
+         id="path10" />
+    </g>
+  </g>
+  <mask
+     id="mask12" />
+  <g
+     stroke-linecap="round"
+     id="g14"
+     transform="translate(-758.90023,-299.88409)">
+    <g
+       transform="translate(960.20239,398.54467)"
+       id="g13">
+      <path
+         d="M -0.48,-0.31 C 2.19,-0.44 13.5,-0.34 16.28,-0.38 m -16,1.1 C 3.1,0.61 14.48,0.29 17.31,0.13"
+         stroke="#1e1e1e"
+         stroke-width="2"
+         fill="none"
+         id="path12" />
+    </g>
+  </g>
+  <mask
+     id="mask14" />
+  <g
+     stroke-linecap="round"
+     id="g16"
+     transform="translate(-758.90023,-299.88409)">
+    <g
+       transform="translate(873.00071,431.42399)"
+       id="g15">
+      <path
+         d="m 0.41,-0.37 c 2.09,2.02 9.77,10.74 11.7,12.89 M -0.05,0.63 c 2.06,1.84 9.77,9.27 11.7,11.12"
+         stroke="#1e1e1e"
+         stroke-width="2"
+         fill="none"
+         id="path14" />
+    </g>
+  </g>
+  <mask
+     id="mask16" />
+  <g
+     stroke-linecap="round"
+     id="g18"
+     transform="translate(-758.90023,-299.88409)">
+    <g
+       transform="translate(872.5242,433.33004)"
+       id="g17">
+      <path
+         d="m 0.13,-0.14 c -1.78,1.83 -8.69,9.42 -10.5,11.16 m 9.9,-11.7 c -1.86,1.67 -8.49,9.1 -10.27,11.01"
+         stroke="#1e1e1e"
+         stroke-width="2"
+         fill="none"
+         id="path16" />
+    </g>
+  </g>
+  <mask
+     id="mask18" />
+  <g
+     stroke-linecap="round"
+     id="g20"
+     transform="translate(-758.90023,-299.88409)">
+    <g
+       transform="translate(968.30309,431.42399)"
+       id="g19">
+      <path
+         d="m 0.13,-0.03 c -1.42,2.24 -7.34,11.44 -8.89,13.74 m 8.3,-14.23 C -1.93,1.8 -7.92,11.95 -9.2,14.44"
+         stroke="#1e1e1e"
+         stroke-width="2"
+         fill="none"
+         id="path18" />
+    </g>
+  </g>
+  <mask
+     id="mask20" />
+  <g
+     stroke-linecap="round"
+     id="g22"
+     transform="translate(-758.90023,-299.88409)">
+    <g
+       transform="translate(969.25611,430.47097)"
+       id="g21">
+      <path
+         d="m -0.42,-0.24 c 1.76,2.72 9.01,13.77 10.79,16.5 M 0.37,0.82 c 1.69,2.6 7.94,12.34 9.5,14.74"
+         stroke="#1e1e1e"
+         stroke-width="2"
+         fill="none"
+         id="path20" />
+    </g>
+  </g>
+  <mask
+     id="mask22" />
+</svg>
