@@ -9,8 +9,9 @@ import socket
 __MEAS_INTERVAL__ = 1
 __MINIMUM_MEASURES_TO_SEND__=10
 __MAXIMUM_SECS_BEFORE_SEND__=3
+__LOOP_DEBUG_LEN__ = 20
 HOST = 'jtag.me'  # The server's hostname or IP address
-PORT = 123       # Port to connect to
+PORT = 911       # Port to connect to
 sensor = dht.DHT11(Pin(15))
 
 wlan = network.WLAN(network.STA_IF) # create station interface
@@ -29,8 +30,6 @@ async def tsk_con_net():
     return True
 
 async def push_data_net():
-    #avoid race conds/?? ja nu kas :D
-    length = len(li_mem_clog)
     await asyncio.sleep(2)
     a = 500
     try:
@@ -39,12 +38,15 @@ async def push_data_net():
         #addr = socket.getaddrinfo(HOST, PORT)[0][-1]
         #s.connect((HOST, PORT))
         reader, writer = await asyncio.open_connection(HOST, PORT)
+        #avoid race conds/?? ja nu kas :D
+        length = len(li_mem_clog)
         print(f'Send: {!r}')
-        writer.write(json.dumps(li_mem_clog[0:length]).encode())
+        writer.write(json.dumps({"epoch" : time.gmtime(0)[0],
+                                 "id": 1,
+                                 "len": length
+                                 }).encode() + b'\n')
+        writer.write(json.dumps(li_mem_clog[0:length]).encode() + b'\n')
         await writer.drain()
-        print('Close the connection')
-        writer.close()
-        await writer.wait_closed()
         await asyncio.sleep(1)
         #await s.connect(addr)
         #s.sendall(json.dumps(li_mem_clog[0:length]).encode() + b'\n')
@@ -53,11 +55,14 @@ async def push_data_net():
         #print(response)
         response = await reader.read(1024)
         #k = await reader.drain()
+        print('Close the connection')
+        writer.close()
+        await writer.wait_closed()
         reader.close()
         if(int(response) == length):
             del li_mem_clog[0:length]
             a = 200
-        s.close()
+        #s.close()
     except Exception as e:
         print(str(e))      
     return a
@@ -96,7 +101,7 @@ async def main():
     tsk2 = asyncio.create_task(push_data())
     await asyncio.sleep(0)
     i=0
-    while i<8:
+    while i<__LOOP_DEBUG_LEN__:
       try:
         await asyncio.sleep(__MEAS_INTERVAL__)
         sensor.measure()
