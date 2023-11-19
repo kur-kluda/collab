@@ -12,6 +12,7 @@ from machine import UART
 import asyncio
 import json
 import socket
+import ntptime
 #import webrepl
 #webrepl.start()
 gc.collect()
@@ -36,6 +37,7 @@ async def tsk_con_net():
         wlan.connect("ff", "")
         while not wlan.isconnected():
             await asyncio.sleep(1)
+    ntptime.settime()
     #print('network config:', wlan.ifconfig())
     return True
 
@@ -120,7 +122,7 @@ async def main():
         #temp_f = temp * (9/5) + 32.0
         #print(time.gmtime(0)[0])
         #yr, Month, date, h, m, s, weekday, yearday
-        li_mem_clog.append([time.time(), temp, hum])
+        li_mem_clog.append([time.mktime(time.gmtime()), temp, hum])
         #print(time.localtime())
         #print(json.loads(json.dumps(time.localtime()))[5])
         #print('Temperature: %3.1f C' %temp)
@@ -134,8 +136,8 @@ async def main():
         print('Failed to read sensor.')
         print(e)
       i=i+1
-uart = UART(0, baudrate=9600)
-uart.write('hello')
+#uart = UART(0, baudrate=9600)
+#uart.write('hello')
 led = Pin(2, Pin.IN)
 led = Pin(2, Pin.OUT)
 time.sleep(1)
