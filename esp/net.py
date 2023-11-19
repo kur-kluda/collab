@@ -1,15 +1,25 @@
+# This file is executed on every boot (including wake-boot from deepsleep)
+#import esp
+#esp.osdebug(None)
+import os, machine
+#os.dupterm(None, 1) # disable REPL on UART(0)
+import gc
 import network
 import dht
 import time
 from machine import Pin
+from machine import UART
 import asyncio
 import json
 import socket
+#import webrepl
+#webrepl.start()
+gc.collect()
 
 __MEAS_INTERVAL__ = 1
 __MINIMUM_MEASURES_TO_SEND__=10
-__MAXIMUM_SECS_BEFORE_SEND__=3
-__LOOP_DEBUG_LEN__ = 20
+__MAXIMUM_SECS_BEFORE_SEND__=30
+__LOOP_DEBUG_LEN__ = 999
 HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 911       # Port to connect to
 sensor = dht.DHT11(Pin(15))
@@ -124,5 +134,13 @@ async def main():
         print('Failed to read sensor.')
         print(e)
       i=i+1
+uart = UART(0, baudrate=9600)
+uart.write('hello')
+led = Pin(2, Pin.IN)
+led = Pin(2, Pin.OUT)
+time.sleep(1)
+led = Pin(2, Pin.IN)
+led = Pin(2, Pin.OUT)
+led = Pin(2, Pin.IN)
 asyncio.run(main())
 
