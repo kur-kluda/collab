@@ -39,10 +39,9 @@ async def tsk_con_net():
     ntptime.settime()
     #print('network config:', wlan.ifconfig())
     return True
-a=0
+
 async def push_data_net():
     await asyncio.sleep(2)
-    a = 500
     try:
         #with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
@@ -72,10 +71,12 @@ async def push_data_net():
         reader.close()
         if(int(response) == length):
             del li_mem_clog[0:length]
-            a = 200
+            await asyncio.sleep(1)
+            return
         #s.close()
     except Exception as e:
         print(str(e))      
+    print("failed to sync")
     return
     
 async def push_data():
@@ -87,7 +88,6 @@ async def push_data():
             #print(li_mem_clog.pop(0))
             #print(li_mem_clog.pop(0))
                 try:
-                    a = 0
                     nets = asyncio.create_task(push_data_net())
                     await asyncio.sleep(0)
                     while (not nets.done()):
@@ -98,8 +98,7 @@ async def push_data():
                     #i = nets.data
                     #for res in i:
                     #    print(res)
-                    if(a!=200):
-                        print("failed to sync")
+                    await asyncio.sleep(1)       
                 except Exception as e:
                     print("failed to sync")
                     print(e)
