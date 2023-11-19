@@ -4,11 +4,13 @@ import time
 from machine import Pin
 import asyncio
 import json
+import socket
 
 __MEAS_INTERVAL__ = 1
 __MINIMUM_MEASURES_TO_SEND__=10
 __MAXIMUM_SECS_BEFORE_SEND__=3
-
+HOST = 'jtag.me'  # The server's hostname or IP address
+PORT = 123       # Port to connect to
 sensor = dht.DHT11(Pin(15))
 
 wlan = network.WLAN(network.STA_IF) # create station interface
@@ -30,8 +32,35 @@ async def push_data_net():
     #avoid race conds/?? ja nu kas :D
     length = len(li_mem_clog)
     await asyncio.sleep(2)
-    del li_mem_clog[0:length]
-    return 200
+    a = 500
+    try:
+        #with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
+        #addr = socket.getaddrinfo(HOST, PORT)[0][-1]
+        #s.connect((HOST, PORT))
+        reader, writer = await asyncio.open_connection(HOST, PORT)
+        print(f'Send: {!r}')
+        writer.write(json.dumps(li_mem_clog[0:length]).encode())
+        await writer.drain()
+        print('Close the connection')
+        writer.close()
+        await writer.wait_closed()
+        await asyncio.sleep(1)
+        #await s.connect(addr)
+        #s.sendall(json.dumps(li_mem_clog[0:length]).encode() + b'\n')
+        #s.send(bytes(json.dumps(li_mem_clog[0:length]).encode() + b'\n'), 'utf-8')
+        #response = s.recv(1024)
+        #print(response)
+        response = await reader.read(1024)
+        #k = await reader.drain()
+        reader.close()
+        if(int(response) == length):
+            del li_mem_clog[0:length]
+            a = 200
+        s.close()
+    except Exception as e:
+        print(str(e))      
+    return a
     
 async def push_data():
     if not wlan.isconnected():
