@@ -39,7 +39,7 @@ async def tsk_con_net():
     ntptime.settime()
     #print('network config:', wlan.ifconfig())
     return True
-
+a=0
 async def push_data_net():
     await asyncio.sleep(2)
     a = 500
@@ -76,7 +76,7 @@ async def push_data_net():
         #s.close()
     except Exception as e:
         print(str(e))      
-    return a
+    return
     
 async def push_data():
     if not wlan.isconnected():
@@ -87,6 +87,7 @@ async def push_data():
             #print(li_mem_clog.pop(0))
             #print(li_mem_clog.pop(0))
                 try:
+                    a = 0
                     nets = asyncio.create_task(push_data_net())
                     await asyncio.sleep(0)
                     while (not nets.done()):
@@ -97,31 +98,33 @@ async def push_data():
                     #i = nets.data
                     #for res in i:
                     #    print(res)
-                    #if(200!=200):
-                    #    print("failed to sync")
+                    if(a!=200):
+                        print("failed to sync")
                 except Exception as e:
                     print("failed to sync")
                     print(e)
         return True
+
+async def light(howlong):
+    led = Pin(2, Pin.OUT)
+    await asyncio.sleep(howlong)
+    led = Pin(2, Pin.IN)
 
 async def main():
     print("checking, connecting to network")
     tsk = asyncio.create_task(tsk_con_net())
     #shis palaiz tsk!!!11
     await asyncio.sleep(0)
-    led = Pin(2, Pin.IN)
-    led = Pin(2, Pin.OUT)
-    time.sleep(1)
-    led = Pin(2, Pin.IN)
-    time.sleep(1)
-    led = Pin(2, Pin.OUT)
-    led = Pin(2, Pin.IN)
+    lig = asyncio.create_task(light(1))
+    await asyncio.sleep(0)
     tsk2 = asyncio.create_task(push_data())
     await asyncio.sleep(0)
     i=0
     while i<__LOOP_DEBUG_LEN__:
       try:
+        led = Pin(2, Pin.OUT)
         await asyncio.sleep(__MEAS_INTERVAL__)
+        led = Pin(2, Pin.IN)
         sensor.measure()
         temp = sensor.temperature()
         hum = sensor.humidity()
@@ -142,11 +145,9 @@ async def main():
         print('Failed to read sensor.')
         print(e)
       i=i+1
-led = Pin(2, Pin.IN)
+
 led = Pin(2, Pin.OUT)
 time.sleep(1)
-led = Pin(2, Pin.IN)
-led = Pin(2, Pin.OUT)
 led = Pin(2, Pin.IN)
 asyncio.run(main())
 
