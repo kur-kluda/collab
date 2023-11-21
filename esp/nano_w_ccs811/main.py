@@ -8,15 +8,15 @@ import network
 import dht
 #import time
 from machine import Pin
+from machine import I2C
 import asyncio
 import json
 import socket
 import ntptime
 import time
-import board
-import busio
+#import busio
 
-import adafruit_ccs811
+#import adafruit_ccs811
 #import adafruit_dht
 
 __MEAS_INTERVAL__ = 1
@@ -24,11 +24,75 @@ __MINIMUM_MEASURES_TO_SEND__=10
 __MAXIMUM_SECS_BEFORE_SEND__=30
 __LOOP_DEBUG_LEN__ = 999
 __LED__='LED'
+_ADDR = 0x5B
 HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 912       # Port to connect to
-i2c = busio.I2C(scl=board.GP1, sda=board.GP0)
-ccs811 = adafruit_ccs811.CCS811(i2c)
+#i2c = busio.I2C(scl=Pin('GP1'), sda=Pin('GP0'))
+#ccs811 = adafruit_ccs811.CCS811(i2c)
+class CCS811:
+    def __init__(self, i2c: I2C):
+        self._i2c = i2c
 
+    def setup(self):
+        print("setup CCS811")
+        self.multi_write_register(0xFF, b"\x11\xE5\x72\x8A")  # RESET
+        time.sleep_ms(100)
+
+        self.check_for_status_error()
+        self.app_valid()
+
+        self._i2c.writeto_mem(_ADDR, 0xF4, b"")  # APP_START
+        time.sleep_ms(100)
+        self.set_driver_mode(1)
+        time.sleep_ms(100)
+
+    def data_available(self) -> bool:
+        v = self._i2c.readfrom_mem(_ADDR, 0x00, 1)
+        if v[0] & 1:
+            e = self.read_register(0xE0)
+            print("error register", hex(e[0]))
+        return (v[0] & 1 << 3) > 0
+
+    def check_for_status_error(self) -> bool:
+        v = self.read_register(0x00)
+        return (v[0] & 1 << 0) > 0
+
+    def app_valid(self):
+        v = self.read_register(0x00)
+        return (v[0] & 1 << 4) > 0
+
+    def set_driver_mode(self, mode: int):
+        v = self.read_register(0x01)  # MEAS_MODE
+        v = v[0]
+        v &= ~(0b00000111 << 4)  # Clear DRIVE_MODE bits
+        v |= mode << 4  # Mask in mode
+        self.write_register(0x01, v)
+
+    def read_algorithm_results(self):
+        v = self.multi_read_register(0x02, 4)  # ALG_RESULT_DATA
+        co2 = v[0] << 8 | v[1]
+        t_voc = v[2] << 8 | v[3]
+        return co2, t_voc
+
+    def write_register(self, offset: int, value: int):
+        return self._i2c.writeto_mem(_ADDR, offset, bytes([value]))
+
+    def read_register(self, offset: int):
+        return self._i2c.readfrom_mem(_ADDR, offset, 1)
+
+    def multi_write_register(self, offset: int, data: bytes):
+        self._i2c.writeto_mem(_ADDR, offset, data)
+
+    def multi_read_register(self, offset: int, length: int):
+        return self._i2c.readfrom_mem(_ADDR, offset, length)
+
+    def status(self):
+        b = self._i2c.readfrom(_ADDR, 1)
+        return b[0]
+
+i2c = I2C(0, sda=Pin(8), scl=Pin(9))
+ccs811 = CCS811(i2c)
+ccs811.setup()
 wlan = network.WLAN(network.STA_IF) # create station interface
 
 li_mem_clog = []
@@ -129,11 +193,13 @@ async def main():
         led = Pin(__LED__, Pin.OUT)
         await asyncio.sleep(__MEAS_INTERVAL__)
         led = Pin(__LED__, Pin.IN)
-        if not ccs811.data_ready:
+        if not ccs811.data_available():
             await asyncio.sleep(__MEAS_INTERVAL__*2)
-        temp = ccs811.temperature
-        co2 = ccs811.eco2
-        tvoc = ccs811.tvoc
+        r = c.read_algorithm_results()
+        print(r)
+        temp = r.temperature
+        co2 = r.eco2
+        tvoc = r.tvoc
         #temp_f = temp * (9/5) + 32.0
         #print(time.gmtime(0)[0])
         #yr, Month, date, h, m, s, weekday, yearday
