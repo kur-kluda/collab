@@ -20,6 +20,7 @@ __MEAS_INTERVAL__ = 1
 __MINIMUM_MEASURES_TO_SEND__=10
 __MAXIMUM_SECS_BEFORE_SEND__=30
 __LOOP_DEBUG_LEN__ = 999
+__LED__= 2
 HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 911       # Port to connect to
 sensor = dht.DHT11(Pin(15))
@@ -105,9 +106,9 @@ async def push_data():
         return True
 
 async def light(howlong):
-    led = Pin(2, Pin.OUT)
+    led = Pin(__LED__, Pin.OUT)
     await asyncio.sleep(howlong)
-    led = Pin(2, Pin.IN)
+    led = Pin(__LED__, Pin.IN)
 
 async def main():
     print("checking, connecting to network")
@@ -121,9 +122,9 @@ async def main():
     i=0
     while i<__LOOP_DEBUG_LEN__:
       try:
-        led = Pin(2, Pin.OUT)
+        led = Pin(__LED__, Pin.OUT)
         await asyncio.sleep(__MEAS_INTERVAL__)
-        led = Pin(2, Pin.IN)
+        led = Pin(__LED__, Pin.IN)
         sensor.measure()
         temp = sensor.temperature()
         hum = sensor.humidity()
@@ -145,9 +146,9 @@ async def main():
         print(e)
       i=i+1
 
-led = Pin(2, Pin.OUT)
+led = Pin(__LED__, Pin.OUT)
 time.sleep(1)
-led = Pin(2, Pin.IN)
+led = Pin(__LED__, Pin.IN)
 asyncio.run(main())
 
 
