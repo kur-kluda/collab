@@ -55,6 +55,7 @@ class CCS811:
 
     def check_for_status_error(self) -> bool:
         v = self.read_register(0x00)
+        print(f"errstat: {v}")
         return (v[0] & 1 << 0) > 0
 
     def app_valid(self):
@@ -81,7 +82,10 @@ class CCS811:
         return self._i2c.readfrom_mem(_ADDR, offset, 1)
 
     def multi_write_register(self, offset: int, data: bytes):
+        #print(f"data: ".join('{:02X}'.format(a) for a in bytes))
+        print(f"data: {data.hex()}\n")
         self._i2c.writeto_mem(_ADDR, offset, data)
+        print("sent")
 
     def multi_read_register(self, offset: int, length: int):
         return self._i2c.readfrom_mem(_ADDR, offset, length)
@@ -90,7 +94,19 @@ class CCS811:
         b = self._i2c.readfrom(_ADDR, 1)
         return b[0]
 
-i2c = I2C(0, sda=Pin(8), scl=Pin(9))
+i2c = I2C(0, sda=Pin('GP0'), scl=Pin('GP1'))
+
+print('Scan i2c bus...')
+devices = i2c.scan()
+
+if len(devices) == 0:
+    print("No i2c device !")
+else:
+    print('i2c devices found:',len(devices))
+
+for device in devices:
+    print("Decimal address: ",device," | Hexa address: ",hex(device))
+
 ccs811 = CCS811(i2c)
 ccs811.setup()
 wlan = network.WLAN(network.STA_IF) # create station interface
