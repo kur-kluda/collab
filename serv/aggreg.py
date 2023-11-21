@@ -19,7 +19,7 @@ for r in answer:
 	HOST = r.address
 	break
 #HOST = socket.getaddrinfo('jtag.me', 80)[0][-1]
-print(HOST)
+print(HOST.split('.')[-1])
 PORT = 911      # Port to listen ond
 
 
@@ -36,12 +36,12 @@ server_socket.bind((HOST, PORT))
 # Listen for incoming connections
 server_socket.listen()
 
-print(f"Server listening on {HOST}:{PORT}")
+print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Server listening on {HOST.split('.')[-1]}:{PORT}")
 
 while True:
     # Accept a connection from a client
     client_socket, client_address = server_socket.accept()
-    print(f"Connection from {client_address}")
+    print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Connection from {client_address[0].split('.')[-1]}")
 
     try:
         with client_socket, client_socket.makefile('rb') as r:
@@ -75,6 +75,7 @@ while True:
                     cur.execute(sql, val)
             db.commit()
             db.close()
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} wrote {len(data)}")
             client_socket.send(str(len(data)).encode())
 
     except Exception as e:
