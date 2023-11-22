@@ -19,10 +19,10 @@ gc.collect()
 __MEAS_INTERVAL__ = 1
 __MINIMUM_MEASURES_TO_SEND__=10
 __MAXIMUM_SECS_BEFORE_SEND__=30
-__LOOP_DEBUG_LEN__ = 999
-__LED__= 2
+#__LOOP_DEBUG_LEN__ = 99999
 HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 911       # Port to connect to
+CLI_ID = 2		#device id to send
 sensor = dht.DHT11(Pin(15))
 
 wlan = network.WLAN(network.STA_IF) # create station interface
@@ -53,7 +53,7 @@ async def push_data_net():
         length = len(li_mem_clog)
         print(f'Send: {!r}')
         writer.write(json.dumps({"epoch" : time.gmtime(0)[0],
-                                 "id": 1,
+                                 "id": CLI_ID,
                                  "len": length
                                  }).encode() + b'\n')
         writer.write(json.dumps(li_mem_clog[0:length]).encode() + b'\n')
@@ -106,25 +106,23 @@ async def push_data():
         return True
 
 async def light(howlong):
-    led = Pin(__LED__, Pin.OUT)
+    led = Pin(2, Pin.OUT)
     await asyncio.sleep(howlong)
-    led = Pin(__LED__, Pin.IN)
+    led = Pin(2, Pin.IN)
 
 async def main():
     print("checking, connecting to network")
     tsk = asyncio.create_task(tsk_con_net())
     #shis palaiz tsk!!!11
     await asyncio.sleep(0)
-    lig = asyncio.create_task(light(1))
-    await asyncio.sleep(0)
     tsk2 = asyncio.create_task(push_data())
     await asyncio.sleep(0)
-    i=0
-    while i<__LOOP_DEBUG_LEN__:
+    #i=0
+    while True: #i<__LOOP_DEBUG_LEN__:
       try:
-        led = Pin(__LED__, Pin.OUT)
+        lig = asyncio.create_task(light(1))
+        await asyncio.sleep(0)
         await asyncio.sleep(__MEAS_INTERVAL__)
-        led = Pin(__LED__, Pin.IN)
         sensor.measure()
         temp = sensor.temperature()
         hum = sensor.humidity()
@@ -144,11 +142,9 @@ async def main():
       except OSError as e:
         print('Failed to read sensor.')
         print(e)
-      i=i+1
+      #i=i+1
 
-led = Pin(__LED__, Pin.OUT)
-time.sleep(1)
-led = Pin(__LED__, Pin.IN)
+light(2)
 asyncio.run(main())
 
 

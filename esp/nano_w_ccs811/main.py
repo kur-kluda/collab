@@ -22,7 +22,7 @@ import time
 __MEAS_INTERVAL__ = 1
 __MINIMUM_MEASURES_TO_SEND__=10
 __MAXIMUM_SECS_BEFORE_SEND__=30
-__LOOP_DEBUG_LEN__ = 999
+#__LOOP_DEBUG_LEN__ = 999
 __LED__='LED'
 _ADDR = 0x5B
 HOST = 'jtag.me'  # The server's hostname or IP address
@@ -311,16 +311,16 @@ async def main():
     await asyncio.sleep(0)
     tsk2 = asyncio.create_task(push_data())
     await asyncio.sleep(0)
-    i=0
-    while i<__LOOP_DEBUG_LEN__:
+    #i=0
+    while True : # i<__LOOP_DEBUG_LEN__:
       try:
         if not fed_is_busy:
             if(time.mktime(time.gmtime()) - lastfed > __FEEDBACK_INTERVAL__):
                 asyncio.create_task(get_feedback_t_hm_for_calculations())
                 await asyncio.sleep(0)
         if(fed_sync):
-            #ccs811.update_feedback(fed_temp, fed_humi)
-            ccs811.put_envdata(fed_humi, fed_temp)
+            ccs811.update_feedback(fed_temp, fed_humi)
+            #ccs811.put_envdata(fed_humi, fed_temp)
             fed_sync = False
         await asyncio.sleep(__MEAS_INTERVAL__)
         if not ccs811.data_available():
@@ -341,7 +341,7 @@ async def main():
       except OSError as e:
         print('Failed to read sensor.')
         print(e)
-      i=i+1
+      #i=i+1
 
 light(2, led_on)
 asyncio.run(main())
