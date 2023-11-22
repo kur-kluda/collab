@@ -828,6 +828,10 @@ void loop()
     Serial.print("] tVOC[");
     //Returns calculated TVOC reading
     Serial.print(mySensor.getTVOC());
+	//temp unsupported??
+	Serial.print("] temp[");
+	CCS811Core::CCS811_Status_e errcode = mySensor.readNTC();
+	Serial.print(mySensor.getTemperature());
     Serial.print("] millis[");
     //Display the time since program start
     Serial.print(millis());

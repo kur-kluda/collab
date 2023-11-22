@@ -27,6 +27,7 @@ __LED__='LED'
 _ADDR = 0x5B
 HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 912       # Port to connect to
+CLI_ID = 2
 #i2c = busio.I2C(scl=Pin('GP1'), sda=Pin('GP0'))
 #ccs811 = adafruit_ccs811.CCS811(i2c)
 class CCS811:
@@ -35,6 +36,14 @@ class CCS811:
 
     def setup(self):
         print("setup CCS811")
+        
+        #nums = self._i2c.writeto(91, b'123')
+        #print(nums)
+        #v = self._i2c.readfrom_mem(_ADDR, 0x20, 1)
+        #print(v)
+        #self._i2c.writeto_mem(_ADDR, 0x20, b"")
+        #v = self._i2c.readfrom_mem(_ADDR, 0x20, 1)
+        #print(v)
         self.multi_write_register(0xFF, b"\x11\xE5\x72\x8A")  # RESET
         time.sleep_ms(100)
 
@@ -137,25 +146,27 @@ async def push_data_net():
         length = len(li_mem_clog)
         print(f'Send: {!r}')
         writer.write(json.dumps({"epoch" : time.gmtime(0)[0],
-                                 "id": 1,
+                                 "id": CLI_ID,
                                  "len": length
                                  }).encode() + b'\n')
         writer.write(json.dumps(li_mem_clog[0:length]).encode() + b'\n')
         await writer.drain()
         await asyncio.sleep(1)
-        #await s.connect(addr)
-        #s.sendall(json.dumps(li_mem_clog[0:length]).encode() + b'\n')
-        #s.send(bytes(json.dumps(li_mem_clog[0:length]).encode() + b'\n'), 'utf-8')
-        #response = s.recv(1024)
-        #print(response)
         response = await reader.read(1024)
         #k = await reader.drain()
         print('Close the connection')
         writer.close()
         await writer.wait_closed()
         reader.close()
-        if(int(response) == length):
+        data = json.loads(response)
+        print(data)
+        if(int(data[0]) == length):
             del li_mem_clog[0:length]
+            if(len(data) > 1):
+                if(len(data[1]) > 1):
+                    print("feedback data received!")
+                    print(f"temp { data[1][0]}")
+                    print(f"humd { data[1][1]}")
             await asyncio.sleep(1)
             return
         #s.close()
@@ -176,7 +187,7 @@ async def push_data():
                     nets = asyncio.create_task(push_data_net())
                     await asyncio.sleep(0)
                     while (not nets.done()):
-                        print("waiting...")
+                        print("waiting for send data to finish...")
                         await asyncio.sleep(1)
                     #nets_w = asyncio.wait_for(nets, 3)
                     #await asyncio.sleep(0)
@@ -188,38 +199,38 @@ async def push_data():
                     print("failed to sync")
                     print(e)
         return True
-
-async def light(howlong):
+    
+led_on = False
+async def light(howlong, led_on):
+    if(led_on):
+        while(led_on):
+            await asyncio.sleep(howlong/2)
+    led_on=True
     led = Pin(__LED__, Pin.OUT)
+    led.on()
     await asyncio.sleep(howlong)
+    led.off()
     led = Pin(__LED__, Pin.IN)
+    led_on=False
 
 async def main():
     print("checking, connecting to network")
     tsk = asyncio.create_task(tsk_con_net())
     #shis palaiz tsk!!!11
     await asyncio.sleep(0)
-    lig = asyncio.create_task(light(1))
-    await asyncio.sleep(0)
     tsk2 = asyncio.create_task(push_data())
     await asyncio.sleep(0)
     i=0
     while i<__LOOP_DEBUG_LEN__:
       try:
-        led = Pin(__LED__, Pin.OUT)
+        #light(1)
         await asyncio.sleep(__MEAS_INTERVAL__)
-        led = Pin(__LED__, Pin.IN)
         if not ccs811.data_available():
             await asyncio.sleep(__MEAS_INTERVAL__*2)
-        r = c.read_algorithm_results()
-        print(r)
-        temp = r.temperature
-        co2 = r.eco2
-        tvoc = r.tvoc
-        #temp_f = temp * (9/5) + 32.0
-        #print(time.gmtime(0)[0])
-        #yr, Month, date, h, m, s, weekday, yearday
-        li_mem_clog.append([time.mktime(time.gmtime()), temp, co2, tvoc])
+        asyncio.create_task(light(__MEAS_INTERVAL__/2, led_on))
+        await asyncio.sleep(0)
+        co2, t_voc = ccs811.read_algorithm_results()
+        li_mem_clog.append([time.mktime(time.gmtime()), co2, t_voc])
         #print(time.localtime())
         #print(json.loads(json.dumps(time.localtime()))[5])
         #print('Temperature: %3.1f C' %temp)
@@ -234,10 +245,9 @@ async def main():
         print(e)
       i=i+1
 
-led = Pin(__LED__, Pin.OUT)
-time.sleep(1)
-led = Pin(__LED__, Pin.IN)
+light(2, led_on)
 asyncio.run(main())
+
 
 
 
