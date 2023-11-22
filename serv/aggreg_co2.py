@@ -48,9 +48,28 @@ while True:
         # Receive the data from the client
             header = r.readline()
             if not header: break
-            data = json.loads(r.readline())
             metadata = json.loads(header)
             #print(metadata)
+            if(metadata["len"]=="MAKROK"):
+                db = mysql.connector.connect(
+                    host=cfg["db"]["host"],
+                    user=cfg["db"]["user"],
+                    password=cfg["db"]["password"],
+                    database=cfg["db"]["database"]
+                )
+                cur = db.cursor()
+                cur.execute("SELECT `1`, `2` FROM `s_1` ORDER BY rcv DESC LIMIT 1")
+
+                result = cur.fetchall()
+            
+                answer = []
+                for x in result:
+                    answer.append(x)
+                db.close()
+                client_socket.send(json.dumps(answer).encode())
+                print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} sync")
+                continue
+            data = json.loads(r.readline())
             if(metadata["len"]==len(data)):
                 db = mysql.connector.connect(
                     host=cfg["db"]["host"],
@@ -74,20 +93,11 @@ while True:
                            float(n[1]), float(n[2]))
                     cur.execute(sql, val)
             db.commit()
-            cur = db.cursor()
 
-            cur.execute("SELECT `1`, `2` FROM `s_1` ORDER BY rcv DESC LIMIT 1")
-
-            result = cur.fetchall()
-            
-            answer = []
-            answer.append(len(data))
-            for x in result:
-                answer.append(x)
             db.close()
             
             print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} wrote {len(data)}")
-            client_socket.send(json.dumps(answer).encode())
+            client_socket.send(str(len(data)).encode())
 
     except Exception as e:
         print(f"Error: {e}")

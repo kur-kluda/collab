@@ -28,6 +28,14 @@ _ADDR = 0x5B
 HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 912       # Port to connect to
 CLI_ID = 2
+__FEEDBACK_INTERVAL__ = 30
+
+uptime_stamp = time.mktime(time.gmtime())
+lastfed = 0
+fed_sync = False
+fed_temp = 0
+fed_humi = 0
+fed_is_busy = False
 #i2c = busio.I2C(scl=Pin('GP1'), sda=Pin('GP0'))
 #ccs811 = adafruit_ccs811.CCS811(i2c)
 class CCS811:
@@ -123,6 +131,7 @@ wlan = network.WLAN(network.STA_IF) # create station interface
 li_mem_clog = []
 
 async def tsk_con_net():
+    global uptime_stamp
     wlan.active(True)       # activate the interface
     #l = wlan.scan()
     #print(l)
@@ -131,6 +140,7 @@ async def tsk_con_net():
         while not wlan.isconnected():
             await asyncio.sleep(1)
     ntptime.settime()
+    uptime_stamp = time.mktime(time.gmtime())
     #print('network config:', wlan.ifconfig())
     return True
 
@@ -158,15 +168,8 @@ async def push_data_net():
         writer.close()
         await writer.wait_closed()
         reader.close()
-        data = json.loads(response)
-        print(data)
-        if(int(data[0]) == length):
+        if(int(response) == length):
             del li_mem_clog[0:length]
-            if(len(data) > 1):
-                if(len(data[1]) > 1):
-                    print("feedback data received!")
-                    print(f"temp { data[1][0]}")
-                    print(f"humd { data[1][1]}")
             await asyncio.sleep(1)
             return
         #s.close()
@@ -176,6 +179,7 @@ async def push_data_net():
     return
     
 async def push_data():
+    global lastfed, __FEEDBACK_INTERVAL__
     if not wlan.isconnected():
         await asyncio.sleep(1)
     else:
@@ -184,6 +188,12 @@ async def push_data():
             #print(li_mem_clog.pop(0))
             #print(li_mem_clog.pop(0))
                 try:
+                    if not fed_is_busy:
+                        if(time.mktime(time.gmtime()) - lastfed > __FEEDBACK_INTERVAL__):
+                            waitforme = asyncio.create_task(get_feedback_t_hm_for_calculations())
+                            await asyncio.sleep(0)
+                            while (not waitforme.done()):
+                                await asyncio.sleep(1)
                     nets = asyncio.create_task(push_data_net())
                     await asyncio.sleep(0)
                     while (not nets.done()):
@@ -199,7 +209,33 @@ async def push_data():
                     print("failed to sync")
                     print(e)
         return True
-    
+
+async def get_feedback_t_hm_for_calculations():
+        global fed_sync, fed_temp, fed_humi, fed_is_busy
+        fed_is_busy = True
+        print("getting feedback")
+        reader, writer = await asyncio.open_connection(HOST, PORT)
+        writer.write(json.dumps({"len" : "MAKROK"
+                                }).encode() + b'\n')
+        await writer.drain()
+        await asyncio.sleep(1)
+        response = await reader.read(1024)
+        #k = await reader.drain()
+        print('Close the connection')
+        writer.close()
+        await writer.wait_closed()
+        reader.close()
+        data = json.loads(response)
+        if(len(data) > 1):
+                    print("feedback data received!")
+                    print(f"temp { data[0]}")
+                    print(f"humd { data[1]}")
+                    fed_temp = float(data[0])
+                    fed_humi = float(data[1])
+                    fed_sync = True
+                    lastfed = time.mktime(time.gmtime())
+        fed_is_busy = False
+
 led_on = False
 async def light(howlong, led_on):
     if(led_on):
@@ -214,6 +250,7 @@ async def light(howlong, led_on):
     led_on=False
 
 async def main():
+    global fed_sync, fed_temp, fed_humi, fed_is_busy
     print("checking, connecting to network")
     tsk = asyncio.create_task(tsk_con_net())
     #shis palaiz tsk!!!11
@@ -223,7 +260,16 @@ async def main():
     i=0
     while i<__LOOP_DEBUG_LEN__:
       try:
+        #failed to make multiple connections on the same server and port simulateously...
+     #           asyncio.create_task(get_feedback_t_hm_for_calculations())
         #light(1)
+        if(fed_sync):
+                print("feedbacking")
+                print(f"temp { fed_temp}")
+                print(f"humd { fed_humi}")
+                fed_temp = float(data[0])
+                fed_humi = float(data[1])
+                fed_sync = False
         await asyncio.sleep(__MEAS_INTERVAL__)
         if not ccs811.data_available():
             await asyncio.sleep(__MEAS_INTERVAL__*2)
