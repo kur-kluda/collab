@@ -22,7 +22,7 @@ __MAXIMUM_SECS_BEFORE_SEND__=30
 #__LOOP_DEBUG_LEN__ = 99999
 HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 911       # Port to connect to
-CLI_ID = 2		#device id to send
+CLI_ID = 1		#device id to send
 sensor = dht.DHT11(Pin(15))
 
 wlan = network.WLAN(network.STA_IF) # create station interface
@@ -104,11 +104,16 @@ async def push_data():
                     print("failed to sync")
                     print(e)
         return True
-
+light_busy = False
 async def light(howlong):
+    global light_busy
+    if(light_busy):
+        return
+    light_busy = True
     led = Pin(2, Pin.OUT)
     await asyncio.sleep(howlong)
     led = Pin(2, Pin.IN)
+    light_busy = False
 
 async def main():
     print("checking, connecting to network")
@@ -120,8 +125,8 @@ async def main():
     #i=0
     while True: #i<__LOOP_DEBUG_LEN__:
       try:
-        lig = asyncio.create_task(light(1))
-        await asyncio.sleep(0)
+        lig = asyncio.create_task(light(__MEAS_INTERVAL__/2))
+        #await asyncio.sleep(0)
         await asyncio.sleep(__MEAS_INTERVAL__)
         sensor.measure()
         temp = sensor.temperature()
