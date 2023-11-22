@@ -35,6 +35,7 @@ lastfed = 0
 fed_temp = 0
 fed_humi = 0
 fed_is_busy = False
+fed_sync = False
 #i2c = busio.I2C(scl=Pin('GP1'), sda=Pin('GP0'))
 #ccs811 = adafruit_ccs811.CCS811(i2c)
 class CCS811:
@@ -98,8 +99,7 @@ class CCS811:
         return self._i2c.readfrom_mem(_ADDR, offset, 1)
 
     def multi_write_register(self, offset: int, data: bytes):
-        #print(f"data: ".join('{:02X}'.format(a) for a in bytes))
-        print(f"data: {data.hex()}\n")
+        print(data)
         self._i2c.writeto_mem(_ADDR, offset, data)
         print("sent")
 
@@ -109,6 +109,69 @@ class CCS811:
     def status(self):
         b = self._i2c.readfrom(_ADDR, 1)
         return b[0]
+    # https://github.com/Notthemarsian/CCS811/blob/master/CCS811.py
+    def put_envdata(self,humidity,temp):
+        envregister = bytearray([0x00,0x00,0x00,0x00])
+        envregister[0] = int(humidity) << 1
+        t = int(temp//1)
+        tf = temp % 1
+        t_H = (t+25) << 9
+        t_L = int(tf*512)
+        t_comb = t_H | t_L
+        envregister[2] = t_comb >> 8
+        envregister[3] = t_comb & 0xFF
+        self._i2c.writeto_mem(_ADDR,0x05,envregister)
+        time.sleep_ms(100)
+        answ = self.check_for_status_error()
+        #return envregister
+        
+    #does not seem to work :/
+    def update_feedback(self, temperature, relativeHumidity):
+        rH = relativeHumidity * 1000; #//42.348 becomes 42348
+        temp = temperature * 1000; #//23.2 becomes 23200
+
+        envData=[]
+        envData.append(0)
+        envData.append(0)
+        envData.append(0)
+        envData.append(0)
+        
+        #//Split value into 7-bit integer and 9-bit fractional
+        
+        #//Incorrect way from datasheet.
+#//envData[0] = ((rH % 1000) / 100) > 7 ? (rH / 1000 + 1) << 1 : (rH / 1000) << 1;
+#//envData[1] = 0; //CCS811 only supports increments of 0.5 so bits 7-0 will always be zero
+#//if (((rH % 1000) / 100) > 2 && (((rH % 1000) / 100) < 8))
+#//{
+#//  envData[0] |= 1; //Set 9th bit of fractional to indicate 0.5%
+#//}
+
+#//Correct rounding. See issue 8: https://github.com/sparkfun/Qwiic_BME280_CCS811_Combo/issues/8
+        envData[0] = int((rH + 250) / 500)
+        envData[1] = 0 #//CCS811 only supports increments of 0.5 so bits 7-0 will always be zero
+
+        temp = temp + 25000 #//Add the 25C offset
+#//Split value into 7-bit integer and 9-bit fractional
+#//envData[2] = ((temp % 1000) / 100) > 7 ? (temp / 1000 + 1) << 1 : (temp / 1000) << 1;
+#//envData[3] = 0;
+#//if (((temp % 1000) / 100) > 2 && (((temp % 1000) / 100) < 8))
+#//{
+#//  envData[2] |= 1;  //Set 9th bit of fractional to indicate 0.5C
+#//}
+
+#//Correct rounding
+        envData[2] = int((temp + 250) / 500)
+        envData[3] = 0
+        print(envData)
+        print(bytearray(envData))
+        self.multi_write_register(0x05, bytearray(envData))  # RESET
+        time.sleep_ms(100)
+
+        answ = self.check_for_status_error()
+        if(answ):
+            print("error feedbacking")
+        return answ
+        #define CSS811_ENV_DATA 0x05
 
 i2c = I2C(0, sda=Pin('GP0'), scl=Pin('GP1'))
 
@@ -203,7 +266,7 @@ async def push_data():
         return True
 
 async def get_feedback_t_hm_for_calculations():
-        global fed_temp, fed_humi, fed_is_busy, lastfed
+        global fed_temp, fed_humi, fed_is_busy, lastfed, fed_sync
         fed_is_busy = True
         print("getting feedback")
         reader, writer = await asyncio.open_connection(HOST, PORT)
@@ -224,7 +287,7 @@ async def get_feedback_t_hm_for_calculations():
                     lastfed = time.mktime(time.gmtime())
                     print(f"temp { fed_temp}")
                     print(f"humd { fed_humi}")
-        #TODO: pass to the sensor..
+                    fed_sync = True
         fed_is_busy = False
 
 led_on = False
@@ -241,7 +304,7 @@ async def light(howlong, led_on):
     led_on=False
 
 async def main():
-    global fed_temp, fed_humi, fed_is_busy, lastfed
+    global fed_temp, fed_humi, fed_is_busy, lastfed, fed_sync
     print("checking, connecting to network")
     tsk = asyncio.create_task(tsk_con_net())
     #shis palaiz tsk!!!11
@@ -255,6 +318,10 @@ async def main():
             if(time.mktime(time.gmtime()) - lastfed > __FEEDBACK_INTERVAL__):
                 asyncio.create_task(get_feedback_t_hm_for_calculations())
                 await asyncio.sleep(0)
+        if(fed_sync):
+            #ccs811.update_feedback(fed_temp, fed_humi)
+            ccs811.put_envdata(fed_humi, fed_temp)
+            fed_sync = False
         await asyncio.sleep(__MEAS_INTERVAL__)
         if not ccs811.data_available():
             await asyncio.sleep(__MEAS_INTERVAL__*2)
@@ -278,6 +345,7 @@ async def main():
 
 light(2, led_on)
 asyncio.run(main())
+
 
 
 
