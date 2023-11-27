@@ -1,7 +1,7 @@
 | Nr. | Lietotāju stāsts<br><lietotājs> vēlas <sasniegt mērķi>, jo <ieguvums>                                                                                                  | Prioritāte       |
 | --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
 | 1.  | Pasūtītājs vēlas savienotus sensorus ar rādītāju paneli, <br /> jo šī brīža risinājums nav pietiekami ērts. | A-> Must haves   |
-| 2.  | Pasūtītājs vēlas iespēju regulēt datu apmaiņas biežumu,<br /> jo ir jāatrod balanss starp biežumu, pārskatamību un enerģijas patēriņu.                        | A-> Must haves   |
+| 2.  | Pasūtītājs vēlas iespēju regulēt datu apmaiņas biežumu,<br /> jo ir jāatrod balanss starp biežumu, pārskatāmību un enerģijas patēriņu.                        | A-> Must haves   |
 | 3.  | Pasūtītājs vēlas rādītāju panelī redzēt sensora rādījuma interpretāciju ar prasībām publiskajā telpā, jo sensoru cipari nav intuitīvi / ātri uztverami <br />| A-> Must haves   |
 | 4.  | Pasūtītājs vēlas rādītāju panelī iespēju regulēt glabāšanas laikus, jo laika gaitā mēdz mainīties pat likumdošana, kur nu vēl viedokļi par glabāšanas ilgumiem. <br />| B-> Should haves |
 | 5.  | Pasūtītājs vēlas trīs glabāšanas stratēģijas (db/arhīvs/dzēš), jo ir jāņem vērā veiktspēja arī pie bieža datu apmaiņas intervāla <br />| B-> Should haves |
