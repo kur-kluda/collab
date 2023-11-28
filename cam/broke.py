@@ -85,9 +85,9 @@ async def singletonrun():
     #h0 = response.decode().split("\r\n")
     if(clen>0):
         response = await reader.read(clen)
-        await bu.appendUntilSeperator(reader, seper, response)
+        byarr = await bu.appendUntilSeperator(reader, seper, response)
         f = open("001.jpg", "bw")
-        f.write(response)
+        f.write(byarr)
         f.close()
     else:
         response = await reader.read(1024)
