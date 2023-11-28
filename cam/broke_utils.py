@@ -56,6 +56,8 @@ async def readUntilSeperator(reader, sep: str, encoding='ascii') -> str:
 
 async def appendUntilSeperator(reader, sep: str, app_byt: bytes, encoding='ascii') -> bytearray:
     #immutablebytes_more_fun yahy I LOVE P{Y}!!!!1111 back to old shit.
+    #more cool stuff: int is what, 32 bit length on 64 bit system no? 
+    # ValueError("invalid literal for int() with base 10: b'\\xb8'")
     immutablebytes_more_fun = bytearray(app_byt)
     a=0
     la=len(sep)
@@ -70,7 +72,7 @@ async def appendUntilSeperator(reader, sep: str, app_byt: bytes, encoding='ascii
                     a=a+1
                     buf.append(bt)
                 else:
-                    immutablebytes_more_fun.append(bt)
+                    immutablebytes_more_fun.append(int(bt))
             else:
                 if(a==la-1 and (bt.decode(encoding)==sep[a] if bt < b'0xf' else False)):
                     return immutablebytes_more_fun
@@ -80,7 +82,7 @@ async def appendUntilSeperator(reader, sep: str, app_byt: bytes, encoding='ascii
                         buf.append(bt)
                     else:
                         for i in buf:
-                            immutablebytes_more_fun.append(i)
+                            immutablebytes_more_fun.append(int(i))
                         buf =[]
                         a=0
     except Exception as ex:
