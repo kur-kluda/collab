@@ -3,68 +3,13 @@ from aiohttp import web
 import aiohttp
 import asyncio
 import requests
+import broke_utils as bu
 #from aiojobs.aiohttp import setup, spawn
 
 
 async def omgnotatask(app):
     asyncio.create_task(singletonrun())
     await asyncio.sleep(0)
-
-async def readUntilNewLine(reader, encoding='ascii') -> str:
-    #sofar =[]
-    idiotpython =[]
-    #~~~~~~~~~~~~ whynot_plus_0 = bytearray()
-    try:
-        bt=b'1'
-        while bt is not None:
-            bt = await reader.read(1)
-            if(bt==b'\r'):
-                await reader.read(1)
-                if(len(idiotpython)<1):
-                    return ""
-                return "".join([i.decode(encoding) for i in idiotpython])# whynot_plus_0.decode(encoding)
-            else:
-                # apnika TypeError: 'bytes' object cannot be interpreted as an integer
-                #sofar.append(bt+0)
-                #~~~~~~~~~~~~ whynot_plus_0.append(bt)~
-                idiotpython.append(bt)
-    except Exception as ex:
-        if(len(idiotpython)<1):
-            return ""
-        return "".join([i.decode(encoding) for i in idiotpython])# wwhynot_plus_0.decode(encoding)
-
-async def readUntilSeperator(reader, sep: str, encoding='ascii') -> str:
-    a=0
-    la=len(sep)
-    idiotpython =[]
-    buf=[]
-    #~~~~~~~~~~~~ whynot_plus_0 = bytearray()
-    try:
-        bt=b'1'
-        while bt is not None:
-            bt = await reader.read(1)
-            if(a == 0):
-                if(bt==sep[a]):
-                    a=a+1
-                    buf.append(bt)
-                else:
-                    idiotpython.append(bt)
-            else:
-                if(a==la-1 and bt==sep[a]):
-                    return "".join([i.decode(encoding) for i in idiotpython])# whynot_plus_0.decode(encoding)
-                else:
-                    if(bt==sep[a]):
-                        a=a+1
-                        buf.append(bt)
-                    else:
-                        for i in buf:
-                            idiotpython.append(i)
-                        buf =[]
-                        a=0
-    except Exception as ex:
-        if(len(idiotpython)<1):
-            return ""
-        return "".join([i.decode(encoding) for i in idiotpython])# wwhynot_plus_0.decode(encoding)
 
 async def singletonrun():
     s = 'http://c.jtag.me:81/stream'
@@ -78,34 +23,83 @@ async def singletonrun():
     #headerris>>
     #hdlen = len(b'HTTP/1.1 200 OK\r\nContent-Type: multipart/x-mixed-replace;boundary=123456789000000000000987654321\r\nTransfer-Encoding: chunked\r\n')
     #response = await reader.read(hdlen)
-    okstr = await readUntilNewLine(reader)
+    okstr = await bu.readUntilNewLine(reader)
     if(okstr!="HTTP/1.1 200 OK"):
         print("TODOO: handle cant connect exception")
-    okstr = await readUntilNewLine(reader)
+    okstr = await bu.readUntilNewLine(reader)
     if(len(okstr) < len('Content-Type: ')):
         print("TODOO: handle cont type connect exception")
     if(not okstr.startswith("Content-Type")):
         print("TODOO: handle cont type not here exception")
     seper = okstr.split("=")[1]
+
+    more_headers = [
+        "Transfer-Encoding",
+        "Access-Control-Allow-Origin",
+        "X-Framerate"
+    ]
+    for h in more_headers:
+        okstr = await bu.readUntilNewLine(reader)  
+        if(not okstr.startswith(h)):
+            print(f"TODOO: handle {h} not here exception")
+    okstr = await bu.readUntilNewLine(reader)  
+    if(okstr==''):
+        okstr = await bu.readUntilNewLine(reader)  
+    try:
+        if(int(okstr)<0):
+            print(f"TODOO: no integer before seperator exception")
+    except Exception as e:
+        print(f"TODOO: no integer before sepperator true exception")
+    okstr = await bu.readUntilSeperator(reader, seper) 
+    okstr = await bu.readUntilNewLine(reader) 
+    if(okstr==''):
+        okstr = await bu.readUntilNewLine(reader)  
+        if(okstr==''):
+            okstr = await bu.readUntilNewLine(reader) 
+
+    #who is this \r\n\r\n 4e \r\n?
+    okstr = await bu.readUntilNewLine(reader) 
+# the more the headers
+    more_headers = [
+        "Content-Type",
+        "Content-Length",
+        "X-Timestamp"
+    ]
+    clen=0
+    tmestamp=0.0
+    for h in more_headers:
+        okstr = await bu.readUntilNewLine(reader)  
+        if(not okstr.startswith(h)):
+            print(f"TODOO: handle {h} not here exception")
+        if(okstr.startswith("Content-Length")):
+            clen = int(okstr.split(":")[1].strip())
+        elif(okstr.startswith("X-Timestamp")):
+            tmestamp = float(okstr.split(":")[1].strip())
+    okstr = await bu.readUntilNewLine(reader) 
+    if(okstr==''):
+        okstr = await bu.readUntilNewLine(reader) 
+        if(okstr==''):
+            okstr = await bu.readUntilNewLine(reader) 
+    #who is this \r\n 39a9 \r\n ??? changes to d2de etc?? checksum??
+    #okstr = await bu.readUntilNewLine(reader)          
     #h0 = response.decode().split("\r\n")
+    if(clen>0):
+        response = await reader.read(clen)
+        await bu.appendUntilSeperator(reader, seper, response)
+        f = open("001.jpg", "bw")
+        f.write(response)
+        f.close()
+    else:
+        response = await reader.read(1024)
+
     while len(response)>2:
         try:
-            response = await reader.read(1024)
             h0 = response.decode().split("\r\n")
-            response = requests.get(s, timeout=5)
-            print(response.headers)
+            response = await reader.read(1024)
         except requests.exceptions.Timeout:
             print("The request timed out")
             await asyncio.sleep(2)
             continue
-        async with sin_session.get(s) as resp:
-            print(await resp.text())
-            reader = aiohttp.MultipartReader.from_response(resp)
-            while True:
-                part = await reader.next()
-                if part is None:
-                    break
-                print(part.headers)
 
 async def handle(request):
    reader = await aiohttp.MultipartReader.from_response(request)
