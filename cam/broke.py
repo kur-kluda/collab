@@ -1,11 +1,16 @@
 #rRrrrrrrrrrrrrrrrrrrrrrr
 from aiohttp import web
+from aiohttp import MultipartWriter
 import aiohttp
 import asyncio
 import requests
 import broke_utils as bu
+from datetime import datetime
 #from aiojobs.aiohttp import setup, spawn
 
+__LAST_UPDATE__ = datetime.now()
+__LIBRARY_SIZE__ = 120
+__LIBRARY_THREAD_SAFE__ = []
 
 async def omgnotatask(app):
     asyncio.create_task(singletonrun())
@@ -58,7 +63,8 @@ async def singletonrun():
             okstr = await bu.readUntilNewLine(reader) 
 
     
-    for tt in range (4):
+    #for tt in range (123):
+    while True:
         #who is this \r\n\r\n 4e \r\n?
         #okstr = await bu.readUntilNewLine(reader) 
         # the more the headers
@@ -70,17 +76,18 @@ async def singletonrun():
         clen=0
         tmestamp=0.0
         for h in more_headers:
-            for oo in range(3):
+            for oo in range(4):
                 if(okstr==''):
                     okstr = await bu.readUntilNewLine(reader) 
-            okstr = await bu.readUntilNewLine(reader)  
+                elif(len(okstr)<5):
+                    okstr = await bu.readUntilNewLine(reader) 
             if(not okstr.startswith(h)):
                 print(f"TODOO: handle {h} not here exception")
             if(okstr.startswith("Content-Length")):
                 clen = int(okstr.split(":")[1].strip())
             elif(okstr.startswith("X-Timestamp")):
                 tmestamp = float(okstr.split(":")[1].strip())
-        okstr = await bu.readUntilNewLine(reader) 
+            okstr = await bu.readUntilNewLine(reader) 
         if(okstr==''):
             okstr = await bu.readUntilNewLine(reader) 
             if(okstr==''):
@@ -88,43 +95,56 @@ async def singletonrun():
         #who is this \r\n 39a9 \r\n ??? changes to d2de etc?? checksum??
         #okstr = await bu.readUntilNewLine(reader)          
         #h0 = response.decode().split("\r\n")
+        byarr = bytearray()
         if(clen>0):
             response = await reader.read(clen)
             byarr = await bu.appendUntilSeperator(reader, '\r\n\r\n--'+seper, response)
+            """
             f = open(f"00{tt}.jpg", "bw")
             f.write(byarr)
             f.close()
             f = open(f"00{tt}noarr.jpg", "bw")
             f.write(response)
             f.close()
+            """
         else:
             response = await reader.read(1024)
-
-        okstr = await bu.readUntilNewLine(reader) 
-        if(okstr==''):
-            okstr = await bu.readUntilNewLine(reader) 
-            if(okstr==''):
-                okstr = await bu.readUntilNewLine(reader) 
-        #who is this \r\n 39a9 \r\n ??? changes to d2de etc?? checksum??
-
-    okstr = await bu.readUntilNewLine(reader) 
-    while len(response)>2:
-        try:
-            h0 = response.decode().split("\r\n")
-            response = await reader.read(1024)
-        except requests.exceptions.Timeout:
-            print("The request timed out")
-            await asyncio.sleep(2)
-            continue
+            byarr = bytearray(response)
+        
+        del response
+        if(len(__LIBRARY_THREAD_SAFE__)< __LIBRARY_SIZE__):
+            __LIBRARY_THREAD_SAFE__.append(byarr)
+        else:
+            __LIBRARY_THREAD_SAFE__.pop(0)
+            __LIBRARY_THREAD_SAFE__.append(byarr)
+        __LAST_UPDATE__ = datetime.now()
+        await asyncio.sleep(0)
 
 async def handle(request):
-   reader = await aiohttp.MultipartReader.from_response(request)
-   while True:
-       part = await reader.next()
-       if part is None:
-           break
-       print(part)
-   return web.Response()
+    my_boundary = "123456789000000000000987654321"
+    response = web.StreamResponse(
+    status=200,
+    reason='OK',
+    headers={
+        'Content-Type': 'multipart/x-mixed-replace;boundary={}'.format(my_boundary)
+    }
+    )
+    await response.prepare(request)
+    pointer = 0
+    while True:
+        if(len(__LIBRARY_THREAD_SAFE__)<1):
+            await asyncio.sleep(1)
+            continue
+        frame = __LIBRARY_THREAD_SAFE__[pointer]
+        with MultipartWriter('image/jpeg', boundary=my_boundary) as mpwriter:
+            mpwriter.append(frame, {
+            'Content-Type': 'image/jpeg'
+            })
+            await mpwriter.write(response, close_boundary=False)
+        await response.drain()
+        pointer = pointer+1
+        if(pointer>=len(__LIBRARY_THREAD_SAFE__)):
+            pointer = 0
 
 """
 async def mainbody():
