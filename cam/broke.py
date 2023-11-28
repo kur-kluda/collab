@@ -33,6 +33,39 @@ async def readUntilNewLine(reader, encoding='ascii') -> str:
             return ""
         return "".join([i.decode(encoding) for i in idiotpython])# wwhynot_plus_0.decode(encoding)
 
+async def readUntilSeperator(reader, sep: str, encoding='ascii') -> str:
+    a=0
+    la=len(sep)
+    idiotpython =[]
+    buf=[]
+    #~~~~~~~~~~~~ whynot_plus_0 = bytearray()
+    try:
+        bt=b'1'
+        while bt is not None:
+            bt = await reader.read(1)
+            if(a == 0):
+                if(bt==sep[a]):
+                    a=a+1
+                    buf.append(bt)
+                else:
+                    idiotpython.append(bt)
+            else:
+                if(a==la-1 and bt==sep[a]):
+                    return "".join([i.decode(encoding) for i in idiotpython])# whynot_plus_0.decode(encoding)
+                else:
+                    if(bt==sep[a]):
+                        a=a+1
+                        buf.append(bt)
+                    else:
+                        for i in buf:
+                            idiotpython.append(i)
+                        buf =[]
+                        a=0
+    except Exception as ex:
+        if(len(idiotpython)<1):
+            return ""
+        return "".join([i.decode(encoding) for i in idiotpython])# wwhynot_plus_0.decode(encoding)
+
 async def singletonrun():
     s = 'http://c.jtag.me:81/stream'
     global sin_session
@@ -51,6 +84,9 @@ async def singletonrun():
     okstr = await readUntilNewLine(reader)
     if(len(okstr) < len('Content-Type: ')):
         print("TODOO: handle cont type connect exception")
+    if(not okstr.startswith("Content-Type")):
+        print("TODOO: handle cont type not here exception")
+    seper = okstr.split("=")[1]
     #h0 = response.decode().split("\r\n")
     while len(response)>2:
         try:
