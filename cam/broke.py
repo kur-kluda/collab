@@ -11,16 +11,19 @@ from datetime import datetime
 __LAST_UPDATE__ = datetime.now()
 __LIBRARY_SIZE__ = 120
 __LIBRARY_THREAD_SAFE__ = []
+__LIBRARY_STAMPS_THREAD_SAFE__ = []
+runtask = None
 
-async def omgnotatask(app):
-    asyncio.create_task(singletonrun())
+async def omgnotatask(app=None):
+    global runtask
+    runtask = asyncio.create_task(singletonrun())
     await asyncio.sleep(0)
 
 async def singletonrun():
-    s = 'http://c.jtag.me:81/stream'
+    #s = 'http://c.jtag.me:81/stream'
     global sin_session
-    HOST="c.jtag.me"
-    PORT=81
+    HOST="jtag.me"
+    PORT=1021
     reader, writer = await asyncio.open_connection(HOST, PORT)
     request = f"GET /stream HTTP/1.1\r\nHost: {HOST}\r\n\r\n"
     writer.write(request.encode())
@@ -114,9 +117,12 @@ async def singletonrun():
         del response
         if(len(__LIBRARY_THREAD_SAFE__)< __LIBRARY_SIZE__):
             __LIBRARY_THREAD_SAFE__.append(byarr)
+            __LIBRARY_STAMPS_THREAD_SAFE__.append(tmestamp)
         else:
             __LIBRARY_THREAD_SAFE__.pop(0)
+            __LIBRARY_STAMPS_THREAD_SAFE__.pop(0)
             __LIBRARY_THREAD_SAFE__.append(byarr)
+            __LIBRARY_STAMPS_THREAD_SAFE__.append(tmestamp)
         __LAST_UPDATE__ = datetime.now()
         await asyncio.sleep(0)
 
@@ -126,7 +132,8 @@ async def handle(request):
     status=200,
     reason='OK',
     headers={
-        'Content-Type': 'multipart/x-mixed-replace;boundary={}'.format(my_boundary)
+        'Content-Type': 'multipart/x-mixed-replace;boundary={}'.format(my_boundary),
+        "X-Framerate": "60"
     }
     )
     await response.prepare(request)
@@ -138,29 +145,41 @@ async def handle(request):
         frame = __LIBRARY_THREAD_SAFE__[pointer]
         with MultipartWriter('image/jpeg', boundary=my_boundary) as mpwriter:
             mpwriter.append(frame, {
-            'Content-Type': 'image/jpeg'
+            'Content-Type': 'image/jpeg',
+            "X-Timestamp": str(__LIBRARY_STAMPS_THREAD_SAFE__[pointer])
             })
             await mpwriter.write(response, close_boundary=False)
         await response.drain()
         pointer = pointer+1
         if(pointer>=len(__LIBRARY_THREAD_SAFE__)):
             pointer = 0
+        #await asyncio.sleep(0.2)
 
-"""
-async def mainbody():
-    #error no main run?? from asyncio...
-    asyncio.create_task(singletonrun(sin_session))
-    #Cannot run the event loop while another loop is running
-    web.run_app(app)
-    #run_app(app, host='127.0.0.1', port=2000)
-"""
+async def handle_ctrl(request):
+    global runtask
+    if('a' in request.query):
+        if(request.query['a']):
+            if(request.query['a'] in ["1", "0"]):
+                if(request.query['a']=="1"):
+                    if(runtask):
+                        runtask.cancel()
+                    runtask = await omgnotatask()
+                else:
+                    if(runtask):
+                        runtask.cancel()
+                        runtask = None
+                return web.Response(text=f"Done, {request.query['a']}")
+    return web.Response(text=f"not ok.")
+
+
 
 #scheduler = aiojobs.Scheduler()
 app = web.Application()
 app.router.add_route('GET', '/', handle)
+app.router.add_route('GET', '/c', handle_ctrl)
 sin_session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=50, connect=10, sock_connect=10))
 app.on_startup.append(omgnotatask)
-web.run_app(app)
+web.run_app(app, host='0.0.0.0', port=81)
 """
 asyncio.run(mainbody())
 """
