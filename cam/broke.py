@@ -57,41 +57,57 @@ async def singletonrun():
         if(okstr==''):
             okstr = await bu.readUntilNewLine(reader) 
 
-    #who is this \r\n\r\n 4e \r\n?
-    okstr = await bu.readUntilNewLine(reader) 
-# the more the headers
-    more_headers = [
-        "Content-Type",
-        "Content-Length",
-        "X-Timestamp"
-    ]
-    clen=0
-    tmestamp=0.0
-    for h in more_headers:
-        okstr = await bu.readUntilNewLine(reader)  
-        if(not okstr.startswith(h)):
-            print(f"TODOO: handle {h} not here exception")
-        if(okstr.startswith("Content-Length")):
-            clen = int(okstr.split(":")[1].strip())
-        elif(okstr.startswith("X-Timestamp")):
-            tmestamp = float(okstr.split(":")[1].strip())
-    okstr = await bu.readUntilNewLine(reader) 
-    if(okstr==''):
+    
+    for tt in range (4):
+        #who is this \r\n\r\n 4e \r\n?
+        #okstr = await bu.readUntilNewLine(reader) 
+        # the more the headers
+        more_headers = [
+            "Content-Type",
+            "Content-Length",
+            "X-Timestamp"
+        ]
+        clen=0
+        tmestamp=0.0
+        for h in more_headers:
+            for oo in range(3):
+                if(okstr==''):
+                    okstr = await bu.readUntilNewLine(reader) 
+            okstr = await bu.readUntilNewLine(reader)  
+            if(not okstr.startswith(h)):
+                print(f"TODOO: handle {h} not here exception")
+            if(okstr.startswith("Content-Length")):
+                clen = int(okstr.split(":")[1].strip())
+            elif(okstr.startswith("X-Timestamp")):
+                tmestamp = float(okstr.split(":")[1].strip())
         okstr = await bu.readUntilNewLine(reader) 
         if(okstr==''):
             okstr = await bu.readUntilNewLine(reader) 
-    #who is this \r\n 39a9 \r\n ??? changes to d2de etc?? checksum??
-    #okstr = await bu.readUntilNewLine(reader)          
-    #h0 = response.decode().split("\r\n")
-    if(clen>0):
-        response = await reader.read(clen)
-        byarr = await bu.appendUntilSeperator(reader, seper, response)
-        f = open("001.jpg", "bw")
-        f.write(byarr)
-        f.close()
-    else:
-        response = await reader.read(1024)
+            if(okstr==''):
+                okstr = await bu.readUntilNewLine(reader) 
+        #who is this \r\n 39a9 \r\n ??? changes to d2de etc?? checksum??
+        #okstr = await bu.readUntilNewLine(reader)          
+        #h0 = response.decode().split("\r\n")
+        if(clen>0):
+            response = await reader.read(clen)
+            byarr = await bu.appendUntilSeperator(reader, '\r\n\r\n--'+seper, response)
+            f = open(f"00{tt}.jpg", "bw")
+            f.write(byarr)
+            f.close()
+            f = open(f"00{tt}noarr.jpg", "bw")
+            f.write(response)
+            f.close()
+        else:
+            response = await reader.read(1024)
 
+        okstr = await bu.readUntilNewLine(reader) 
+        if(okstr==''):
+            okstr = await bu.readUntilNewLine(reader) 
+            if(okstr==''):
+                okstr = await bu.readUntilNewLine(reader) 
+        #who is this \r\n 39a9 \r\n ??? changes to d2de etc?? checksum??
+
+    okstr = await bu.readUntilNewLine(reader) 
     while len(response)>2:
         try:
             h0 = response.decode().split("\r\n")
