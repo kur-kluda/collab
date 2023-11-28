@@ -10,12 +10,52 @@ async def omgnotatask(app):
     asyncio.create_task(singletonrun())
     await asyncio.sleep(0)
 
+async def readUntilNewLine(reader, encoding='ascii') -> str:
+    #sofar =[]
+    idiotpython =[]
+    #~~~~~~~~~~~~ whynot_plus_0 = bytearray()
+    try:
+        bt=b'1'
+        while bt is not None:
+            bt = await reader.read(1)
+            if(bt==b'\r'):
+                await reader.read(1)
+                if(len(idiotpython)<1):
+                    return ""
+                return "".join([i.decode(encoding) for i in idiotpython])# whynot_plus_0.decode(encoding)
+            else:
+                # apnika TypeError: 'bytes' object cannot be interpreted as an integer
+                #sofar.append(bt+0)
+                #~~~~~~~~~~~~ whynot_plus_0.append(bt)~
+                idiotpython.append(bt)
+    except Exception as ex:
+        if(len(idiotpython)<1):
+            return ""
+        return "".join([i.decode(encoding) for i in idiotpython])# wwhynot_plus_0.decode(encoding)
+
 async def singletonrun():
     s = 'http://c.jtag.me:81/stream'
     global sin_session
-
-    while True:
+    HOST="c.jtag.me"
+    PORT=81
+    reader, writer = await asyncio.open_connection(HOST, PORT)
+    request = f"GET /stream HTTP/1.1\r\nHost: {HOST}\r\n\r\n"
+    writer.write(request.encode())
+    await writer.drain()
+    #headerris>>
+    #hdlen = len(b'HTTP/1.1 200 OK\r\nContent-Type: multipart/x-mixed-replace;boundary=123456789000000000000987654321\r\nTransfer-Encoding: chunked\r\n')
+    #response = await reader.read(hdlen)
+    okstr = await readUntilNewLine(reader)
+    if(okstr!="HTTP/1.1 200 OK"):
+        print("TODOO: handle cant connect exception")
+    okstr = await readUntilNewLine(reader)
+    if(len(okstr) < len('Content-Type: ')):
+        print("TODOO: handle cont type connect exception")
+    #h0 = response.decode().split("\r\n")
+    while len(response)>2:
         try:
+            response = await reader.read(1024)
+            h0 = response.decode().split("\r\n")
             response = requests.get(s, timeout=5)
             print(response.headers)
         except requests.exceptions.Timeout:
