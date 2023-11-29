@@ -16,6 +16,8 @@ __LAST_UPDATE__ = datetime.now()
 __LIBRARY_SIZE__ = 120
 __LIBRARY_THREAD_SAFE__ = []
 __LIBRARY_STAMPS_THREAD_SAFE__ = []
+__IMG__ = None
+__STM__ = None
 __CFG_FLUSH_ALL_WHEN_LIB_FULL__ = True
 __DBGMSG__ = False
 __DBG_SAVE_IMAGES__ = False
@@ -27,6 +29,7 @@ async def omgnotatask(app=None):
     await asyncio.sleep(0)
 
 async def singletonrun():
+    global __STM__, __IMG__
     #s = 'http://c.jtag.me:81/stream'
     HOST="jtag.me"
     PORT=1075
@@ -125,7 +128,7 @@ async def singletonrun():
         #h0 = response.decode().split("\r\n")
         byarr = bytearray()
         if(__DBGMSG__):
-            print(f"line#126: clen is {clen}")
+            print(f"line#131: clen is {clen}")
         if(clen>0):
             response = await reader.read(clen)
             if(sys.platform.startswith('win')):
@@ -146,6 +149,10 @@ async def singletonrun():
             byarr = bytearray(response)
         
         del response
+        __IMG__=byarr
+        __LAST_UPDATE__ = datetime.now()
+        __STM__ = tmestamp
+        """
         if(len(__LIBRARY_THREAD_SAFE__)< __LIBRARY_SIZE__):
             __LIBRARY_THREAD_SAFE__.append(byarr)
             __LIBRARY_STAMPS_THREAD_SAFE__.append(tmestamp)
@@ -169,8 +176,9 @@ async def singletonrun():
             __LIBRARY_STAMPS_THREAD_SAFE__.append(tmestamp)
         __LAST_UPDATE__ = datetime.now()
         #await asyncio.sleep(0)
-
+"""
 async def handle(request):
+    global __STM__, __IMG__
     my_boundary = "123456789000000000000987654321"
     print(f"deb {request.remote}")
     response = web.StreamResponse(
@@ -184,25 +192,33 @@ async def handle(request):
     await response.prepare(request)
     pointer = 0
     while True:
+        if(__STM__ is None):
+            await asyncio.sleep(1)
+            continue
+        """
         if(len(__LIBRARY_THREAD_SAFE__)<1):
             await asyncio.sleep(1)
             continue
         if(pointer>=len(__LIBRARY_THREAD_SAFE__)):
             pointer = 0
         frame = __LIBRARY_THREAD_SAFE__[pointer]
+        """
+        frame = __IMG__
         with MultipartWriter('image/jpeg', boundary=my_boundary) as mpwriter:
             mpwriter.append(frame, {
             'Content-Type': 'image/jpeg',
-            "X-Timestamp": str(__LIBRARY_STAMPS_THREAD_SAFE__[pointer])
+            "X-Timestamp": str(__STM__)#str(__LIBRARY_STAMPS_THREAD_SAFE__[pointer])
             })
             await mpwriter.write(response, close_boundary=False)
         #if(not sys.platform.startswith('win')):
         #    await response.drain()
         #drain already inside write?? always?? examples enlisted drain too, no?
         #await response.write()
+        """
         pointer = pointer+1
         if(pointer>=len(__LIBRARY_THREAD_SAFE__)):
             pointer = 0
+        """
         #why linux needs this? ubuntu.. otherwise it just hangs not displaying even the first frame image..
         if(not sys.platform.startswith('win')):
 #still freezes. :(            
