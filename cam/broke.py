@@ -4,7 +4,11 @@ from aiohttp import MultipartWriter
 import aiohttp
 import asyncio
 import requests
-import broke_utils as bu
+import sys
+if(sys.platform.startswith('win')):
+    import broke_utils as bu
+else:
+    import broke_utils_linux as bu
 from datetime import datetime
 #from aiojobs.aiohttp import setup, spawn
 
@@ -21,11 +25,13 @@ async def omgnotatask(app=None):
 
 async def singletonrun():
     #s = 'http://c.jtag.me:81/stream'
-    global sin_session
     HOST="jtag.me"
-    PORT=1021
+    PORT=1075
     reader, writer = await asyncio.open_connection(HOST, PORT)
-    request = f"GET /stream HTTP/1.1\r\nHost: {HOST}\r\n\r\n"
+    if(sys.platform.startswith('win')):
+        request = f"GET /stream HTTP/1.1\r\nHost: {HOST}\r\n\r\n"
+    else:
+        request = f"GET /stream HTTP/1.1\nHost: {HOST}\n\n"
     writer.write(request.encode())
     await writer.drain()
     #headerris>>
@@ -101,7 +107,10 @@ async def singletonrun():
         byarr = bytearray()
         if(clen>0):
             response = await reader.read(clen)
-            byarr = await bu.appendUntilSeperator(reader, '\r\n\r\n--'+seper, response)
+            if(sys.platform.startswith('win')):
+                byarr = await bu.appendUntilSeperator(reader, '\r\n\r\n--'+seper, response)
+            else:
+                byarr = await bu.appendUntilSeperator(reader, '\n\n--'+seper, response)
             """
             f = open(f"00{tt}.jpg", "bw")
             f.write(byarr)
@@ -124,7 +133,7 @@ async def singletonrun():
             __LIBRARY_THREAD_SAFE__.append(byarr)
             __LIBRARY_STAMPS_THREAD_SAFE__.append(tmestamp)
         __LAST_UPDATE__ = datetime.now()
-        await asyncio.sleep(0)
+        #await asyncio.sleep(0)
 
 async def handle(request):
     my_boundary = "123456789000000000000987654321"
@@ -149,7 +158,9 @@ async def handle(request):
             "X-Timestamp": str(__LIBRARY_STAMPS_THREAD_SAFE__[pointer])
             })
             await mpwriter.write(response, close_boundary=False)
-        await response.drain()
+        #await response.drain()
+        #drain already inside write?? always?? examples enlisted drain too, no?
+        #await response.write()
         pointer = pointer+1
         if(pointer>=len(__LIBRARY_THREAD_SAFE__)):
             pointer = 0
@@ -177,7 +188,6 @@ async def handle_ctrl(request):
 app = web.Application()
 app.router.add_route('GET', '/', handle)
 app.router.add_route('GET', '/c', handle_ctrl)
-sin_session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=50, connect=10, sock_connect=10))
 app.on_startup.append(omgnotatask)
 web.run_app(app, host='0.0.0.0', port=81)
 """
