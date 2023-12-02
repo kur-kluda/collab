@@ -1,0 +1,1 @@
+# ziņas par ogļskābo gāzi.
