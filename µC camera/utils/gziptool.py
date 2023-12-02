@@ -2,6 +2,10 @@ import gzip
 from io import StringIO, BytesIO
 import data1
 
+# https://stackoverflow.com/q/69714533/435878
+# function author: Fumanchu3000
+# https://stackoverflow.com/users/8245737/fumanchu3000
+# no changes where made.
 def string_to_bytes(input_str: str) -> bytes:
     """
         Read the given string, encode it in utf-8, gzip compress
@@ -18,7 +22,10 @@ def string_to_bytes(input_str: str) -> bytes:
             compressor.close()
             return stream.getvalue()
         compressor.write(chunk)
-
+        
+# as this function has no link to other functions whatsoever,
+# it is not built upon them
+# therefore not required to be by-sa 4.0
 def bytes_to_4string(in_by: bytes) -> str:
     cnt = 0
     #outstr = [(("0x"+i.hex()+" ", print(cnt)), cnt=cnt+1) for i in in_by]
@@ -32,7 +39,10 @@ def bytes_to_4string(in_by: bytes) -> str:
     #print("".join(outstr))
     return "".join(outstr)
 
-
+# https://stackoverflow.com/q/69714533/435878
+# function author: Fumanchu3000
+# https://stackoverflow.com/users/8245737/fumanchu3000
+# no changes where made.
 def bytes_to_string(input_bytes: bytes) -> str:
     """
         Decompress the given byte array (which must be valid
