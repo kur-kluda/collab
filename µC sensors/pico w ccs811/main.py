@@ -130,11 +130,7 @@ class CCS811:
         rH = relativeHumidity * 1000; #//42.348 becomes 42348
         temp = temperature * 1000; #//23.2 becomes 23200
 
-        envData=[]
-        envData.append(0)
-        envData.append(0)
-        envData.append(0)
-        envData.append(0)
+        envData= bytearray([0x00,0x00,0x00,0x00])
         
         #//Split value into 7-bit integer and 9-bit fractional
         
@@ -163,7 +159,6 @@ class CCS811:
         envData[2] = int((temp + 250) / 500)
         envData[3] = 0
         print(envData)
-        print(bytearray(envData))
         self.multi_write_register(0x05, bytearray(envData))  # RESET
         time.sleep_ms(100)
 
