@@ -23,12 +23,15 @@ __LED__='LED'
 HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 911       # Port to connect to
 CLI_ID = 1		#device id to send
+CLI_ID2 = 3		#device id to send
 pin = Pin(22)#, Pin.OUT, Pin.PULL_DOWN)
 sensor = dht.DHT11(pin)
+sensor2 = dht.DHT22(Pin(21))
 
 wlan = network.WLAN(network.STA_IF) # create station interface
 
 li_mem_clog = []
+li_mem_clog2 = []
 
 async def tsk_con_net():
     wlan.active(True)       # activate the interface
@@ -80,7 +83,47 @@ async def push_data_net():
         print(str(e))      
     print("failed to sync")
     return
-    
+
+async def push_data_net2():
+    await asyncio.sleep(2)
+    try:
+        #with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
+        #addr = socket.getaddrinfo(HOST, PORT)[0][-1]
+        #s.connect((HOST, PORT))
+        reader, writer = await asyncio.open_connection(HOST, PORT)
+        #avoid race conds/?? ja nu kas :D
+        length = len(li_mem_clog2)
+        print(f'Send: {!r}')
+        writer.write(json.dumps({"epoch" : time.gmtime(0)[0],
+                                 "id": CLI_ID2,
+                                 "len": length
+                                 }).encode() + b'\n')
+        writer.write(json.dumps(li_mem_clog2[0:length]).encode() + b'\n')
+        await writer.drain()
+        await asyncio.sleep(1)
+        #await s.connect(addr)
+        #s.sendall(json.dumps(li_mem_clog[0:length]).encode() + b'\n')
+        #s.send(bytes(json.dumps(li_mem_clog[0:length]).encode() + b'\n'), 'utf-8')
+        #response = s.recv(1024)
+        #print(response)
+        response = await reader.read(1024)
+        #k = await reader.drain()
+        print('Close the connection')
+        writer.close()
+        await writer.wait_closed()
+        reader.close()
+        if(int(response) == length):
+            del li_mem_clog2[0:length]
+            await asyncio.sleep(1)
+            return
+        #s.close()
+    except Exception as e:
+        print(str(e))      
+    print("failed to sync")
+    return
+
+
 async def push_data():
     if not wlan.isconnected():
         await asyncio.sleep(1)
@@ -92,7 +135,9 @@ async def push_data():
                 try:
                     nets = asyncio.create_task(push_data_net())
                     await asyncio.sleep(0)
-                    while (not nets.done()):
+                    nets2 = asyncio.create_task(push_data_net2())
+                    await asyncio.sleep(0)
+                    while (not nets.done() and not nets2.done()):
                         print("waiting...")
                         await asyncio.sleep(1)
                     #nets_w = asyncio.wait_for(nets, 3)
@@ -133,12 +178,16 @@ async def main():
         #await asyncio.sleep(0)
         await asyncio.sleep(__MEAS_INTERVAL__)
         sensor.measure()
+        sensor2.measure()
         temp = sensor.temperature()
         hum = sensor.humidity()
+        temp2 = sensor2.temperature()
+        hum2 = sensor2.humidity()
         #temp_f = temp * (9/5) + 32.0
         #print(time.gmtime(0)[0])
         #yr, Month, date, h, m, s, weekday, yearday
         li_mem_clog.append([time.mktime(time.gmtime()), temp, hum])
+        li_mem_clog2.append([time.mktime(time.gmtime()), temp2, hum2])
         #print(time.localtime())
         #print(json.loads(json.dumps(time.localtime()))[5])
         #print('Temperature: %3.1f C' %temp)
