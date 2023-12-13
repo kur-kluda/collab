@@ -3,6 +3,8 @@ import os
 from a.utils import show_db_matplot
 from a.utils import show_db_matplot_hum_date
 from a.utils import show_db_matplot_temp_date
+from a.utils import show_db_matplot_hum_date1
+from a.utils import show_db_matplot_temp_date1
 from a.utils import show_db_matplot_co2_date
 from a.utils import show_db_matplot_tvoc_date
 # Create your views here.
@@ -27,13 +29,17 @@ def dbplot_date(req):
     if req.method =='GET':
         wordcloud = show_db_matplot_hum_date([]) 
         wordclouda = show_db_matplot_temp_date([])
+        wc1 = show_db_matplot_hum_date1([]) 
+        wc1a = show_db_matplot_temp_date1([]) 
         wc2 = show_db_matplot_co2_date([]) 
         wc2a = show_db_matplot_tvoc_date([]) 
         
         view_model = {
         'errorText': errorText,
-        'wordcloud': wordcloud,
-        'wordclouda': wordclouda,
+        'wordcloud1': wordcloud,
+        'wordcloud': wordclouda,
+        'wordcloud1a': wc1,
+        'wordclouda': wc1a,
         'wordcloud2': wc2,
         'wordcloud2a': wc2a
         }

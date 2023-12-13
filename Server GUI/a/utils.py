@@ -14,8 +14,8 @@ import json
 
 def show_db_plot_overlord(xcol, ycol, tablename, 
 #orderby_expression, 
-limit, xlabel, ylabel, data: Optional[list]) -> Optional[Image.Image]:
-    orderby_expression = "rcv DESC"
+limit, xlabel, ylabel) -> Optional[Image.Image]:
+	orderby_expression = "rcv DESC"
 	try:
  		#print(os.path.abspath('../../agr/db.yaml'))
  		with open('../../agr/db.yaml', 'r') as f:
@@ -53,10 +53,16 @@ def show_db_matplot(data: Optional[list]) -> Optional[Image.Image]:
     return show_db_plot_overlord("1", "2", "s_1", "50", "temperatura", "r. mitrums")
 
 def show_db_matplot_hum_date(data: Optional[list]) -> Optional[Image.Image]:
-	return show_db_plot_overlord("time", "2", "s_1", "50", "laiks GMT+0", "r. mitrums")
+	return show_db_plot_overlord("time", "2", "s_1", "50", "laiks GMT+0", "r. mitrums DHT11")
 
 def show_db_matplot_temp_date(data: Optional[list]) -> Optional[Image.Image]:
-	return show_db_plot_overlord("time", "1", "s_1", "50", "laiks GMT+0", "temperatura")
+	return show_db_plot_overlord("time", "1", "s_1", "50", "laiks GMT+0", "temperatura DHT11")
+    
+def show_db_matplot_hum_date1(data: Optional[list]) -> Optional[Image.Image]:
+	return show_db_plot_overlord("time", "2", "s_3", "50", "laiks GMT+0", "r. mitrums DHT22")
+
+def show_db_matplot_temp_date1(data: Optional[list]) -> Optional[Image.Image]:
+	return show_db_plot_overlord("time", "1", "s_3", "50", "laiks GMT+0", "temperatura DHT22")
 
 def show_db_matplot_co2_date(data: Optional[list]) -> Optional[Image.Image]:
 	return show_db_plot_overlord("time", "1", "s_2", "50", "laiks GMT+0", "co2 ppm")
