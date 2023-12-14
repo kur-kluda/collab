@@ -16,8 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from a import views as av
+from a import grafiki as g
 
 urlpatterns = [
+    path('g/', g.render_templ_grafs, name='dbGplotApp'),
     path('3/', av.dbplot, name='dbplotApp'),
     path('4/', av.dbplot_date, name='dbplotApp'),
     path('admin/', admin.site.urls),

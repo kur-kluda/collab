@@ -1,0 +1,27 @@
+<body>
+<script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+<script type="text/javascript">
+function but_hider(frameselector, butselector){
+$(frameselector).on("load", () =>{let hadbut=  window.setInterval(
+    ()=>{if($(butselector, $(frameselector)[0].contentDocument).length <1) {}
+	else {$(butselector, $(frameselector)[0].contentDocument).remove(); window.clearInterval(hadbut);}
+	}, 500);});
+}
+$(document).ready(()=>{
+//'.navbar-page-btn' -> .parent().remove()
+but_hider('#fr_gr1', '.navbar-edit');
+but_hider('#fr_gr1', '.navbar-page-btn');
+but_hider('#fr_gr2', '.navbar-edit');
+but_hider('#fr_gr2', '.navbar-page-btn');
+
+});</script>
+
+<iframe width="100%" id="fr_gr1" height="100%" src="https://dj.jtag.me/d/BQySPLDSz/mernieki-1?panelId=2&fullscreen&orgId=1&kiosk=tv&refresh=5s"></iframe>
+<hr>
+<iframe width="100%" height="100%" id="fr_gr2" src="https://dj.jtag.me/d/0Se83yvSz/rel-mitrums-dht11-dht22?panelId=2&fullscreen&orgId=1&kiosk=tv&refresh=5s">
+</iframe>
+
+</body>
