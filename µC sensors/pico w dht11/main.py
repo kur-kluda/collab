@@ -1,5 +1,5 @@
-# This file is executed on every boot (including wake-boot from deepsleep)
-#import esp
+# at this moment 5 new records appear while waiting for db to write so first 10=> send (+5 in the meanwhile), then @10=>send so it sends each 
+#5 measurements instead of intended 10 @1sec interval measuring
 #esp.osdebug(None)
 import os, machine
 #os.dupterm(None, 1) # disable REPL on UART(0)
@@ -24,14 +24,17 @@ HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 911       # Port to connect to
 CLI_ID = 1		#device id to send
 CLI_ID2 = 3		#device id to send
+CLI_ID3 = 4		#device id to send
 pin = Pin(22)#, Pin.OUT, Pin.PULL_DOWN)
 sensor = dht.DHT11(pin)
 sensor2 = dht.DHT22(Pin(21))
+sensor3 = dht.DHT22(Pin(3))
 
 wlan = network.WLAN(network.STA_IF) # create station interface
 
 li_mem_clog = []
 li_mem_clog2 = []
+li_mem_clog3 = []
 
 async def tsk_con_net():
     wlan.active(True)       # activate the interface
@@ -123,6 +126,44 @@ async def push_data_net2():
     print("failed to sync")
     return
 
+async def push_data_net3():
+    await asyncio.sleep(2)
+    try:
+        #with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
+        #addr = socket.getaddrinfo(HOST, PORT)[0][-1]
+        #s.connect((HOST, PORT))
+        reader, writer = await asyncio.open_connection(HOST, PORT)
+        #avoid race conds/?? ja nu kas :D
+        length = len(li_mem_clog2)
+        print(f'Send: {!r}')
+        writer.write(json.dumps({"epoch" : time.gmtime(0)[0],
+                                 "id": CLI_ID3,
+                                 "len": length
+                                 }).encode() + b'\n')
+        writer.write(json.dumps(li_mem_clog3[0:length]).encode() + b'\n')
+        await writer.drain()
+        await asyncio.sleep(1)
+        #await s.connect(addr)
+        #s.sendall(json.dumps(li_mem_clog[0:length]).encode() + b'\n')
+        #s.send(bytes(json.dumps(li_mem_clog[0:length]).encode() + b'\n'), 'utf-8')
+        #response = s.recv(1024)
+        #print(response)
+        response = await reader.read(1024)
+        #k = await reader.drain()
+        print('Close the connection')
+        writer.close()
+        await writer.wait_closed()
+        reader.close()
+        if(int(response) == length):
+            del li_mem_clog3[0:length]
+            await asyncio.sleep(1)
+            return
+        #s.close()
+    except Exception as e:
+        print(str(e))      
+    print("failed to sync")
+    return
 
 async def push_data():
     if not wlan.isconnected():
@@ -137,7 +178,9 @@ async def push_data():
                     await asyncio.sleep(0)
                     nets2 = asyncio.create_task(push_data_net2())
                     await asyncio.sleep(0)
-                    while (not nets.done() and not nets2.done()):
+                    nets3 = asyncio.create_task(push_data_net3())
+                    await asyncio.sleep(0)
+                    while (not nets.done() and not nets2.done() and not nets3.done()):
                         print("waiting...")
                         await asyncio.sleep(1)
                     #nets_w = asyncio.wait_for(nets, 3)
@@ -179,21 +222,25 @@ async def main():
         await asyncio.sleep(__MEAS_INTERVAL__)
         sensor.measure()
         sensor2.measure()
+        sensor3.measure()
         temp = sensor.temperature()
         hum = sensor.humidity()
         temp2 = sensor2.temperature()
         hum2 = sensor2.humidity()
+        temp3 = sensor3.temperature()
+        hum3 = sensor3.humidity()
         #temp_f = temp * (9/5) + 32.0
         #print(time.gmtime(0)[0])
         #yr, Month, date, h, m, s, weekday, yearday
         li_mem_clog.append([time.mktime(time.gmtime()), temp, hum])
         li_mem_clog2.append([time.mktime(time.gmtime()), temp2, hum2])
+        li_mem_clog3.append([time.mktime(time.gmtime()), temp3, hum3])
         #print(time.localtime())
         #print(json.loads(json.dumps(time.localtime()))[5])
         #print('Temperature: %3.1f C' %temp)
         #print('Temperature: %3.1f F' %temp_f)
         #print('Humidity: %3.1f %%' %hum)
-        print(len(li_mem_clog))
+        print(f'lis1: {len(li_mem_clog)} lis2: {len(li_mem_clog2)} lis3: {len(li_mem_clog3)}')
         if(tsk2.done()):
             tsk2 = asyncio.create_task(push_data())
             await asyncio.sleep(0)
