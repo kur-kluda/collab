@@ -229,6 +229,8 @@ async def main():
         hum2 = sensor2.humidity()
         temp3 = sensor3.temperature()
         hum3 = sensor3.humidity()
+        #print(f'temp1: {temp} temp2: {temp2} temp3: {temp3}')
+        #print(f'hum1: {hum} hum2: {hum2} hum3: {hum3}')
         #temp_f = temp * (9/5) + 32.0
         #print(time.gmtime(0)[0])
         #yr, Month, date, h, m, s, weekday, yearday
@@ -240,7 +242,7 @@ async def main():
         #print('Temperature: %3.1f C' %temp)
         #print('Temperature: %3.1f F' %temp_f)
         #print('Humidity: %3.1f %%' %hum)
-        print(f'lis1: {len(li_mem_clog)} lis2: {len(li_mem_clog2)} lis3: {len(li_mem_clog3)}')
+        #print(f'lis1: {len(li_mem_clog)} lis2: {len(li_mem_clog2)} lis3: {len(li_mem_clog3)}')
         if(tsk2.done()):
             tsk2 = asyncio.create_task(push_data())
             await asyncio.sleep(0)
