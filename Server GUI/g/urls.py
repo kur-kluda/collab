@@ -19,9 +19,11 @@ from a import views as av
 from a import grafiki as g
 
 urlpatterns = [
+    path('', g.render_templ_grafs, name='dbGplotApp'),
     path('g/', g.render_templ_grafs, name='dbGplotApp'),
     path('3/', av.dbplot, name='dbplotApp'),
-    path('4/', av.dbplot_date, name='dbplotApp'),
+    #path('4/', av.dbplot_date, name='dbplotApp'),
+    path('4/', g.render_templ_grafs, name='dbGplotApp'),
     path('admin/', admin.site.urls),
     #path('1/a.txt', redirect(to="/static/e.txt"))
     path('t/<str:file_name>/', av.view_text, name='viewText'),

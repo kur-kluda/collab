@@ -25,16 +25,19 @@ PORT = 911       # Port to connect to
 CLI_ID = 1		#device id to send
 CLI_ID2 = 3		#device id to send
 CLI_ID3 = 4		#device id to send
+CLI_ID4 = 5		#device id to send
 pin = Pin(22)#, Pin.OUT, Pin.PULL_DOWN)
 sensor = dht.DHT11(pin)
 sensor2 = dht.DHT22(Pin(21))
 sensor3 = dht.DHT22(Pin(3))
+sensor4 = dht.DHT11(Pin(20))
 
 wlan = network.WLAN(network.STA_IF) # create station interface
 
 li_mem_clog = []
 li_mem_clog2 = []
 li_mem_clog3 = []
+li_mem_clog4 = []
 
 async def tsk_con_net():
     wlan.active(True)       # activate the interface
@@ -135,7 +138,7 @@ async def push_data_net3():
         #s.connect((HOST, PORT))
         reader, writer = await asyncio.open_connection(HOST, PORT)
         #avoid race conds/?? ja nu kas :D
-        length = len(li_mem_clog2)
+        length = len(li_mem_clog3)
         print(f'Send: {!r}')
         writer.write(json.dumps({"epoch" : time.gmtime(0)[0],
                                  "id": CLI_ID3,
@@ -165,6 +168,45 @@ async def push_data_net3():
     print("failed to sync")
     return
 
+async def push_data_net4():
+    await asyncio.sleep(2)
+    try:
+        #with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
+        #addr = socket.getaddrinfo(HOST, PORT)[0][-1]
+        #s.connect((HOST, PORT))
+        reader, writer = await asyncio.open_connection(HOST, PORT)
+        #avoid race conds/?? ja nu kas :D
+        length = len(li_mem_clog4)
+        print(f'Send: {!r}')
+        writer.write(json.dumps({"epoch" : time.gmtime(0)[0],
+                                 "id": CLI_ID4,
+                                 "len": length
+                                 }).encode() + b'\n')
+        writer.write(json.dumps(li_mem_clog4[0:length]).encode() + b'\n')
+        await writer.drain()
+        await asyncio.sleep(1)
+        #await s.connect(addr)
+        #s.sendall(json.dumps(li_mem_clog[0:length]).encode() + b'\n')
+        #s.send(bytes(json.dumps(li_mem_clog[0:length]).encode() + b'\n'), 'utf-8')
+        #response = s.recv(1024)
+        #print(response)
+        response = await reader.read(1024)
+        #k = await reader.drain()
+        print('Close the connection')
+        writer.close()
+        await writer.wait_closed()
+        reader.close()
+        if(int(response) == length):
+            del li_mem_clog4[0:length]
+            await asyncio.sleep(1)
+            return
+        #s.close()
+    except Exception as e:
+        print(str(e))      
+    print("failed to sync")
+    return
+
 async def push_data():
     if not wlan.isconnected():
         await asyncio.sleep(1)
@@ -180,7 +222,9 @@ async def push_data():
                     await asyncio.sleep(0)
                     nets3 = asyncio.create_task(push_data_net3())
                     await asyncio.sleep(0)
-                    while (not nets.done() and not nets2.done() and not nets3.done()):
+                    nets4 = asyncio.create_task(push_data_net4())
+                    await asyncio.sleep(0)
+                    while (not nets.done() and not nets2.done() and not nets3.done() and not nets4.done()):
                         print("waiting...")
                         await asyncio.sleep(1)
                     #nets_w = asyncio.wait_for(nets, 3)
@@ -223,12 +267,15 @@ async def main():
         sensor.measure()
         sensor2.measure()
         sensor3.measure()
+        sensor4.measure()
         temp = sensor.temperature()
         hum = sensor.humidity()
         temp2 = sensor2.temperature()
         hum2 = sensor2.humidity()
         temp3 = sensor3.temperature()
         hum3 = sensor3.humidity()
+        temp4 = sensor4.temperature()
+        hum4 = sensor4.humidity()
         #print(f'temp1: {temp} temp2: {temp2} temp3: {temp3}')
         #print(f'hum1: {hum} hum2: {hum2} hum3: {hum3}')
         #temp_f = temp * (9/5) + 32.0
@@ -237,6 +284,7 @@ async def main():
         li_mem_clog.append([time.mktime(time.gmtime()), temp, hum])
         li_mem_clog2.append([time.mktime(time.gmtime()), temp2, hum2])
         li_mem_clog3.append([time.mktime(time.gmtime()), temp3, hum3])
+        li_mem_clog4.append([time.mktime(time.gmtime()), temp4, hum4])
         #print(time.localtime())
         #print(json.loads(json.dumps(time.localtime()))[5])
         #print('Temperature: %3.1f C' %temp)
