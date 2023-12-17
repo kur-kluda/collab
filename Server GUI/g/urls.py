@@ -17,9 +17,11 @@ from django.contrib import admin
 from django.urls import path
 from a import views as av
 from a import grafiki as g
+from a import config as c
 
 urlpatterns = [
     path('', g.render_templ_grafs, name='dbGplotApp'),
+    path('ad', c.config, name='configApp'),
     path('g/', g.render_templ_grafs, name='dbGplotApp'),
     path('3/', av.dbplot, name='dbplotApp'),
     #path('4/', av.dbplot_date, name='dbplotApp'),

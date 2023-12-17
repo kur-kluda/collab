@@ -1,0 +1,18 @@
+<form method="post" action="{% url 'configApp' %}">
+    {% csrf_token %}
+<input 
+    class="custom-range" 
+    name="measure_all_interval_slider"
+    type="range" value="1" min="1" max="3600"
+    id="slii"  oninput="this.nextElementSibling.value = this.value">
+<input type="number" name="measure_all_interval" value="1">seconds
+<p></p>
+<input type="submit" value="update wait time">
+</form>
+{% if errorText %}
+Error: <pre>{{errorText}}</pre>
+{% else %}
+{% if  request.method == 'POST' %}
+updated!
+{% endif %}
+{% endif %}
