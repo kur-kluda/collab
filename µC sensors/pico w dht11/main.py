@@ -311,9 +311,13 @@ async def main():
         else:
             await asyncio.sleep(1)
         sensor.measure()
+        #print("1")
         sensor2.measure()
+        #print("2")
         sensor3.measure()
+        #print("3")
         sensor4.measure()
+        #print("4")
         temp = sensor.temperature()
         hum = sensor.humidity()
         temp2 = sensor2.temperature()
