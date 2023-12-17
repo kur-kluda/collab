@@ -1,5 +1,4 @@
 import socket
-import json
 # pip install dnspython mysql-connector-python
 import dns.query
 import dns.resolver
