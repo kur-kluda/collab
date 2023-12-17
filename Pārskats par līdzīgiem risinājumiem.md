@@ -21,5 +21,9 @@ keywords:
 ![documentation meraki com_MT_MT_Datasheets_MT14_Datasheet_-_Indoor_Air_Quality_Monitor (1)](https://github.com/kur-kluda/collab/assets/85872382/52a8a669-fd37-4e21-992c-69bb7032f9a4)
 ![documentation meraki com_MT_MT_General_Articles_MT_Psychrometric_Chart (1)](https://github.com/kur-kluda/collab/assets/85872382/9d678f05-1733-43cf-a6f0-fe4a9619e046)
 
+# Papildresursi:
+* [Par TVOC un VOC](https://www.jacksonavedental.com/post/tvoc-levels) - Šajā saitē ir paskaidrots kas ir gan TVOC, gan VOC. Tiek pieminēts, kādos produktos ir VOC un kā noteikt vai produkts ir VOC. VOC ietekme uz veselību. Kādā mērā TVOC pēc daudzuma uzskata par veselībai nekaitējošu līdz nāvējošam? Vēl ir parādīts kā interpretēt TVOC rezultātus.
 
-Intelektisko algoritmu atsauces:
+* [Par VOC sensoriem](https://www.thecmmgroup.com/different-types-voc-detectors-available/#:~:text=There%20are%20three%20main%20types,oxide%20semiconductor%20sensor%20(MOS)) - Šajā saitē tiek izklāstīts par VOC sensoriem un to veidiem. Tiek arī likts uzsvars, kadā gadījumā VOC sensori ir efektīvi.
+
+Intelektisko algoritmu atsauces: 
