@@ -51,8 +51,27 @@ async def tsk_con_net():
     #print('network config:', wlan.ifconfig())
     return True
 
+async def measure_interval_updater():
+    global __MEAS_INTERVAL__
+    while(True):
+        try:
+            reader, writer = await asyncio.open_connection(HOST, PORT)
+            writer.write("NET\n".encode())
+            await writer.drain()
+            await asyncio.sleep(1)
+            response = await reader.read(1024)
+            if(int(response)^ord('d') > 0):
+                __MEAS_INTERVAL__ = int(response)^ord('d')
+            writer.close()
+            await writer.wait_closed()
+            reader.close()
+            await asyncio.sleep(1)
+        except Exception as e:
+            print(str(e)) 
+        
 async def push_data_net():
-    await asyncio.sleep(2)
+    #global __MEAS_INTERVAL__
+    await asyncio.sleep(1)
     try:
         #with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
@@ -75,6 +94,12 @@ async def push_data_net():
         #response = s.recv(1024)
         #print(response)
         response = await reader.read(1024)
+        #responsea = str(response.decode()).split(" ")
+        #response = responsea[0]
+        #if(len(responsea)>1):
+        #    q = int(responsea[1])
+        #    if(q^ord('d') > 0):
+        #        __MEAS_INTERVAL__=q^ord('d')
         #k = await reader.drain()
         print('Close the connection')
         writer.close()
@@ -91,7 +116,7 @@ async def push_data_net():
     return
 
 async def push_data_net2():
-    await asyncio.sleep(2)
+    await asyncio.sleep(1)
     try:
         #with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
@@ -130,7 +155,7 @@ async def push_data_net2():
     return
 
 async def push_data_net3():
-    await asyncio.sleep(2)
+    await asyncio.sleep(1)
     try:
         #with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
@@ -169,7 +194,7 @@ async def push_data_net3():
     return
 
 async def push_data_net4():
-    await asyncio.sleep(2)
+    await asyncio.sleep(1)
     try:
         #with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
@@ -237,6 +262,15 @@ async def push_data():
                     print("failed to sync")
                     print(e)
         return True
+
+async def alarm_clock():
+    global __MEAS_INTERVAL__
+    counter = 0
+    while(counter< __MEAS_INTERVAL__):
+        await asyncio.sleep(1)
+        counter = counter+1
+        print(f'count: {counter} meas: {__MEAS_INTERVAL__}')
+    
 led_on = False
 async def light(howlong):
     global led_on
@@ -252,18 +286,30 @@ async def light(howlong):
     led_on=False
 
 async def main():
+    global __MEAS_INTERVAL__
     print("checking, connecting to network")
     tsk = asyncio.create_task(tsk_con_net())
     #shis palaiz tsk!!!11
     await asyncio.sleep(0)
     tsk2 = asyncio.create_task(push_data())
     await asyncio.sleep(0)
+    tsk_inter = asyncio.create_task(measure_interval_updater())
+    await asyncio.sleep(0)
     #i=0
     while True: #i<__LOOP_DEBUG_LEN__:
       try:
-        lig = asyncio.create_task(light(__MEAS_INTERVAL__/2))
+        lig = asyncio.create_task(light(1/2))
         #await asyncio.sleep(0)
-        await asyncio.sleep(__MEAS_INTERVAL__)
+        #print(__MEAS_INTERVAL__)
+        # why not this::::
+        #await alarm_clock()
+        if(__MEAS_INTERVAL__ > 1):
+            waker = asyncio.create_task(alarm_clock())
+            await asyncio.sleep(0)
+            while (not waker.done()):
+                await asyncio.sleep(1)
+        else:
+            await asyncio.sleep(1)
         sensor.measure()
         sensor2.measure()
         sensor3.measure()
@@ -301,6 +347,7 @@ async def main():
 
 light(2)
 asyncio.run(main())
+
 
 
 

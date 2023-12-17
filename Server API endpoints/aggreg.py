@@ -31,13 +31,14 @@ with open('db.yaml', 'r') as f:
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to the host and port
-server_socket.bind((HOST, PORT))
+server_socket.bind(('', PORT))
 
 # Listen for incoming connections
 server_socket.listen()
 
 print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Server listening on {HOST.split('.')[-1]}:{PORT}")
 
+lastInterval = 0
 while True:
     # Accept a connection from a client
     client_socket, client_address = server_socket.accept()
@@ -47,10 +48,31 @@ while True:
         with client_socket, client_socket.makefile('rb') as r:
         # Receive the data from the client
             header = r.readline()
+            dheader = header.decode()
+            #print(dheader)
+            if(dheader.startswith("GET")):
+                #print(dheader)
+                relhref = dheader.split(' ')
+                if(len(relhref)<2):
+                    continue
+                varname = relhref[1].split('?')
+                if(len(varname)<2):
+                     continue
+                pi = int(varname[1])^ord('c')
+                if(pi>0):
+                    lastInterval=int(pi)
+                    print(f'updated {str(pi)}')
+                client_socket.send("200 OK\n".encode())
+                continue
+            elif(dheader.startswith("NET")):
+                client_socket.send(str(lastInterval^ord('d')).encode())
+                continue
             if not header: break
             data = json.loads(r.readline())
             metadata = json.loads(header)
             #print(metadata)
+            if(metadata.get("y")):
+                print("yyy")
             if(metadata["len"]==len(data)):
                 db = mysql.connector.connect(
                     host=cfg["db"]["host"],
@@ -76,6 +98,7 @@ while True:
             db.commit()
             db.close()
             print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} wrote {len(data)}")
+            #client_socket.send((str(len(data))+" "+str((lastInterval)^ord('d'))).encode())
             client_socket.send(str(len(data)).encode())
 
     except Exception as e:
