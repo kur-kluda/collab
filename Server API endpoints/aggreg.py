@@ -14,7 +14,7 @@ resolver = dns.resolver.Resolver()               #
 resolver.nameservers = [dns_se]                  #
 answer = resolver.resolve(dm, 'A')               # 
 HOST = 'jtag.me'                                 # Konfigurē servera DNS iestatījumus,
-	HOST = r.address                             # atrisina domēna “jtag.me” IP adresi un iestata servera resursdatoru un portu.
+HOST = r.address                                 # atrisina domēna “jtag.me” IP adresi un iestata servera resursdatoru un portu.
 for r in answer:                                 # 
 	break                                        #
 #HOST = socket.getaddrinfo('jtag.me', 80)[0][-1] #
