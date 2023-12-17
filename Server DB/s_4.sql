@@ -23,8 +23,9 @@ CREATE TABLE `s_4` (
   `rcv` datetime NOT NULL,
   `1` float NOT NULL,
   `2` float NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci; /*'ENGINE=InnoDB' - Norāda tabulas storage engine (Tā ir pamatā esošās programmatūras komponente, ko datu bāzes pārvaldības sistēma (DBVS) izmanto, lai izveidotu, lasītu, atjauninātu un dzēstu (CRUD) datus no datu bāzes.).
+                                                                      'DEFAULT CHARSET=utf8mb4' - Definē tabulas noklusējuma rakstzīmju kopu. Šajā gadījumā rakstzīmju kopa ir iestatīta uz utf8mb4, ko parasti izmanto, lai atbalstītu plašāku unikoda rakstzīmju klāstu.
+                                                                      'COLLATE=utf8mb4_0900_ai_ci' - Norāda rakstzīmju kopas salīdzināšanu. Salīdzināšana nosaka rakstzīmju salīdzināšanas un šķirošanas noteikumus. Šajā gadījumā utf8mb4_0900_ai_ci apzīmē "utf8mb4" ar versiju "0900" (Unicode version 9.0) un "ai_ci" ( "accent-insensitive" and "case-insensitive") salīdzinājumu.*/
 --
 -- Indexes for dumped tables
 --
@@ -32,7 +33,7 @@ CREATE TABLE `s_4` (
 --
 -- Indexes for table `s_3`
 --
-ALTER TABLE `s_4`
+ALTER TABLE `s_4`--ar atribūtu izmaiņām saistīts
   ADD KEY `time_index` (`time`);
 COMMIT;
 
