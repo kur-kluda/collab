@@ -8,32 +8,32 @@ from datetime import datetime
 import mysql.connector
 # Server settings
 #HOST = 'jtag.me'  # The server's hostname or IP address
-dns_se = '8.8.8.8'
-dm = 'jtag.me'
-resolver = dns.resolver.Resolver()
-resolver.nameservers = [dns_se]
-answer = resolver.resolve(dm, 'A')
-HOST = 'jtag.me'
-for r in answer:
-	HOST = r.address
-	break
-#HOST = socket.getaddrinfo('jtag.me', 80)[0][-1]
-print(HOST.split('.')[-1])
-PORT = 911      # Port to listen ond
-
+dns_se = '8.8.8.8'                               #
+dm = 'jtag.me'                                   #
+resolver = dns.resolver.Resolver()               #
+resolver.nameservers = [dns_se]                  #
+answer = resolver.resolve(dm, 'A')               # 
+HOST = 'jtag.me'                                 # Konfigurē servera DNS iestatījumus,
+HOST = r.address                                 # atrisina domēna “jtag.me” IP adresi un iestata servera resursdatoru un portu.
+for r in answer:                                 # 
+	break                                        #
+#HOST = socket.getaddrinfo('jtag.me', 80)[0][-1] #
+print(HOST.split('.')[-1])                       #
+PORT = 911      # Port to listen ond             #
+                                                 
 
 #with open('..\\serv\\db.yaml', 'r') as f:
-with open('db.yaml', 'r') as f:
-   cfg = json.load(f)
+with open('db.yaml', 'r') as f: # Izveido socket jeb ligzdu (Ligzda ir komunikācijas savienojuma beigu punkts starp programmām, kas tiek darbinātas uz tīkla)),
+   cfg = json.load(f)           # saista to ar norādīto resursdatoru (host) un portu un sāk klausīties ienākošos savienojumus.
 
 # Create a socket object
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# Bind the socket to the host and port
-server_socket.bind(('', PORT))
-
-# Listen for incoming connections
-server_socket.listen()
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #
+                                                                  #
+# Bind the socket to the host and port                            #
+server_socket.bind(('', PORT))                                    # Izveido ligzdu, saista to ar norādīto resursdatoru un portu un sāk klausīties ienākošos savienojumus.
+                                                                  #
+# Listen for incoming connections                                 #
+server_socket.listen()                                            # 
 
 print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Server listening on {HOST.split('.')[-1]}:{PORT}")
 
