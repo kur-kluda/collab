@@ -1,6 +1,7 @@
 # at this moment 5 new records appear while waiting for db to write so first 10=> send (+5 in the meanwhile), then @10=>send so it sends each 
 #5 measurements instead of intended 10 @1sec interval measuring
 #esp.osdebug(None)
+__DEBUG_LEVEL_1__ = False
 import os, machine
 #os.dupterm(None, 1) # disable REPL on UART(0)
 import gc
@@ -109,6 +110,9 @@ async def push_data_net():
             del li_mem_clog[0:length]
             await asyncio.sleep(1)
             return
+        else:
+            if(__DEBUG_LEVEL_1__):
+                print(f"fail to send. response was {response}")
         #s.close()
     except Exception as e:
         print(str(e))      
@@ -148,6 +152,9 @@ async def push_data_net2():
             del li_mem_clog2[0:length]
             await asyncio.sleep(1)
             return
+        else:
+            if(__DEBUG_LEVEL_1__):
+                print(f"fail to send. response was {response}")
         #s.close()
     except Exception as e:
         print(str(e))      
@@ -187,6 +194,9 @@ async def push_data_net3():
             del li_mem_clog3[0:length]
             await asyncio.sleep(1)
             return
+        else:
+            if(__DEBUG_LEVEL_1__):
+                print(f"fail to send. response was {response}")
         #s.close()
     except Exception as e:
         print(str(e))      
@@ -226,6 +236,9 @@ async def push_data_net4():
             del li_mem_clog4[0:length]
             await asyncio.sleep(1)
             return
+        else:
+            if(__DEBUG_LEVEL_1__):
+                print(f"fail to send. response was {response}")
         #s.close()
     except Exception as e:
         print(str(e))      
@@ -249,8 +262,12 @@ async def push_data():
                     await asyncio.sleep(0)
                     nets4 = asyncio.create_task(push_data_net4())
                     await asyncio.sleep(0)
+                    if(__DEBUG_LEVEL_1__):
+                        seccounter = 0
                     while (not nets.done() and not nets2.done() and not nets3.done() and not nets4.done()):
-                        print("waiting...")
+                        if(__DEBUG_LEVEL_1__):
+                            print(f"waiting...{seccounter}")
+                            seccounter = seccounter +1
                         await asyncio.sleep(1)
                     #nets_w = asyncio.wait_for(nets, 3)
                     #await asyncio.sleep(0)
@@ -311,13 +328,17 @@ async def main():
         else:
             await asyncio.sleep(1)
         sensor.measure()
-        #print("1")
+        if(__DEBUG_LEVEL_1__):
+            print("1")
         sensor2.measure()
-        #print("2")
+        if(__DEBUG_LEVEL_1__):
+            print("2")
         sensor3.measure()
-        #print("3")
+        if(__DEBUG_LEVEL_1__):
+            print("3")
         sensor4.measure()
-        #print("4")
+        if(__DEBUG_LEVEL_1__):
+            print("4")
         temp = sensor.temperature()
         hum = sensor.humidity()
         temp2 = sensor2.temperature()
