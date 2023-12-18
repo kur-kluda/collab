@@ -1,0 +1,32 @@
+<form method="post" action="{% url 'wordCountApp' %}">
+    {% csrf_token %}
+      File: <input type="text" name="post_filepath" value="{{ file }}">
+  <input type="submit">
+</form>
+
+{% if  request.method != 'POST' %}
+<p class="row">In order to begin, please press the button </p>
+<p class="row">or enter a path to file (for example ../../moodle/index.php ) and then press the button</p>
+{% endif %}
+
+{% if errorText %}
+Error: <pre>{{errorText}}</pre>
+{% endif %}
+
+
+    {% if wordcloud is not None %}
+        <img src="{{ wordcloud }}">
+    {% endif %}
+
+    {% if wordcloud2 is not None %}
+        <img src="{{ wordcloud2 }}">
+    {% endif %}
+
+{% if a_list %}
+    <ul>
+    {% for q, n in a_list %}
+        <li>{{ q.0 }}({{ n }})</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+

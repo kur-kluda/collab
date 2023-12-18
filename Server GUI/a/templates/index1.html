@@ -1,0 +1,34 @@
+{% if errorText %}
+Error: <pre>{{errorText}}</pre>
+{% endif %}
+
+
+    {% if wordcloud is not None %}
+        <img src="{{ wordcloud }}">
+    {% endif %}
+    {% if wordclouda is not None %}
+        <img src="{{ wordclouda }}">
+    {% endif %}
+	
+	{% if wordcloud1 is not None %}
+        <img src="{{ wordcloud1 }}">
+    {% endif %}
+   {% if wordcloud1a is not None %}
+        <img src="{{ wordcloud1a }}">
+    {% endif %}
+
+    {% if wordcloud2 is not None %}
+        <img src="{{ wordcloud2 }}">
+    {% endif %}
+   {% if wordcloud2a is not None %}
+        <img src="{{ wordcloud2a }}">
+    {% endif %}
+
+{% if a_list %}
+    <ul>
+    {% for q, n in a_list %}
+        <li>{{ q.0 }}({{ n }})</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
