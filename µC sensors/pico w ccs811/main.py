@@ -192,14 +192,18 @@ async def tsk_con_net():
     wlan.active(True)       # activate the interface
     #l = wlan.scan()
     #print(l)
-    if not wlan.isconnected():
-        wlan.connect("ff", "")
-        while not wlan.isconnected():
-            await asyncio.sleep(1)
-    ntptime.settime()
-    uptime_stamp = time.mktime(time.gmtime())
+    while(True):
+        try:
+            if not wlan.isconnected():
+                wlan.connect("ff", "")
+                while not wlan.isconnected():
+                    await asyncio.sleep(1)
+            ntptime.settime()
+            uptime_stamp = time.mktime(time.gmtime())
+            return True
+        except Exception as e:
+            print(str(e))  
     #print('network config:', wlan.ifconfig())
-    return True
 
 async def push_data_net():
     await asyncio.sleep(2)
@@ -318,6 +322,9 @@ async def main():
             #ccs811.put_envdata(fed_humi, fed_temp)
             fed_sync = False
         await asyncio.sleep(__MEAS_INTERVAL__)
+        if len(li_mem_clog) >230 :
+            await asyncio.sleep(1)
+            continue
         if not ccs811.data_available():
             await asyncio.sleep(__MEAS_INTERVAL__*2)
         asyncio.create_task(light(__MEAS_INTERVAL__/2, led_on))
@@ -329,7 +336,7 @@ async def main():
         #print('Temperature: %3.1f C' %temp)
         #print('Temperature: %3.1f F' %temp_f)
         #print('Humidity: %3.1f %%' %hum)
-        print(len(li_mem_clog))
+        #print(len(li_mem_clog))
         if(tsk2.done()):
             tsk2 = asyncio.create_task(push_data())
             await asyncio.sleep(0)
@@ -340,9 +347,3 @@ async def main():
 
 light(2, led_on)
 asyncio.run(main())
-
-
-
-
-
-

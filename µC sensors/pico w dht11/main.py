@@ -44,13 +44,18 @@ async def tsk_con_net():
     wlan.active(True)       # activate the interface
     #l = wlan.scan()
     #print(l)
-    if not wlan.isconnected():
-        wlan.connect("ff", "")
-        while not wlan.isconnected():
-            await asyncio.sleep(1)
-    ntptime.settime()
+    while(True):
+        try:
+            if not wlan.isconnected():
+                wlan.connect("ff", "")
+                while not wlan.isconnected():
+                    await asyncio.sleep(1)
+            ntptime.settime()
+            uptime_stamp = time.mktime(time.gmtime())
+            return True
+        except Exception as e:
+            print(str(e))  
     #print('network config:', wlan.ifconfig())
-    return True
 
 async def measure_interval_updater():
     global __MEAS_INTERVAL__
@@ -316,6 +321,11 @@ async def main():
     while True: #i<__LOOP_DEBUG_LEN__:
       try:
         lig = asyncio.create_task(light(1/2))
+        if(tsk2.done()):
+            tsk2 = asyncio.create_task(push_data())
+            await asyncio.sleep(0)
+        if len(li_mem_clog) > 64:
+            continue
         #await asyncio.sleep(0)
         #print(__MEAS_INTERVAL__)
         # why not this::::
@@ -362,9 +372,6 @@ async def main():
         #print('Temperature: %3.1f F' %temp_f)
         #print('Humidity: %3.1f %%' %hum)
         #print(f'lis1: {len(li_mem_clog)} lis2: {len(li_mem_clog2)} lis3: {len(li_mem_clog3)}')
-        if(tsk2.done()):
-            tsk2 = asyncio.create_task(push_data())
-            await asyncio.sleep(0)
       except OSError as e:
         print('Failed to read sensor.')
         print(e)
@@ -372,7 +379,3 @@ async def main():
 
 light(2)
 asyncio.run(main())
-
-
-
-
