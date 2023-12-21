@@ -1,3 +1,4 @@
+"""
 from django.shortcuts import render
 import os
 from a.utils import show_db_matplot
@@ -59,3 +60,4 @@ def view_text(r, file_name):
    }
    return render(r, 't.html', view_model)
 
+"""

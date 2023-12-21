@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from a import views as av
+#from a import views as av
 from a import grafiki as g
 from a import config as c
 
@@ -23,10 +23,10 @@ urlpatterns = [
     path('', g.render_templ_grafs, name='dbGplotApp'),
     path('ad', c.config, name='configApp'),
     path('g/', g.render_templ_grafs, name='dbGplotApp'),
-    path('3/', av.dbplot, name='dbplotApp'),
+    #path('3/', av.dbplot, name='dbplotApp'),
     #path('4/', av.dbplot_date, name='dbplotApp'),
     path('4/', g.render_templ_grafs, name='dbGplotApp'),
     path('admin/', admin.site.urls),
     #path('1/a.txt', redirect(to="/static/e.txt"))
-    path('t/<str:file_name>/', av.view_text, name='viewText'),
+    #path('t/<str:file_name>/', av.view_text, name='viewText'),
 ]

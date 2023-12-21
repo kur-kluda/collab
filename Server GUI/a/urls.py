@@ -1,7 +1,7 @@
 from django.urls import path
 
-from . import views
+from . import grafiki
 
 urlpatterns = [
-    path('', views.dbplot_date, name='index'),
+    path('', grafiki.render_templ_grafs, name='index'),
 ]
