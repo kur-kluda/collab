@@ -1,6 +1,7 @@
-# This file is executed on every boot (including wake-boot from deepsleep)
-#import esp
-#esp.osdebug(None)
+debuglevel1 = 0
+__DEBUG_LEVEL_1__ = True if debuglevel1==1 else False
+debuglevel2 = 0
+__DEBUG_LEVEL_2__ = True if debuglevel1==1 else False
 import os, machine
 #os.dupterm(None, 1) # disable REPL on UART(0)
 import gc
@@ -67,12 +68,14 @@ class CCS811:
         v = self._i2c.readfrom_mem(_ADDR, 0x00, 1)
         if v[0] & 1:
             e = self.read_register(0xE0)
-            print("error register", hex(e[0]))
+            if(__DEBUG_LEVEL_2__):
+                print("error register", hex(e[0]))
         return (v[0] & 1 << 3) > 0
 
     def check_for_status_error(self) -> bool:
         v = self.read_register(0x00)
-        print(f"errstat: {v}")
+        if(__DEBUG_LEVEL_1__):
+            print(f"errstat: {v}")
         return (v[0] & 1 << 0) > 0
 
     def app_valid(self):
@@ -99,9 +102,11 @@ class CCS811:
         return self._i2c.readfrom_mem(_ADDR, offset, 1)
 
     def multi_write_register(self, offset: int, data: bytes):
-        print(data)
+        if(__DEBUG_LEVEL_2__):
+            print(data)
         self._i2c.writeto_mem(_ADDR, offset, data)
-        print("sent")
+        if(__DEBUG_LEVEL_2__):
+            print("sent")
 
     def multi_read_register(self, offset: int, length: int):
         return self._i2c.readfrom_mem(_ADDR, offset, length)
@@ -158,13 +163,14 @@ class CCS811:
 #//Correct rounding
         envData[2] = int((temp + 250) / 500)
         envData[3] = 0
-        print(envData)
+        if(__DEBUG_LEVEL_2__):
+            print(envData)
         self.multi_write_register(0x05, bytearray(envData))  # RESET
         time.sleep_ms(100)
 
         answ = self.check_for_status_error()
         if(answ):
-            print("error feedbacking")
+            print(f"error feedbacking {answ}")
         return answ
         #define CSS811_ENV_DATA 0x05
 
@@ -176,10 +182,11 @@ devices = i2c.scan()
 if len(devices) == 0:
     print("No i2c device !")
 else:
-    print('i2c devices found:',len(devices))
-
-for device in devices:
-    print("Decimal address: ",device," | Hexa address: ",hex(device))
+    if(__DEBUG_LEVEL_1__):
+        print('i2c devices found:',len(devices))
+if(__DEBUG_LEVEL_1__):
+    for device in devices:
+        print("Decimal address: ",device," | Hexa address: ",hex(device))
 
 ccs811 = CCS811(i2c)
 ccs811.setup()
@@ -205,6 +212,33 @@ async def tsk_con_net():
             print(str(e))  
     #print('network config:', wlan.ifconfig())
 
+async def measure_interval_updater():
+    global __MEAS_INTERVAL__
+    while(True):
+        try:
+            reader, writer = await asyncio.open_connection(HOST, PORT)
+            writer.write("NET\n".encode())
+            await writer.drain()
+            await asyncio.sleep(1)
+            response = await reader.read(1024)
+            if(int(response)^ord('d') > 0):
+                __MEAS_INTERVAL__ = int(response)^ord('d')
+            writer.close()
+            await writer.wait_closed()
+            reader.close()
+            await asyncio.sleep(1)
+        except Exception as e:
+            print(str(e))
+            
+async def alarm_clock():
+    global __MEAS_INTERVAL__
+    counter = 0
+    while(counter< __MEAS_INTERVAL__):
+        await asyncio.sleep(1)
+        counter = counter+1
+        if(__DEBUG_LEVEL_1__):
+            print(f'count: {counter} meas: {__MEAS_INTERVAL__}')
+
 async def push_data_net():
     await asyncio.sleep(2)
     try:
@@ -215,7 +249,8 @@ async def push_data_net():
         reader, writer = await asyncio.open_connection(HOST, PORT)
         #avoid race conds/?? ja nu kas :D
         length = len(li_mem_clog)
-        print(f'Send: {!r}')
+        if(__DEBUG_LEVEL_1__):
+            print(f'pd Send: {!r}')
         writer.write(json.dumps({"epoch" : time.gmtime(0)[0],
                                  "id": CLI_ID,
                                  "len": length
@@ -225,7 +260,8 @@ async def push_data_net():
         await asyncio.sleep(1)
         response = await reader.read(1024)
         #k = await reader.drain()
-        print('Close the connection')
+        if(__DEBUG_LEVEL_1__):
+            print('pd Close the connection')
         writer.close()
         await writer.wait_closed()
         reader.close()
@@ -251,7 +287,8 @@ async def push_data():
                     nets = asyncio.create_task(push_data_net())
                     await asyncio.sleep(0)
                     while (not nets.done()):
-                        print("waiting for send data to finish...")
+                        if(__DEBUG_LEVEL_1__):
+                            print("waiting for send data to finish...")
                         await asyncio.sleep(1)
                     #nets_w = asyncio.wait_for(nets, 3)
                     #await asyncio.sleep(0)
@@ -267,7 +304,8 @@ async def push_data():
 async def get_feedback_t_hm_for_calculations():
         global fed_temp, fed_humi, fed_is_busy, lastfed, fed_sync
         fed_is_busy = True
-        print("getting feedback")
+        if(__DEBUG_LEVEL_1__):
+            print("getting feedback")
         reader, writer = await asyncio.open_connection(HOST, PORT)
         writer.write(json.dumps({"len" : "MAKROK"
                                 }).encode() + b'\n')
@@ -275,7 +313,8 @@ async def get_feedback_t_hm_for_calculations():
         await asyncio.sleep(1)
         response = await reader.read(1024)
         #k = await reader.drain()
-        print('Close the connection')
+        if(__DEBUG_LEVEL_1__):
+            print('Close the fb connection')
         writer.close()
         await writer.wait_closed()
         reader.close()
@@ -284,8 +323,9 @@ async def get_feedback_t_hm_for_calculations():
                     fed_temp = float(data[0][0])
                     fed_humi = float(data[0][1])
                     lastfed = time.mktime(time.gmtime())
-                    print(f"temp { fed_temp}")
-                    print(f"humd { fed_humi}")
+                    if(__DEBUG_LEVEL_2__):
+                        print(f"temp { fed_temp}")
+                        print(f"humd { fed_humi}")
                     fed_sync = True
         fed_is_busy = False
 
@@ -303,12 +343,14 @@ async def light(howlong, led_on):
     led_on=False
 
 async def main():
-    global fed_temp, fed_humi, fed_is_busy, lastfed, fed_sync
+    global fed_temp, fed_humi, fed_is_busy, lastfed, fed_sync, __MEAS_INTERVAL__
     print("checking, connecting to network")
     tsk = asyncio.create_task(tsk_con_net())
     #shis palaiz tsk!!!11
     await asyncio.sleep(0)
     tsk2 = asyncio.create_task(push_data())
+    await asyncio.sleep(0)
+    tsk_inter = asyncio.create_task(measure_interval_updater())
     await asyncio.sleep(0)
     #i=0
     while True : # i<__LOOP_DEBUG_LEN__:
@@ -321,7 +363,14 @@ async def main():
             ccs811.update_feedback(fed_temp, fed_humi)
             #ccs811.put_envdata(fed_humi, fed_temp)
             fed_sync = False
-        await asyncio.sleep(__MEAS_INTERVAL__)
+
+        if(__MEAS_INTERVAL__ > 1):
+            waker = asyncio.create_task(alarm_clock())
+            await asyncio.sleep(0)
+            while (not waker.done()):
+                await asyncio.sleep(1)
+        else:
+            await asyncio.sleep(1)
         if len(li_mem_clog) >230 :
             await asyncio.sleep(1)
             continue

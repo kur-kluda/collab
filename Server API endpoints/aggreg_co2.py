@@ -36,6 +36,8 @@ with open('db.yaml', 'r') as f:
 # Create a socket object
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) 
+#oh no resolve takes 127anyways unless diff serverf
+HOST=''
 # Bind the socket to the host and port
 server_socket.bind((HOST, PORT))
 
@@ -43,6 +45,51 @@ server_socket.bind((HOST, PORT))
 server_socket.listen()
 
 print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {SERV_NAME} Server listening on {HOST.split('.')[-1]}:{PORT}")
+
+lastInterval = 0
+
+#TODO: lock??
+async def configurator(r, client_socket, client_address, dheader):
+    global lastInterval
+    try:
+        if(__DEBUG_LEVEL_2_):
+            print(dheader)
+        relhref = dheader.split(' ')
+        if(len(relhref)<2):
+            r.close()
+            client_socket.close()
+            return
+        varname = relhref[1].split('?')
+        if(len(varname)<2):
+             if(relhref[1].find("favicon.ico")>-1):
+                 #TODO print favicon//redirect??
+                 client_socket.send("403 FORBIDDEN\n".encode())
+             r.close()
+             client_socket.close()
+             return
+        if not varname[1].isnumeric():
+            r.close()
+            client_socket.close()
+            return
+        pi = int(varname[1])^ord('c')
+        if(pi>0):
+            lastInterval=int(pi)
+            if(__DEBUG_LEVEL_1_):
+                print(f'updated {str(pi)}')
+        client_socket.send("200 OK\n".encode())
+    except Exception as e:
+        print(f"configurator Error: {e}")
+    finally:
+        if(r):
+            r.close()
+        if(client_socket):
+            client_socket.close()
+
+async def rdr(r, client_socket, client_address, dheader):
+    global lastInterval
+    client_socket.send(str(lastInterval^ord('d')).encode())
+    r.close()
+    client_socket.close()
 
 async def sync(r, client_socket, client_address, metadata, data):
     try:
@@ -129,6 +176,15 @@ async def loop():
             # Receive the data from the client
                 header = r.readline()
                 if not header: break
+                dheader = header.decode()
+                if(dheader.startswith("GET")):
+                    asyncio.create_task(configurator(r, client_socket, client_address, dheader))
+                    await asyncio.sleep(0)
+                    continue
+                elif(dheader.startswith("NET")):
+                    asyncio.create_task(rdr(r, client_socket, client_address, dheader))
+                    await asyncio.sleep(0)
+                    continue
                 metadata = json.loads(header)
                 #print(metadata)
                 if(metadata["len"]=="MAKROK"):
