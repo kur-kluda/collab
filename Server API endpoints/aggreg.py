@@ -7,8 +7,12 @@ import mysql
 from datetime import datetime
 import mysql.connector
 import asyncio
-# Server settings
-#HOST = 'jtag.me'  # The server's hostname or IP address
+
+dbg1=1
+dbg2=0
+__DEBUG_LEVEL_2_ = True if dbg2==1 else False
+__DEBUG_LEVEL_1_ = True if dbg1==1 else False
+
 dns_se = '8.8.8.8'                               #
 dm = 'jtag.me'                                   #
 resolver = dns.resolver.Resolver()               #
@@ -43,26 +47,41 @@ print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Server listening on {HOST
 lastInterval = 0
 
 #TODO: lock??
-async def configurator(client_socket, client_address, dheader):
+async def configurator(r, client_socket, client_address, dheader):
     global lastInterval
-        #print(dheader)
-    relhref = dheader.split(' ')
-    if(len(relhref)<2):
-        r.close()
-        client_socket.close()
-        return
-    varname = relhref[1].split('?')
-    if(len(varname)<2):
-         r.close()
-         client_socket.close()
-         return
-    pi = int(varname[1])^ord('c')
-    if(pi>0):
-        lastInterval=int(pi)
-        print(f'updated {str(pi)}')
-    client_socket.send("200 OK\n".encode())
-    r.close()
-    client_socket.close()
+    try:
+        if(__DEBUG_LEVEL_2_):
+            print(dheader)
+        relhref = dheader.split(' ')
+        if(len(relhref)<2):
+            r.close()
+            client_socket.close()
+            return
+        varname = relhref[1].split('?')
+        if(len(varname)<2):
+             if(relhref[1].find("favicon.ico")>-1):
+                 #TODO print favicon//redirect??
+                 client_socket.send("403 FORBIDDEN\n".encode())
+             r.close()
+             client_socket.close()
+             return
+        if not varname[1].isnumeric():
+            r.close()
+            client_socket.close()
+            return
+        pi = int(varname[1])^ord('c')
+        if(pi>0):
+            lastInterval=int(pi)
+            if(__DEBUG_LEVEL_1_):
+                print(f'updated {str(pi)}')
+        client_socket.send("200 OK\n".encode())
+    except Exception as e:
+        print(f"configurator Error: {e}")
+    finally:
+        if(r):
+            r.close()
+        if(client_socket):
+            client_socket.close()
 
 async def rdr(r, client_socket, client_address, dheader):
     global lastInterval
@@ -78,6 +97,8 @@ async def sync(r, client_socket, client_address, header):
         #print(metadata)
         if(metadata.get("y")):
             print("yyy")
+        if(__DEBUG_LEVEL_1_):
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} SYNC @ {client_address[0].split('.')[-1]} d: {len(data)}")
         if(metadata["len"]==len(data)):
             db = mysql.connector.connect(
                 host=cfg["db"]["host"],
@@ -107,7 +128,7 @@ async def sync(r, client_socket, client_address, header):
             client_socket.send(str(len(data)).encode())
 
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error sync: {e}")
 
     finally:
         # Close the client socket
@@ -119,31 +140,31 @@ async def loop():
     while True:
         # Accept a connection from a client
         client_socket, client_address = server_socket.accept()
-        #await asyncio.sleep(0)
-        print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Connection from {client_address[0].split('.')[-1]}")
 
         try:
             #with client_socket, client_socket.makefile('rb') as r:
             r = client_socket.makefile('rb')
-            # Receive the data from the client
+            # Receive the heading data from the client
             header = r.readline()
             if not header: continue
             dheader = header.decode()
             #print(dheader)
             if(dheader.startswith("GET")):
                 asyncio.create_task(configurator(r, client_socket, client_address, dheader))
+                await asyncio.sleep(0)
                 continue
             elif(dheader.startswith("NET")):
                 asyncio.create_task(rdr(r, client_socket, client_address, dheader))
+                await asyncio.sleep(0)
                 continue
             asyncio.create_task(sync(r, client_socket, client_address, header))
+            await asyncio.sleep(0)
             continue
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Error main: {e}")
             if(r):
                 r.close()
             if(client_socket):
                 client_socket.close()
-
 
 asyncio.run(loop())
