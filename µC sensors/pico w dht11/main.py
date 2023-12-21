@@ -1,7 +1,8 @@
 # at this moment 5 new records appear while waiting for db to write so first 10=> send (+5 in the meanwhile), then @10=>send so it sends each 
 #5 measurements instead of intended 10 @1sec interval measuring
 #esp.osdebug(None)
-__DEBUG_LEVEL_1__ = False
+debuglevel1 = 0
+__DEBUG_LEVEL_1__ = True if debuglevel1==1 else False
 import os, machine
 #os.dupterm(None, 1) # disable REPL on UART(0)
 import gc
