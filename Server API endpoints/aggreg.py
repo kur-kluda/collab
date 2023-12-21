@@ -32,10 +32,11 @@ with open('db.yaml', 'r') as f: # Izveido socket jeb ligzdu (Ligzda ir komunikā
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #
                                                                   #
 # Bind the socket to the host and port                            #
-server_socket.bind(('', PORT))                                    # Izveido ligzdu, saista to ar norādīto resursdatoru un portu un sāk klausīties ienākošos savienojumus.
-                                                                  #
-# Listen for incoming connections                                 #
-server_socket.listen()                                            # 
+# Izveido ligzdu, saista to ar norādīto resursdatoru un portu un sāk klausīties ienākošos savienojumus.
+server_socket.bind(('', PORT))
+#
+# Listen for incoming connections
+server_socket.listen()
 
 print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Server listening on {HOST.split('.')[-1]}:{PORT}")
 
