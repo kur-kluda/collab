@@ -14,27 +14,28 @@ __DEBUG_LEVEL_2_ = True if dbg2==1 else False
 __DEBUG_LEVEL_1_ = True if dbg1==1 else False
 
 dns_se = '8.8.8.8'                               #
-dm = 'jtag.me'                                   #
+dm = 'jtag.me'
+# Port to listen ond
+PORT = 911 
+SERV_NAME = "temp 1 aggr"
+
 resolver = dns.resolver.Resolver()               #
 resolver.nameservers = [dns_se]                  #
 answer = resolver.resolve(dm, 'A')               # 
-HOST = 'jtag.me'                                 # Konfigurē servera DNS iestatījumus,
+HOST = dm                                 # Konfigurē servera DNS iestatījumus,
                                                  # atrisina domēna “jtag.me” IP adresi un iestata servera resursdatoru un portu.
 for r in answer: 
 	HOST = r.address                                # 
 	break                                        #
-#HOST = socket.getaddrinfo('jtag.me', 80)[0][-1] #
-print(HOST.split('.')[-1])                       #
-PORT = 911      # Port to listen ond             #
-                                                 
-
+#HOST = socket.getaddrinfo('jtag.me', 80)[0][-1] # Izveido socket jeb ligzdu (Ligzda ir komunikācijas savienojuma beigu punkts starp programmām, kas tiek darbinātas uz tīkla)),
+                                                    # saista to ar norādīto resursdatoru (host) un portu un sāk klausīties ienākošos savienojumus.
 #with open('..\\serv\\db.yaml', 'r') as f:
-with open('db.yaml', 'r') as f: # Izveido socket jeb ligzdu (Ligzda ir komunikācijas savienojuma beigu punkts starp programmām, kas tiek darbinātas uz tīkla)),
-   cfg = json.load(f)           # saista to ar norādīto resursdatoru (host) un portu un sāk klausīties ienākošos savienojumus.
+with open('db.yaml', 'r') as f: 
+   cfg = json.load(f)           
 
-# Create a socket object
+# Create a socket object TODO: closewait??
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #
-                                                                  #
+server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)                                                                  #
 # Bind the socket to the host and port                            #
 # Izveido ligzdu, saista to ar norādīto resursdatoru un portu un sāk klausīties ienākošos savienojumus.
 server_socket.bind(('', PORT))
@@ -42,7 +43,7 @@ server_socket.bind(('', PORT))
 # Listen for incoming connections
 server_socket.listen()
 
-print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Server listening on {HOST.split('.')[-1]}:{PORT}")
+print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {SERV_NAME} Server listening on {HOST.split('.')[-1]}:{PORT}")
 
 lastInterval = 0
 
