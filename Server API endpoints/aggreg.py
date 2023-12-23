@@ -99,7 +99,7 @@ async def sync(r, client_socket, client_address, header):
         if(metadata.get("y")):
             print("yyy")
         if(__DEBUG_LEVEL_1_):
-            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} SYNC @ {client_address[0].split('.')[-1]} d: {len(data)}")
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} SYNC @ {client_address[0].split('.')[-1]} se: {metadata['id']} d: {len(data)}")
         if(metadata["len"]==len(data)):
             db = mysql.connector.connect(
                 host=cfg["db"]["host"],
@@ -114,13 +114,23 @@ async def sync(r, client_socket, client_address, header):
             date_time = datetime(int(metadata["epoch"]), 1, 1, 0, 0, 0)
             ts = datetime.timestamp(date_time)
             base_ts = ts+epots
-
-            sql = "INSERT INTO `s_"+str(metadata["id"])+ "` (`time`, `rcv`, `1`, `2`) VALUES (%s, %s, %s, %s)"
+            sql=""
+            #print(f"id: {metadata['id']} len: {len(metadata)} longq: {metadata['id']!=6}")
+            #print(data)
+            if(metadata["id"]!=6):
+                sql = "INSERT INTO `s_"+str(metadata["id"])+ "` (`time`, `rcv`, `1`, `2`) VALUES (%s, %s, %s, %s)"
+            else:
+                sql = "INSERT INTO `s_"+str(metadata["id"])+ "` (`time`, `rcv`, `1`) VALUES (%s, %s, %s)"
             for n in data:
                 dt_object = datetime.fromtimestamp(base_ts+n[0])
-                val = (dt_object.strftime('%Y-%m-%d %H:%M:%S'), 
+                if(metadata["id"]!=6):
+                    val = (dt_object.strftime('%Y-%m-%d %H:%M:%S'), 
                        datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 
                        float(n[1]), float(n[2]))
+                else:
+                    val = (dt_object.strftime('%Y-%m-%d %H:%M:%S'), 
+                       datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 
+                       float(n[1]))
                 cur.execute(sql, val)
             db.commit()
             db.close()
