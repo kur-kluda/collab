@@ -3,7 +3,7 @@
 #esp.osdebug(None)
 debuglevel1 = 0
 __DEBUG_LEVEL_1__ = True if debuglevel1==1 else False
-debuglevel2 = 0s
+debuglevel2 = 0
 __DEBUG_LEVEL_2__ = True if debuglevel2==1 else False
 import os, machine
 #os.dupterm(None, 1) # disable REPL on UART(0)
