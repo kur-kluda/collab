@@ -3,7 +3,7 @@
 #esp.osdebug(None)
 debuglevel1 = 0
 __DEBUG_LEVEL_1__ = True if debuglevel1==1 else False
-debuglevel2 = 0
+debuglevel2 = 0s
 __DEBUG_LEVEL_2__ = True if debuglevel2==1 else False
 import os, machine
 #os.dupterm(None, 1) # disable REPL on UART(0)
@@ -278,9 +278,12 @@ async def push_data_net5():
         #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
         #addr = socket.getaddrinfo(HOST, PORT)[0][-1]
         #s.connect((HOST, PORT))
+        print("aa 0")
         reader, writer = await asyncio.open_connection(HOST, PORT)
+        print("aa 1")
         #avoid race conds/?? ja nu kas :D
         length = len(li_mem_clog5)
+        print("aa 2")
         if(__DEBUG_LEVEL_1__):
             print(f'Send 5: {!r}')
         writer.write(json.dumps({"epoch" : time.gmtime(0)[0],
@@ -327,11 +330,11 @@ async def push_data():
                     nets = asyncio.create_task(push_data_net())
                     await asyncio.sleep(0)
                     nets2 = asyncio.create_task(push_data_net2())
-                    await asyncio.sleep(0)
+                    await asyncio.sleep(1)
                     nets3 = asyncio.create_task(push_data_net3())
                     await asyncio.sleep(0)
                     nets4 = asyncio.create_task(push_data_net4())
-                    await asyncio.sleep(0)
+                    await asyncio.sleep(1)
                     nets5 = asyncio.create_task(push_data_net5())
                     await asyncio.sleep(0)
                     if(__DEBUG_LEVEL_1__):
