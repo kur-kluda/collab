@@ -25,4 +25,6 @@ ja 4==0:
 
 Diemžēl man ir tikai 1 multimetrs, nevaru vienlaicīgi redzēt ieejas strāvu un izejas voltāžu, tad nu centos trāpīt..
 
+Apakšējo nevaru zem 0.07V nolaist, skrūve uz riņķi rauj
+
 ![image](https://github.com/kur-kluda/collab/assets/85872382/1f01b496-45d2-4088-a991-7d56b6de6319)
