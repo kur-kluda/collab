@@ -52,4 +52,4 @@ $V_{kal}={I_{mēr}*V_{ref} \over I_{rangs}}$
 
 Atsk nulli ignorēšu, aprēķinu pret $V_{ref}$ teorētisko vismaz 2 punktos. ja sakrīt, tiešām ir solītā linearitāte pat ar pārveidotāju kā starpnieku. Ja ne, atstāju pēdējo.
 
-$\implies V_{m-kal}={I_{mēr}*3300 \over 20} \implies \qquad V_{m-kal}={I_{mēr}*165$
+$\implies V_{m-kal}={I_{mēr}*3300 \over 20} \implies \qquad V_{m-kal}=I_{mēr}*165$
