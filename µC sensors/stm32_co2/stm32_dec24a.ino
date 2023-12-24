@@ -1,5 +1,7 @@
 #include <STM32ADC.h>
- 
+
+const bool __DEBUG__CALIBR__1__ = true;
+const bool __DEBUG__CALIBR__2__ = false;
 const int maxMeasures = 120; // 120 measures stored in the memory to be averaged on send.
 
 // Arrays for the ADC data
@@ -62,29 +64,41 @@ Serial.begin(9600);
 }
 
 int c =0;
+float lastKnownZeroCurrent_VoltageSkew = 315.0206299; //372.3636364;
+
+
 void loop() {
 digitalWrite(PC13, HIGH);   // turn the LED on (HIGH is the voltage level)
+if(__DEBUG__CALIBR__1__){
 Serial.println("hellow "+String(c));
 c++;
+}
+
 float vals = 0.0;
-unsigned int valcnt = 0;
+float last_calculated_mili_amps = 0.0;
+float valcnt = 0;
   for(unsigned int i = 0; i < maxMeasures; i ++) {
     vals += dataPoints[i];
     valcnt++;
-    /*Serial.print("sample[");
-    Serial.print(i);
-    Serial.print("] = ");
-    Serial.println(dataPoints[i]);*/
     }
+    if(__DEBUG__CALIBR__1__){
    Serial.print("average value: ");
    Serial.print(vals/valcnt, 7);
    Serial.print("\t Voltage Eq = ");
    //TODO: get VREF vs BUS ??
-   Serial.print((vals/valcnt+1)* 3300 / 4096, 7);
+   Serial.print(((vals+1)/valcnt)* 3300 / 4096, 7);
    Serial.print("\t miliAmps Eq = ");
-   Serial.print((vals/valcnt+1-372.3636364) *20/ 4096, 7);
+   //last_calculated_mili_amps = (vals/valcnt+1-lastKnownZeroCurrent_VoltageSkew) *(20-4)/ 4096*3300/4096+4;
+   last_calculated_mili_amps = ((vals+1-lastKnownZeroCurrent_VoltageSkew)/valcnt) *(20)/4096;
+   //liela starpība, bet sanāk 4 ma un range navjāņem vērā>> jo 1. ir tuvāks 8.1315317 vs 9.244446346 @ 8.06
+   Serial.print(last_calculated_mili_amps, 7);
+   Serial.print("\t");
+   Serial.print(((vals+1-lastKnownZeroCurrent_VoltageSkew)/valcnt) *(20-4)/ 4096*3300/4096+4, 7);
+   Serial.println();
    Serial.print("\t CO2 ppm Eq = ");
-   Serial.print((5000-400)*(vals/valcnt+1-372.3636364) / 4096+400, 7);
+   Serial.print(4600/16*(last_calculated_mili_amps-4)+400, 7);
+   Serial.print("\t");
+   Serial.print(287.5*last_calculated_mili_amps-750, 7);
    Serial.println();
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ direct read single value..
   int analogValue = analogRead(2);
@@ -93,16 +107,25 @@ unsigned int valcnt = 0;
  // Serial.println("ADC 2 millivolts value = " + String(analogVolts));
 
   int analogValueA7 = analogRead(PA7);
-  Serial.println("ADC B1 analog value = "+String(analogValueA7));
-
-   int analogValueB = analogRead(PB0);
-  Serial.println("ADC B0 analog value = "+String(analogValueB));
-
+  Serial.println("ADC PA7 analog value = "+String(analogValueA7));
   Serial.println();
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ eo direct read single value..
+  /* int analogValueB = analogRead(PB0);
+  Serial.println("ADC B0 analog value = "+String(analogValueB));*/
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ eo direct read single value..
+    } else{
+    Serial.print(287.5*last_calculated_mili_amps-750, 7);
+    }
+    
+ if(__DEBUG__CALIBR__2__){ 
+  for(unsigned int i = 0; i < maxMeasures; i ++) {
+    Serial.print(dataPoints[i]);
+    Serial.print("  ");
+    }
+ Serial.println();
+}
   
-  delay(1000);              // wait for a second
+  delay(500);              // wait for a half second
   digitalWrite(PC13, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);              // wait for a second
+  delay(500);              // wait for a half second
 }
