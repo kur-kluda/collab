@@ -1,5 +1,5 @@
 # citation from: https://deepbluembedded.com/stm32-adc-tutorial-complete-guide-with-examples/
-
+# solution for STm: https://www.st.com/resource/en/application_note/an2834-how-to-optimize-the-adc-accuracy-in-the-stm32-mcus-stmicroelectronics.pdf
    STM32 ADC Conversion Errors   
  
 
