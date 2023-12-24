@@ -1,7 +1,8 @@
+# 1. Aprēķini
 12 width tātad 4096 (0-4095). \
 $V_{ref} \approx 3.3V$ \
 \
-(DACiks+1) * 3300 / 4096 ==> salīdzinošie mV [priekš kalibrācijas/debug]
+$(DACiks+1) * 3300 \over 4096$ ==> salīdzinošie mV [priekš kalibrācijas/debug]
 
 $\approx$ *4/5
 
@@ -10,19 +11,19 @@ $\approx$ *4/5
 ??vai 4 ==0 vai tomēr 0==0?? TODO: A avots
 ja 4==0:
 ```
-${(sensora_{max} - sensora_{min})* S_{mV} \over V_{ref}} + sensora_{min} $
-
-${4600 * S_{mv} \over V_{ref}} - 400 $
+${(sensora_{max} - sensora_{min})* S_{mV} \over V_{ref}} + sensora_{min} \text{          } \implies\qquad{4600 * S_{mv} \over V_{ref}} - 400 $
 
 ---
 
-(sensora_max - sensora_min)*(DACiks+1)/2^DAC_w + sensora_min
+${(sensora_{max} - sensora_{min})*(DACiks+1) \over 2^{DAC_w}} + sensora_{min}  \implies \qquad {4600 *(DACiks+1) \over 4096}+40 \implies $
+<br>
+<br>
 
-4600*(DACiks+1)/4096+40
-
-1.123046875*(DACiks+1)+40
+<p align=center><b>1.123046875 * (DACiks+1)+400 ppm</b></p>
 
 ---
+
+# 2. Kalibrācija
 
 ![image](https://github.com/kur-kluda/collab/assets/85872382/1f01b496-45d2-4088-a991-7d56b6de6319)
 
