@@ -43,6 +43,5 @@ zudums: 0.07V ~= 86,884855225 DACika līmeņi (87 grrrr)
 2. **cerams** ka tur ir kāds sazarojums vai diode vai kkas, kas nelaiž tiešām virs Vmax.. Ja būtu I avots..
 
 
-
-
-
+Bez nobīdes būtu:
+$V_{kal}={I_{mēr}*V_{ref} \over I_{rangs}}$
