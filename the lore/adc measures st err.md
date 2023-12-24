@@ -1,3 +1,5 @@
+# citation from: https://deepbluembedded.com/stm32-adc-tutorial-complete-guide-with-examples/
+
    STM32 ADC Conversion Errors   
  
 
@@ -8,6 +10,7 @@ This section lists the main error types that have an effect on A/D conversion ac
 1.1 – ADC Offset Error
 
 The offset error is the deviation between the first actual transition and the first ideal transition. The first transition occurs when the digital ADC output changes from 0 to 1. Ideally, when the analog input ranges between 0.5 LSB and 1.5 LSB, the digital output should be 1. Still, ideally, the first transition occurs at 0.5 LSB. The offset error is denoted by EO. The offset error can easily be calibrated by the application firmware.
+![image](https://github.com/kur-kluda/collab/assets/85872382/0182f294-92f1-4a29-a989-d02fd05f4be8)
 
 STM32 ADC Offset Error - ADC Tutorial
 
@@ -16,6 +19,7 @@ STM32 ADC Offset Error - ADC Tutorial
 The gain error is the deviation between the last actual transition and the last ideal transition. It is denoted by EG. The last actual transition is the transition from 0xFFE to 0xFFF. Ideally, there should be a transition from 0xFFE to 0xFFF when the analog input is equal to VREF+ – 0.5 LSB. So for VREF+= 3.3 V, the last ideal transition should occur at 3.299597 V. If the ADC provides the 0xFFF reading for VAIN < VREF+ – 0.5 LSB, then a negative gain error is obtained. The gain error is obtained by the formula below:
 
 EG = Last actual transition – ideal transition
+![image](https://github.com/kur-kluda/collab/assets/85872382/2510e440-d38b-47ba-a1c2-26a6cf8f88a9)
 
 STM32 ADC Gain Error - ADC Tutorial
 
@@ -24,6 +28,7 @@ STM32 ADC Gain Error - ADC Tutorial
 The integral linearity error is the maximum deviation between any actual transition and the endpoint correlation line. The ILE is denoted by EL. The endpoint correlation line can be defined as the line on the A/D transfer curve that connects the first actual transition with the last actual transition.
 
 EL is the deviation from this line for each transition. The endpoint correlation line thus corresponds to the actual transfer curve and has no relation to the ideal transfer curve. The ILE is also known as the integral non-linearity error (INL). The ILE is the integral of the DLE over the whole range.
+![image](https://github.com/kur-kluda/collab/assets/85872382/ccef348b-2380-48e4-8ed7-e7488aefcab5)
 
 STM32 ADC Integral Linearity Error - ADC Tutorial
 
@@ -40,6 +45,7 @@ Small but high-frequency signal variation can result in big conversion errors du
 2.3 – ADC Dynamic Range Bad Matching
 
 To obtain the maximum ADC conversion precision, it is very important that the ADC dynamic range matches the maximum amplitude of the signal to be converted. Let us assume that the signal to be converted varies between 0 V and 2.5 V and that VREF+ is equal to 3.3 V. The maximum signal value converted by the ADC is 3102 (2.5 V) as shown in the diagram down below. In this case, there are 993 unused transitions (4095 – 3102 = 993). This implies a loss in the converted signal accuracy.
+![image](https://github.com/kur-kluda/collab/assets/85872382/558a999d-55a8-42a7-8e47-6056542aadf8)
 
 STM32 ADC Dynamic Range Matching Error - ADC Tutorial
 
@@ -49,6 +55,7 @@ The impedance of the analog signal source, or series resistance (RAIN), between 
 
 If the sampling time is less than the time required to fully charge the CADC through RADC + RAIN (ts < tc), the digital value converted by the ADC is less than the actual value.
 
+![image](https://github.com/kur-kluda/collab/assets/85872382/5f8d30c7-038c-4c2f-b53e-d32d2e379f34)
 
 
 This error can be reduced or completely eliminated by setting the sampling time of the analog channel in such a way that guarantees an appropriate voltage level on the input pin is present before the ADC starts the conversion.
@@ -58,6 +65,7 @@ This error can be reduced or completely eliminated by setting the sampling time 
 When converting analog signals, it is necessary to account for the capacitance at the source and the parasitic capacitance seen on the analog input pin. The source resistance and capacitance form an RC network. In addition, the ADC conversion results may not be accurate unless the external capacitor (CAIN + Cp) is fully charged to the level of the input voltage.
 
 The greater value of (CAIN + Cp), the more limited the source frequency. The external capacitance at the source and the parasitic capacitance are denoted by CAIN and Cp, respectively.
+![image](https://github.com/kur-kluda/collab/assets/85872382/fd7095d5-9f43-4f82-8276-6c8ec3f8d958)
 
 STM32 ADC Analog Input Capacitance And Parasitics - ADC Tutorial
 
@@ -65,19 +73,22 @@ STM32 ADC Analog Input Capacitance And Parasitics - ADC Tutorial
 
 A negative injection current on any analog pin (or a closely positioned digital input pin) may introduce leakage current into the ADC input. The worst case is the adjacent analog channel. A negative injection current is introduced when VAIN < VSS, causing current to flow out from the I/O pin. Which can potentially shift the voltage level on the pin and distort the measurement result.
 
-STM32 ADC Analog Input IO Pin Current Injection Errors - ADC Tutorial
+![image](https://github.com/kur-kluda/collab/assets/85872382/935d2829-670e-45ba-88bf-f2d83129a3a0)
+
 
 2.7 – IO Pins Cross-Talking
 
 Switching the I/Os may induce some noise in the analog input of the ADC due to capacitive coupling between I/Os. Crosstalk may be introduced by PCB tracks that run close to each other or that cross each other.
 
 Internally switching digital signals and IOs introduces high-frequency noise. Switching high sink I/Os may induce some voltage dips in the power supply caused by current surges. A digital track that crosses an analog input track on the PCB may affect the analog signal.
+![image](https://github.com/kur-kluda/collab/assets/85872382/12cb6130-6e20-40e6-b639-2bac701434f0)
 
-STM32 ADC Analog Input IO Pin Cross-Talking Errors - ADC Tutorial
 
 2.8 – EMI-Induced Noise
 
 Electromagnetic emissions from neighboring circuits may introduce high-frequency noise in an analog signal because the PCB tracks may act as an antenna. It’s called electromagnetic interference (EMI) noise.
+
+![image](https://github.com/kur-kluda/collab/assets/85872382/2d3bd547-e81f-449b-8c2f-062df66a8509)
 
 STM32 ADC EMI Noise - ADC Tutorial
 
