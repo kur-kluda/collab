@@ -59,3 +59,10 @@ $V_{kal}={I_{mēr}*V_{ref} \over I_{rangs}}$
 Atsk nulli ignorēšu, aprēķinu pret $V_{ref}$ teorētisko vismaz 2 punktos. ja sakrīt, tiešām ir solītā linearitāte pat ar pārveidotāju kā starpnieku. Ja ne, atstāju pēdējo.
 
 $\implies V_{m-kal}={I_{mēr}*3300 \over 20} \implies \qquad V_{m-kal}=I_{mēr}*165$
+
+---
+
+volti izskatās labi.
+![IMG_6439](https://github.com/kur-kluda/collab/assets/85872382/4aeeb9c1-0901-43ed-95a7-f5ddd1e7321e)
+
+
