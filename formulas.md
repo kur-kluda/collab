@@ -23,8 +23,21 @@ ja 4==0:
 
 ---
 
+![image](https://github.com/kur-kluda/collab/assets/85872382/1f01b496-45d2-4088-a991-7d56b6de6319)
+
 Diemžēl man ir tikai 1 multimetrs, nevaru vienlaicīgi redzēt ieejas strāvu un izejas voltāžu, tad nu centos trāpīt..
 
 Apakšējo nevaru zem 0.07V nolaist, skrūve uz riņķi rauj
 
-![image](https://github.com/kur-kluda/collab/assets/85872382/1f01b496-45d2-4088-a991-7d56b6de6319)
+---
+
+Tātad jākalibrē pret +0.07V = 0mA
+
+1. 4mA **cerams** ir uz 400ppm, nevis sākas tā itkā būtu 0pp-> 4mA.. Ja būtu I avots.. Vai shēma kā nonullēt GND sensoru. Vdiv ja mx tad "0" ? or smthn?
+
+2. **cerams** ka tur ir kāds sazarojums vai diode vai kkas, kas nelaiž tiešām virs Vmax.. Ja būtu I avots..
+
+
+
+
+
