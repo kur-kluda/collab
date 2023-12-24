@@ -86,14 +86,14 @@ float valcnt = 0;
    Serial.print(vals/valcnt, 7);
    Serial.print("\t Voltage Eq = ");
    //TODO: get VREF vs BUS ??
-   Serial.print(((vals+1)/valcnt)* 3300 / 4096, 7);
+   Serial.print(((vals/valcnt+1)* 3300 / 4096, 7);
    Serial.print("\t miliAmps Eq = ");
    //last_calculated_mili_amps = (vals/valcnt+1-lastKnownZeroCurrent_VoltageSkew) *(20-4)/ 4096*3300/4096+4;
-   last_calculated_mili_amps = ((vals+1-lastKnownZeroCurrent_VoltageSkew)/valcnt) *(20)/4096;
+   last_calculated_mili_amps = (vals/valcnt+1-lastKnownZeroCurrent_VoltageSkew) *(20)/4096;
    //liela starpība, bet sanāk 4 ma un range navjāņem vērā>> jo 1. ir tuvāks 8.1315317 vs 9.244446346 @ 8.06
    Serial.print(last_calculated_mili_amps, 7);
    Serial.print("\t");
-   Serial.print(((vals+1-lastKnownZeroCurrent_VoltageSkew)/valcnt) *(20-4)/ 4096*3300/4096+4, 7);
+   Serial.print((vals/valcnt+1-lastKnownZeroCurrent_VoltageSkew) *(20-4)/ 4096*3300/4096+4, 7);
    Serial.println();
    Serial.print("\t CO2 ppm Eq = ");
    Serial.print(4600/16*(last_calculated_mili_amps-4)+400, 7);
@@ -114,6 +114,7 @@ float valcnt = 0;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ eo direct read single value..
     } else{
+    last_calculated_mili_amps = (vals/valcnt+1-lastKnownZeroCurrent_VoltageSkew) *(20)/4096;
     Serial.print(287.5*last_calculated_mili_amps-750, 7);
     }
     
