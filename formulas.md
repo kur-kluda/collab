@@ -31,9 +31,12 @@ Apakšējo nevaru zem 0.07V nolaist, skrūve uz riņķi rauj
 
 ---
 
+```
 Tātad jākalibrē pret +0.07V = 0mA
 tero granulitāte (izšķirtspēja) : 3.3/4096 = 0,000805664 V uz katru DACika līmeni.
 zudums: 0.07V ~= 86,884855225 DACika līmeņi (87 grrrr)
+```
+
 
 1. 4mA **cerams** ir uz 400ppm, nevis sākas tā itkā būtu 0pp-> 4mA.. Ja būtu I avots.. Vai shēma kā nonullēt GND sensoru. Vdiv ja mx tad "0" ? or smthn?
 
