@@ -1,6 +1,6 @@
 #include <STM32ADC.h>
 
-const bool __DEBUG__CALIBR__1__ = true;
+const bool __DEBUG__CALIBR__1__ = false;
 const bool __DEBUG__CALIBR__2__ = false;
 const int maxMeasures = 120; // 120 measures stored in the memory to be averaged on send.
 
@@ -64,7 +64,7 @@ Serial.begin(9600);
 }
 
 int c =0;
-float lastKnownZeroCurrent_VoltageSkew = 315.0206299; //372.3636364;
+float lastKnownZeroCurrent_VoltageSkew = 393.0333252; //372.3636364;
 
 
 void loop() {
@@ -86,7 +86,7 @@ float valcnt = 0;
    Serial.print(vals/valcnt, 7);
    Serial.print("\t Voltage Eq = ");
    //TODO: get VREF vs BUS ??
-   Serial.print(((vals/valcnt+1)* 3300 / 4096, 7);
+   Serial.print((vals/valcnt+1)* 3300 / 4096, 7);
    Serial.print("\t miliAmps Eq = ");
    //last_calculated_mili_amps = (vals/valcnt+1-lastKnownZeroCurrent_VoltageSkew) *(20-4)/ 4096*3300/4096+4;
    last_calculated_mili_amps = (vals/valcnt+1-lastKnownZeroCurrent_VoltageSkew) *(20)/4096;
@@ -108,14 +108,20 @@ float valcnt = 0;
 
   int analogValueA7 = analogRead(PA7);
   Serial.println("ADC PA7 analog value = "+String(analogValueA7));
-  Serial.println();
-  /* int analogValueB = analogRead(PB0);
-  Serial.println("ADC B0 analog value = "+String(analogValueB));*/
 
+   int analogValueB = analogRead(PB0);
+  Serial.println("ADC B0 analog value = "+String(analogValueB));
+
+  Serial.println();
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ eo direct read single value..
     } else{
+    Serial.print("[");
     last_calculated_mili_amps = (vals/valcnt+1-lastKnownZeroCurrent_VoltageSkew) *(20)/4096;
     Serial.print(287.5*last_calculated_mili_amps-750, 7);
+    Serial.print(", ");
+    Serial.print(vals/valcnt, 7);
+    Serial.print("]");
+    Serial.println();
     }
     
  if(__DEBUG__CALIBR__2__){ 
@@ -126,7 +132,7 @@ float valcnt = 0;
  Serial.println();
 }
   
-  delay(500);              // wait for a half second
+  delay(400);              // wait for a half second
   digitalWrite(PC13, LOW);    // turn the LED off by making the voltage LOW
-  delay(500);              // wait for a half second
+  delay(400);              // wait for a half second
 }
