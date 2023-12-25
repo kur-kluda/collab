@@ -22,13 +22,12 @@ import time
 
 __MEAS_INTERVAL__ = 1
 __MINIMUM_MEASURES_TO_SEND__=10
-__MAXIMUM_SECS_BEFORE_SEND__=30
+__MAXIMUM_SECS_BEFORE_SEND__=20
 #__LOOP_DEBUG_LEN__ = 999
 __LED__='LED'
 HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 912       # Port to connect to
 CLI_ID = 2
-__FEEDBACK_INTERVAL__ = 30
 
 uptime_stamp = time.mktime(time.gmtime())
 
@@ -68,7 +67,7 @@ async def measure_interval_updater():
             writer.close()
             await writer.wait_closed()
             reader.close()
-            await asyncio.sleep(1)
+            await asyncio.sleep(4)
         except Exception as e:
             print(str(e))
             
@@ -82,7 +81,7 @@ async def alarm_clock():
             print(f'count: {counter} meas: {__MEAS_INTERVAL__}')
 
 async def push_data_net():
-    await asyncio.sleep(2)
+    await asyncio.sleep(1)
     try:
         #with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
