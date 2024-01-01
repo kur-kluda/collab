@@ -278,12 +278,15 @@ async def push_data_net5():
         #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
         #addr = socket.getaddrinfo(HOST, PORT)[0][-1]
         #s.connect((HOST, PORT))
-        print("aa 0")
+        if(__DEBUG_LEVEL_2__):
+            print("aa 0")
         reader, writer = await asyncio.open_connection(HOST, PORT)
-        print("aa 1")
+        if(__DEBUG_LEVEL_2__):
+            print("aa 1")
         #avoid race conds/?? ja nu kas :D
         length = len(li_mem_clog5)
-        print("aa 2")
+        if(__DEBUG_LEVEL_2__):
+            print("aa 2")
         if(__DEBUG_LEVEL_1__):
             print(f'Send 5: {!r}')
         writer.write(json.dumps({"epoch" : time.gmtime(0)[0],
@@ -396,6 +399,12 @@ async def main():
             tsk2 = asyncio.create_task(push_data())
             await asyncio.sleep(0)
         if len(li_mem_clog) > 64:
+            tsk = asyncio.create_task(tsk_con_net())
+            await asyncio.sleep(3)
+            tsk2 = asyncio.create_task(push_data())
+            await asyncio.sleep(3)
+            lg = asyncio.create_task(light(2))
+            await asyncio.sleep(0)
             continue
         #await asyncio.sleep(0)
         #print(__MEAS_INTERVAL__)

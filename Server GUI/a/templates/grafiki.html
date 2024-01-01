@@ -7,32 +7,39 @@
 function but_hider(frameselector, butselector, wanaBeTitle){
 $(frameselector).on("load", () =>{let hadbut=  window.setInterval(
     ()=>{if($(butselector, $(frameselector)[0].contentDocument).length <1) {}
-	else {$(butselector, $(frameselector)[0].contentDocument).remove(); window.clearInterval(hadbut);
+	else {
 	if($(frameselector+"_header1", $(frameselector)[0].contentDocument).length <1) {
 	//oh no bad this is so bad.. but well no way to write oneliner that includes id class tagname ++
 	if(wanaBeTitle!='')
-	$("<h1 id='"+frameselector+"_header1"+"'>"+wanaBeTitle+"</h1>").insertBefore($(".navbar__spacer", $(frameselector)[0].contentDocument));
+	$("<h1 id='"+frameselector+"_header1"+"'>"+wanaBeTitle+"</h1>").insertBefore($(butselector, $(frameselector)[0].contentDocument));
 	}
+	$(butselector, $(frameselector)[0].contentDocument).remove(); window.clearInterval(hadbut);
 	}
 	}, 500);});
 }
 $(document).ready(()=>{
 //'.navbar-page-btn' -> .parent().remove()
-but_hider('#fr_gr1', '.navbar-edit', 'Temperatūras mērījumi');
+but_hider('#fr_gr1', '[aria-label="Breadcrumbs"]', 'Temperatūras mērījumi');
 //tas pats te.
-but_hider('#fr_gr1', '.navbar-page-btn', '');
-but_hider('#fr_gr2', '.navbar-edit', 'Relat. mitruma mērījumi');
+but_hider('#fr_gr1', '#mega-menu-toggle', '');
+//papildus search bar poga līdz ar atjauninājumu...
+but_hider('#fr_gr1', '[title="Toggle top search bar"]', '');
+
+but_hider('#fr_gr2', '[aria-label="Breadcrumbs"]', 'Relat. mitruma mērījumi');
 //pamanās paralēli 2 izpildīt..
-but_hider('#fr_gr2', '.navbar-page-btn', '');
-but_hider('#fr_gr3', '.navbar-edit', 'Gāzu mērījumi');
+but_hider('#fr_gr2', '#mega-menu-toggle', '');
+but_hider('#fr_gr2', '[title="Toggle top search bar"]', '');
+
+but_hider('#fr_gr3', '[aria-label="Breadcrumbs"]', 'Gāzu mērījumi');
 //pamanās paralēli 2 izpildīt..
-but_hider('#fr_gr3', '.navbar-page-btn', '');
+but_hider('#fr_gr3', '#mega-menu-toggle', '');
+but_hider('#fr_gr3', '[title="Toggle top search bar"]', '');
 });</script>
 
-<iframe width="100%" id="fr_gr1" height="100%" src="https://dj.jtag.me/d/BQySPLDSz/mernieki-1?panelId=2&fullscreen&orgId=1&kiosk=tv&refresh=5s&from=now-3h&to=now"></iframe>
+<iframe width="100%" id="fr_gr1" height="100%" src="https://dj.jtag.me/d/BQySPLDSz/temperatura-dht11-dht22?orgId=1&refresh=5s&from=now-3h&to=now&viewPanel=2&kiosk=tv"></iframe>
 <hr>
-<iframe width="100%" height="100%" id="fr_gr2" src="https://dj.jtag.me/d/0Se83yvSz/rel-mitrums-dht11-dht22?panelId=2&fullscreen&orgId=1&kiosk=tv&refresh=5s&from=now-3h&to=now">
+<iframe width="100%" height="100%" id="fr_gr2" src="https://dj.jtag.me/d/0Se83yvSz/rel-mitrums-dht11-dht22?orgId=1&refresh=5s&from=now-3h&to=now&viewPanel=2&kiosk=tv">
 </iframe>
 <hr>
-<iframe width="100%" height="100%" id="fr_gr3" src="https://dj.jtag.me/d/cX1l5UvIz/vienalga-ko-sutit?panelId=2&fullscreen&orgId=1&kiosk=tv&refresh=5s&from=now-3h&to=now">
+<iframe width="100%" height="100%" id="fr_gr3" src="https://dj.jtag.me/d/cX1l5UvIz/gazes?orgId=1&refresh=5s&from=now-3h&to=now&viewPanel=2&kiosk=tv">
 </body>
