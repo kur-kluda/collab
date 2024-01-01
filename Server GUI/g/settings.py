@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from . import secret
+#from . import dbrouter
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -44,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'v.fakevalidator',
+    'a'
     #'v.templatetags.metadata'
 ]
 
@@ -76,6 +79,7 @@ TEMPLATES = [
             ],
             'libraries':{
             'metadata': 'v.templatetags.metadata',
+            'list2str': 'v.templatetags.list2str',
         }
         },
 
@@ -92,9 +96,18 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    },
+    'meta-db': secret.db_setting()
 }
 
+
+DATABASE_ROUTERS = [
+    'g.dbrouter.DbRouter'
+]
+
+DATABASE_APPS_MAPPING : {
+    'a': 'meta-db',
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

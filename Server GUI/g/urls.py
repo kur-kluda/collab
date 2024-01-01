@@ -14,13 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 #from a import views as av
 from a import grafiki as g
 from a import config as c
 
+
 urlpatterns = [
     path('', g.render_templ_grafs, name='dbGplotApp'),
+    path('s', include("a.urls")),
     path('ad', c.config, name='configApp'),
     path('g/', g.render_templ_grafs, name='dbGplotApp'),
     #path('3/', av.dbplot, name='dbplotApp'),
