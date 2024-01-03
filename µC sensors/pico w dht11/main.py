@@ -346,6 +346,8 @@ async def push_data():
                         if(__DEBUG_LEVEL_1__):
                             print(f"waiting...{seccounter}")
                             seccounter = seccounter +1
+                            if(seccounter > 120):
+                                return False
                         await asyncio.sleep(1)
                     #nets_w = asyncio.wait_for(nets, 3)
                     #await asyncio.sleep(0)
@@ -394,16 +396,17 @@ async def main():
     #i=0
     while True: #i<__LOOP_DEBUG_LEN__:
       try:
+        if not wlan.isconnected():
+            tsk = asyncio.create_task(tsk_con_net())
+            await asyncio.sleep(0)
         lig = asyncio.create_task(light(1/2))
         if(tsk2.done()):
             tsk2 = asyncio.create_task(push_data())
             await asyncio.sleep(0)
         if len(li_mem_clog) > 64:
-            tsk = asyncio.create_task(tsk_con_net())
-            await asyncio.sleep(3)
             tsk2 = asyncio.create_task(push_data())
             await asyncio.sleep(3)
-            lg = asyncio.create_task(light(2))
+            lg = asyncio.create_task(light(1/2))
             await asyncio.sleep(0)
             continue
         #await asyncio.sleep(0)
@@ -475,6 +478,9 @@ async def main():
       except OSError as e:
         print('Main loop: Failed to read sensor.')
         print(e)
+      except Exception as ex:
+        print('Main loop Exception:')
+        print(ex)
       #i=i+1
 
 light(2)
