@@ -57,6 +57,8 @@ for rec in records:
 
 print(f"{TABLE_NAME} sync complete. now gitting")
 
+os.chdir("../")
+
 print(subprocess.check_output('git pull', shell=True))
 print(subprocess.check_output('git add .', shell=True))
 print(subprocess.check_output(f'git commit -m "Grafana DB :: {TABLE_NAME} sync {datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}"', shell=True))
