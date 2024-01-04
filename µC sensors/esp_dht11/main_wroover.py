@@ -1,9 +1,9 @@
 # at this moment 5 new records appear while waiting for db to write so first 10=> send (+5 in the meanwhile), then @10=>send so it sends each 
 #5 measurements instead of intended 10 @1sec interval measuring
 #esp.osdebug(None)
-debuglevel1 = 1
+debuglevel1 = 0
 __DEBUG_LEVEL_1__ = True if debuglevel1==1 else False
-debuglevel2 = 1
+debuglevel2 = 0
 __DEBUG_LEVEL_2__ = True if debuglevel2==1 else False
 import os, machine
 #os.dupterm(None, 1) # disable REPL on UART(0)
@@ -23,7 +23,7 @@ import onewire, ds18x20
 __MEAS_INTERVAL__ = 1
 __MINIMUM_MEASURES_TO_SEND__=10
 __MAXIMUM_SECS_BEFORE_SEND__=30
-__LED__='LED'
+__LED__=2#'LED'
 #__LOOP_DEBUG_LEN__ = 99999
 HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 911       # Port to connect to
@@ -32,8 +32,17 @@ CLI_ID2 = 8		#device id to send
 CLI_ID3 = 9		#device id to send
 CLI_ID4 = 10		#device id to send
 CLI_ID5 = 11		#device id to send
-pin = Pin(35)#, Pin.OUT, Pin.PULL_DOWN)
-sensor = dht.DHT11(pin)
+"""
+    Pins 1 and 3 are REPL UART TX and RX respectively
+
+    Pins 6, 7, 8, 11, 16, and 17 are used for connecting the embedded flash, and are not recommended for other uses
+
+    Pins 34-39 are input only, and also do not have internal pull-up resistors
+
+    See Deep-sleep mode for a discussion of pin behaviour during sleep
+"""
+#, Pin.OUT, Pin.PULL_DOWN)
+sensor = dht.DHT11(Pin(33))
 sensor2 = dht.DHT22(Pin(12))
 sensor3 = dht.DHT22(Pin(13))
 sensor4 = dht.DHT11(Pin(14))

@@ -13,6 +13,7 @@ dbg2=0
 __DEBUG_LEVEL_2_ = True if dbg2==1 else False
 __DEBUG_LEVEL_1_ = True if dbg1==1 else False
 
+SENSORS_IDS_SINGLE_DIMENSIONS = [6, 11]
 dns_se = '8.8.8.8'                               #
 dm = 'jtag.me'
 # Port to listen ond
@@ -92,6 +93,7 @@ async def rdr(r, client_socket, client_address, dheader):
 
 
 async def sync(r, client_socket, client_address, header):
+    global SENSORS_IDS_SINGLE_DIMENSIONS
     try:
         data = json.loads(r.readline())
         metadata = json.loads(header)
@@ -117,13 +119,14 @@ async def sync(r, client_socket, client_address, header):
             sql=""
             #print(f"id: {metadata['id']} len: {len(metadata)} longq: {metadata['id']!=6}")
             #print(data)
-            if(metadata["id"]!=6):
+            has_more_than_one_column = metadata["id"] not in SENSORS_IDS_SINGLE_DIMENSIONS
+            if(has_more_than_one_column):
                 sql = "INSERT INTO `s_"+str(metadata["id"])+ "` (`time`, `rcv`, `1`, `2`) VALUES (%s, %s, %s, %s)"
             else:
                 sql = "INSERT INTO `s_"+str(metadata["id"])+ "` (`time`, `rcv`, `1`) VALUES (%s, %s, %s)"
             for n in data:
                 dt_object = datetime.fromtimestamp(base_ts+n[0])
-                if(metadata["id"]!=6):
+                if(has_more_than_one_column):
                     val = (dt_object.strftime('%Y-%m-%d %H:%M:%S'), 
                        datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 
                        float(n[1]), float(n[2]))
@@ -142,6 +145,11 @@ async def sync(r, client_socket, client_address, header):
         print(f"Error sync: {e}")
 
     finally:
+        if(db):
+            try:
+                db.close()
+            finally:
+                just_try_no_need_for_finally_or_catch=""
         # Close the client socket
         r.close()
         client_socket.close()
@@ -173,9 +181,13 @@ async def loop():
             continue
         except Exception as e:
             print(f"Error main: {e}")
-            if(r):
-                r.close()
-            if(client_socket):
-                client_socket.close()
+        finally:
+            try:
+                if(r):
+                    r.close()
+                if(client_socket):
+                    client_socket.close()
+            finally:
+                just_try_no_need_for_finally_or_catch=""
 
 asyncio.run(loop())
