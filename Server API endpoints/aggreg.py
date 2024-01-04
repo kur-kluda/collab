@@ -9,7 +9,7 @@ import mysql.connector
 import asyncio
 
 dbg1=1
-dbg2=0
+dbg2=1
 __DEBUG_LEVEL_2_ = True if dbg2==1 else False
 __DEBUG_LEVEL_1_ = True if dbg1==1 else False
 
@@ -187,6 +187,8 @@ async def loop():
                     r.close()
                 if(client_socket):
                     client_socket.close()
+            except Exception as e:
+                print(f"Error GC-ollecting main: {e}")
             finally:
                 just_try_no_need_for_finally_or_catch=""
 

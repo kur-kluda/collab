@@ -476,7 +476,7 @@ async def main():
         #print('Humidity: %3.1f %%' %hum)
         #print(f'lis1: {len(li_mem_clog)} lis2: {len(li_mem_clog2)} lis3: {len(li_mem_clog3)}')
       except OSError as e:
-        print('Main loop: Failed to read sensor.')
+        print('Main loop: Oserror, prob Failed to read sensor.')
         print(e)
       except Exception as ex:
         print('Main loop Exception:')
