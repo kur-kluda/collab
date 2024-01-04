@@ -1,9 +1,9 @@
 # at this moment 5 new records appear while waiting for db to write so first 10=> send (+5 in the meanwhile), then @10=>send so it sends each 
 #5 measurements instead of intended 10 @1sec interval measuring
 #esp.osdebug(None)
-debuglevel1 = 0
+debuglevel1 = 1
 __DEBUG_LEVEL_1__ = True if debuglevel1==1 else False
-debuglevel2 = 0
+debuglevel2 = 1
 __DEBUG_LEVEL_2__ = True if debuglevel2==1 else False
 import os, machine
 #os.dupterm(None, 1) # disable REPL on UART(0)
@@ -27,17 +27,17 @@ __LED__='LED'
 #__LOOP_DEBUG_LEN__ = 99999
 HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 911       # Port to connect to
-CLI_ID = 1		#device id to send
-CLI_ID2 = 3		#device id to send
-CLI_ID3 = 4		#device id to send
-CLI_ID4 = 5		#device id to send
-CLI_ID5 = 6		#device id to send
-pin = Pin(22)#, Pin.OUT, Pin.PULL_DOWN)
+CLI_ID = 7		#device id to send
+CLI_ID2 = 8		#device id to send
+#CLI_ID3 = 9		#device id to send
+#CLI_ID4 = 10		#device id to send
+CLI_ID5 = 9		#device id to send
+pin = Pin(12)#, Pin.OUT, Pin.PULL_DOWN)
 sensor = dht.DHT11(pin)
-sensor2 = dht.DHT22(Pin(21))
-sensor3 = dht.DHT22(Pin(3))
-sensor4 = dht.DHT11(Pin(20))
-onewire5 = ds18x20.DS18X20(onewire.OneWire(Pin(7)))
+sensor2 = dht.DHT22(Pin(2))
+#sensor3 = dht.DHT22(Pin(3))
+#sensor4 = dht.DHT11(Pin(4))
+onewire5 = ds18x20.DS18X20(onewire.OneWire(Pin(14)))
 
 onewire_devs5 = onewire5.scan()
 if(__DEBUG_LEVEL_1__):
@@ -47,8 +47,8 @@ wlan = network.WLAN(network.STA_IF) # create station interface
 
 li_mem_clog = []
 li_mem_clog2 = []
-li_mem_clog3 = []
-li_mem_clog4 = []
+#li_mem_clog3 = []
+#li_mem_clog4 = []
 li_mem_clog5 = []
 
 
@@ -181,7 +181,7 @@ async def push_data_net2():
         print(f" push 2 {str(e)}")      
     print("failed to sync 2")
     return
-
+"""
 async def push_data_net3():
     await asyncio.sleep(1)
     try:
@@ -270,7 +270,7 @@ async def push_data_net4():
         #print(li_mem_clog4)
     print("failed to sync 4")
     return
-
+"""
 async def push_data_net5():
     await asyncio.sleep(1)
     try:
@@ -334,15 +334,17 @@ async def push_data():
                     await asyncio.sleep(0)
                     nets2 = asyncio.create_task(push_data_net2())
                     await asyncio.sleep(1)
-                    nets3 = asyncio.create_task(push_data_net3())
-                    await asyncio.sleep(0)
-                    nets4 = asyncio.create_task(push_data_net4())
-                    await asyncio.sleep(1)
+                    #nets3 = asyncio.create_task(push_data_net3())
+                    #await asyncio.sleep(0)
+                    #nets4 = asyncio.create_task(push_data_net4())
+                    #await asyncio.sleep(1)
                     nets5 = asyncio.create_task(push_data_net5())
                     await asyncio.sleep(0)
                     if(__DEBUG_LEVEL_1__):
                         seccounter = 0
-                    while (not nets.done() and not nets2.done() and not nets3.done() and not nets4.done() and not nets5.done()):
+                    while (not nets.done() and not nets2.done()
+                           #and not nets3.done() and not nets4.done()
+                           and not nets5.done()):
                         if(__DEBUG_LEVEL_1__):
                             print(f"waiting...{seccounter}")
                             seccounter = seccounter +1
@@ -426,12 +428,12 @@ async def main():
         sensor2.measure()
         if(__DEBUG_LEVEL_1__):
             print("2")
-        sensor3.measure()
-        if(__DEBUG_LEVEL_1__):
-            print("3")
-        sensor4.measure()
-        if(__DEBUG_LEVEL_1__):
-            print("4")
+        #sensor3.measure()
+        #if(__DEBUG_LEVEL_1__):
+        #    print("3")
+        #sensor4.measure()
+        #if(__DEBUG_LEVEL_1__):
+        #    print("4")
         onewire5.convert_temp()
         asyncio.sleep_ms(750)
         #for sensor in onewire_devs5:
@@ -450,14 +452,14 @@ async def main():
         hum2 = sensor2.humidity()
         if(__DEBUG_LEVEL_2__):
             print(f"2 t: {temp2} hum: {hum2}")
-        temp3 = sensor3.temperature()
-        hum3 = sensor3.humidity()
-        if(__DEBUG_LEVEL_2__):
-            print(f"3 t: {temp3} hum: {hum3}")
-        temp4 = sensor4.temperature()
-        hum4 = sensor4.humidity()
-        if(__DEBUG_LEVEL_2__):
-            print(f"4 t: {temp4} hum: {hum4}")
+        #temp3 = sensor3.temperature()
+        #hum3 = sensor3.humidity()
+        #if(__DEBUG_LEVEL_2__):
+        #    print(f"3 t: {temp3} hum: {hum3}")
+        #temp4 = sensor4.temperature()
+        #hum4 = sensor4.humidity()
+        #if(__DEBUG_LEVEL_2__):
+        #    print(f"4 t: {temp4} hum: {hum4}")
         # 5 is onewire with only temperature and another kind of flow...
         #print(f'temp1: {temp} temp2: {temp2} temp3: {temp3}')
         #print(f'hum1: {hum} hum2: {hum2} hum3: {hum3}')
@@ -466,8 +468,8 @@ async def main():
         #yr, Month, date, h, m, s, weekday, yearday
         li_mem_clog.append([time.mktime(time.gmtime()), temp, hum])
         li_mem_clog2.append([time.mktime(time.gmtime()), temp2, hum2])
-        li_mem_clog3.append([time.mktime(time.gmtime()), temp3, hum3])
-        li_mem_clog4.append([time.mktime(time.gmtime()), temp4, hum4])
+        #li_mem_clog3.append([time.mktime(time.gmtime()), temp3, hum3])
+        #li_mem_clog4.append([time.mktime(time.gmtime()), temp4, hum4])
         li_mem_clog5.append([time.mktime(time.gmtime()), temp5])
         #print(time.localtime())
         #print(json.loads(json.dumps(time.localtime()))[5])
@@ -485,3 +487,4 @@ async def main():
 
 light(2)
 asyncio.run(main())
+
