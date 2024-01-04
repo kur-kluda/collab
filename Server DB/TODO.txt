@@ -1,3 +1,3 @@
-Add Grafana selects here
-Move also first table structures
-Probably each its own subfolder in common DB folder..
+V Add Grafana selects here
+V Move also first table structures
+V Probably each its own subfolder in common DB folder..

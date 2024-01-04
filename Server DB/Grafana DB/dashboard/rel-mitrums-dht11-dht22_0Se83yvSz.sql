@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS dashboard (
+id INTEGER,
+version INTEGER,
+slug TEXT,
+title TEXT,
+data TEXT,
+org_id INTEGER,
+created DATETIME,
+updated DATETIME,
+updated_by INTEGER,
+created_by INTEGER,
+gnet_id INTEGER,
+plugin_id TEXT,
+folder_id INTEGER,
+is_folder INTEGER,
+has_acl INTEGER,
+uid TEXT,
+is_public INTEGER,
+folder_uid TEXT
+)
+
+INSERT INTO dashboard VALUES (2, 5, 'rel-mitrums-dht11-dht22', 'Rel mitrums DHT11 DHT22', b'{"annotations":{"list":[{"$$hashKey":"object:33","builtIn":1,"datasource":{"type":"datasource","uid":"grafana"},"enable":true,"hide":true,"iconColor":"rgba(0, 211, 255, 1)","name":"Annotations \\u0026 Alerts","type":"dashboard"}]},"editable":true,"fiscalYearStartMonth":0,"graphTooltip":0,"id":2,"links":[],"liveNow":false,"panels":[{"aliasColors":{},"bars":false,"dashLength":10,"dashes":false,"datasource":{"type":"mysql","uid":"000000001"},"description":"","fieldConfig":{"defaults":{"links":[]},"overrides":[]},"fill":1,"fillGradient":0,"gridPos":{"h":9,"w":12,"x":0,"y":0},"hiddenSeries":false,"id":2,"legend":{"avg":false,"current":false,"max":false,"min":false,"show":true,"total":false,"values":false},"lines":true,"linewidth":1,"nullPointMode":"null","options":{"alertThreshold":true},"percentage":false,"pluginVersion":"10.3.0-pre","pointradius":2,"points":false,"renderer":"flot","seriesOverrides":[],"spaceLength":10,"stack":false,"steppedLine":false,"targets":[{"datasource":{"type":"mysql","uid":"000000001"},"editorMode":"code","format":"time_series","group":[],"metricColumn":"none","rawQuery":true,"rawSql":"SELECT\\n  time AS \\"time\\",\\n  `2` AS \\"relat\xc4\xabvais mitrums DHT11 (orig) @1p22\\"\\nFROM s_1\\nWHERE\\n  $__timeFilter(time)\\nORDER BY time","refId":"A","select":[[{"params":["`2`"],"type":"column"}]],"sql":{"columns":[{"parameters":[],"type":"function"}],"groupBy":[{"property":{"type":"string"},"type":"groupBy"}],"limit":50},"table":"s_1","timeColumn":"time","timeColumnType":"timestamp","where":[{"name":"$__timeFilter","params":[],"type":"macro"}]},{"datasource":{"type":"mysql","uid":"000000001"},"editorMode":"code","format":"time_series","group":[],"metricColumn":"none","rawQuery":true,"rawSql":"SELECT\\n  time AS \\"time\\",\\n  `2` AS \\"relat\xc4\xabvais mitrums DHT22 @1p21\\"\\nFROM s_3\\nWHERE\\n  $__timeFilter(time)\\nORDER BY time","refId":"B","select":[[{"params":["1"],"type":"column"}]],"sql":{"columns":[{"parameters":[],"type":"function"}],"groupBy":[{"property":{"type":"string"},"type":"groupBy"}],"limit":50},"table":"s_3","timeColumn":"time","timeColumnType":"datetime","where":[{"name":"$__timeFilter","params":[],"type":"macro"}]},{"datasource":{"type":"mysql","uid":"000000001"},"editorMode":"code","format":"time_series","group":[],"metricColumn":"none","rawQuery":true,"rawSql":"SELECT\\n  time AS \\"time\\",\\n  `2` AS \\"relat\xc4\xabvais mitrums DHT22 @1p3\\"\\nFROM s_4\\nWHERE\\n  $__timeFilter(time)\\nORDER BY time","refId":"C","select":[[{"params":["1"],"type":"column"}]],"sql":{"columns":[{"parameters":[],"type":"function"}],"groupBy":[{"property":{"type":"string"},"type":"groupBy"}],"limit":50},"table":"s_1","timeColumn":"time","timeColumnType":"timestamp","where":[{"name":"$__timeFilter","params":[],"type":"macro"}]},{"datasource":{"type":"mysql","uid":"000000001"},"editorMode":"code","format":"time_series","group":[],"metricColumn":"none","rawQuery":true,"rawSql":"SELECT\\n  time AS \\"time\\",\\n  `2` AS \\"relat\xc4\xabvais mitrums DHT11 @1p20\\"\\nFROM s_5\\nWHERE\\n  $__timeFilter(time)\\nORDER BY time","refId":"D","select":[[{"params":["1"],"type":"column"}]],"sql":{"columns":[{"parameters":[],"type":"function"}],"groupBy":[{"property":{"type":"string"},"type":"groupBy"}],"limit":50},"table":"s_1","timeColumn":"time","timeColumnType":"timestamp","where":[{"name":"$__timeFilter","params":[],"type":"macro"}]}],"thresholds":[],"timeRegions":[],"tooltip":{"shared":true,"sort":0,"value_type":"individual"},"type":"graph","xaxis":{"mode":"time","show":true,"values":[]},"yaxes":[{"$$hashKey":"object:197","format":"short","logBase":1,"show":true},{"$$hashKey":"object:198","format":"short","logBase":1,"show":true}],"yaxis":{"align":false}}],"refresh":"","schemaVersion":39,"tags":[],"templating":{"list":[]},"time":{"from":"now-6h","to":"now"},"timepicker":{},"timezone":"","title":"Rel mitrums DHT11 DHT22","uid":"0Se83yvSz","version":5,"weekStart":""}', 1, '2023-12-14 22:17:52', '2024-01-04 14:09:11', 1, 1, 0, '', 0, 0, 0, '0Se83yvSz', 0, None);
