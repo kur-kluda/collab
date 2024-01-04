@@ -1,0 +1,4 @@
+add sensors metadata @search db
+try that plugin
+augument sensors with more so paging w/e is visible
+implement the search
