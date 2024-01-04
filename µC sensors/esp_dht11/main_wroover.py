@@ -394,6 +394,7 @@ async def light(howlong):
 
 async def main():
     global __MEAS_INTERVAL__
+    laststates = [False, False, False, False, False]
     print("Welcome! Booting up by connecting to the network")
     tsk = asyncio.create_task(tsk_con_net())
     #shis palaiz tsk!!!11
@@ -430,15 +431,19 @@ async def main():
         else:
             await asyncio.sleep(1)
         sensor.measure()
+        laststates[1-1] = True
         if(__DEBUG_LEVEL_1__):
             print("1")
         sensor2.measure()
+        laststates[2-1] = True
         if(__DEBUG_LEVEL_1__):
             print("2")
         sensor3.measure()
+        laststates[3-1] = True
         if(__DEBUG_LEVEL_1__):
             print("3")
         sensor4.measure()
+        laststates[4-1] = True
         if(__DEBUG_LEVEL_1__):
             print("4")
         onewire5.convert_temp()
@@ -447,6 +452,7 @@ async def main():
         #    print(f"sensor unique address: {sensor}")
         #    print(onewire5.read_temp(sensor))
         temp5 = onewire5.read_temp(onewire_devs5[0])
+        laststates[5-1] = True
         if(__DEBUG_LEVEL_1__):
             print("5")
         if(__DEBUG_LEVEL_2__):
@@ -478,6 +484,7 @@ async def main():
         li_mem_clog3.append([time.mktime(time.gmtime()), temp3, hum3])
         li_mem_clog4.append([time.mktime(time.gmtime()), temp4, hum4])
         li_mem_clog5.append([time.mktime(time.gmtime()), temp5])
+        laststates = [False, False, False, False, False]
         #print(time.localtime())
         #print(json.loads(json.dumps(time.localtime()))[5])
         #print('Temperature: %3.1f C' %temp)
@@ -485,14 +492,16 @@ async def main():
         #print('Humidity: %3.1f %%' %hum)
         #print(f'lis1: {len(li_mem_clog)} lis2: {len(li_mem_clog2)} lis3: {len(li_mem_clog3)}')
       except OSError as e:
-        print('Main loop: Failed to read sensor.')
+        print('Main loop: OSerror, probably Failed to read sensor:')
         print(e)
+        print(laststates)
+        print(time.mktime(time.gmtime()))
       except Exception as ex:
         print('Main loop Exception:')
         print(ex)
+        print(laststates)
+        print(time.mktime(time.gmtime()))
       #i=i+1
 
 light(2)
 asyncio.run(main())
-
-
