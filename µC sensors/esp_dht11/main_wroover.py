@@ -99,7 +99,8 @@ async def measure_interval_updater():
             reader.close()
             await asyncio.sleep(1)
         except Exception as e:
-            print(f"{t(time.gmtime())} meaure interval updater: {str(e)}") 
+            print(f"{t(time.gmtime())} meaure interval updater: {str(e)}")
+            await asyncio.sleep(2)
         
 async def push_data_net():
     #global __MEAS_INTERVAL__
@@ -516,7 +517,7 @@ async def main():
         if(just_was_exception):
             print(f"{t(time.gmtime())} main now OK!")
         just_was_exception = False
-        await asyncio.sleep(__MEAS_INTERVAL__+1)
+        await asyncio.sleep(__MEAS_INTERVAL__)
         #print(time.localtime())
         #print(json.loads(json.dumps(time.localtime()))[5])
         #print(f'lis1: {len(li_mem_clog)} lis2: {len(li_mem_clog2)} lis3: {len(li_mem_clog3)}')
@@ -526,12 +527,14 @@ async def main():
         print(laststates)
         print(t(time.gmtime()))
         just_was_exception = True
+        await asyncio.sleep(__MEAS_INTERVAL__)
       except Exception as ex:
         print('{t(time.gmtime())} Main loop Exception:')
         print(ex)
         print(laststates)
         print(t(time.gmtime()))
         just_was_exception = True
+        await asyncio.sleep(__MEAS_INTERVAL__)
       #i=i+1
 
 light(2)
