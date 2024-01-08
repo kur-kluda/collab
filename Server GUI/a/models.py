@@ -30,6 +30,7 @@ class SensorMeta(m.Model):
     #hubs = m.ManyToManyField('HubMeta')
     hub = m.ForeignKey(HubMeta, on_delete=m.CASCADE)
     interface = m.ForeignKey(Connection_InterfaceMeta, null=True, on_delete=m.SET_NULL)
+    measurements = m.ManyToManyField('MeasureMeta')
     loc_la = m.FloatField()
     loc_lo = m.FloatField()
     loc_ro = m.FloatField()
@@ -37,6 +38,7 @@ class SensorMeta(m.Model):
     is_real = m.BooleanField(default=False)
 
 class MeasureMeta(m.Model):
+    nr = m.AutoField(primary_key=True, default=None)
     the_measure_enum=[
         ('t', 'Temperature'),
         ('hum', 'Humidity'),

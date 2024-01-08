@@ -1,19 +1,25 @@
 class DbRouter:
     meta_db = "meta-db"
     default_db = "default"
-    business_entities = ["HubMeta",
-                         "SensorMeta"]
-
-    def db_for_read(self, model, **hints):
-        model_name = model._meta.model_name
-       # print(f"mnme: {model_name}")
-        if model_name in self.business_entities:
+    business_entities = ["HubMeta".lower(),
+                         "SensorMeta".lower(),
+                         "Connection_InterfaceMeta".lower(),
+                         "MeasureMeta".lower(),
+                         "sensormeta_measurements".lower()
+                         ]
+    
+    def routeToBase(self, model_name)-> bool:
+        if model_name.lower()[0]=="a" and model_name.lower()[1]=="_":
             return self.meta_db
-        else:
-            return self.default_db
+        else: return self.default_db
+#, whoishere="nothererere---",
+    def db_for_read(self, model, **hints):
+        #return self.routeToBase(model._meta.model_name)
+        return self.routeToBase(model._meta.db_table)
 
     def db_for_write(self, model, **hints):
-        return self.db_for_read(model, hints)
+        #return self.routeToBase(model._meta.model_name)
+        return self.routeToBase(model._meta.db_table)
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
        # print(f"apppl: {app_label}, mdl: {str(model_name)}")

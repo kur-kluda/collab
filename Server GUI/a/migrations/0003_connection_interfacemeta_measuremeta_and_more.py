@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MeasureMeta',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('nr', models.AutoField(primary_key=True, serialize=False)),
                 ('measurement', models.CharField(choices=[('t', 'Temperature'), ('hum', 'Humidity'), ('tvoc', 'Total Voilatile Component'), ('co2', 'Carbon Dioxide'), ('p', 'Pressure'), ('li', 'Light'), ('snd', 'Sound'), ('mot', 'Motion')], max_length=5)),
                 ('range_low', models.DecimalField(decimal_places=5, max_digits=20)),
                 ('range_high', models.DecimalField(decimal_places=5, max_digits=20)),

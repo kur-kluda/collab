@@ -37,3 +37,12 @@ OR
 simply manage.py migrate
 if router is fine.
 ```
+
+hererererer
+
+```
+python ./manage.py makemigrations a
+
+python ./manage.py migrate --database=meta-db
+
+```
