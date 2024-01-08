@@ -18,10 +18,12 @@ from django.urls import path, include
 #from a import views as av
 from a import grafiki as g
 from a import config as c
+from a import bluffer as bl
 
 
 urlpatterns = [
     path('', g.render_templ_grafs, name='dbGplotApp'),
+    path('bl', bl.render_bluff, name='bluffApp'),
     path('s', include("a.urls")),
     path('ad', c.config, name='configApp'),
     path('g/', g.render_templ_grafs, name='dbGplotApp'),

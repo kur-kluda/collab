@@ -1,0 +1,9 @@
+{% if is_ok is not None %}
+        <p style="font-size: larger;">
+{{ is_ok|safe }}
+        </p>
+{% else %}
+<h1>Under construction</h1>
+<p>This site is under construction.</p>
+<p>Feel free to come by anytime soon.</p>
+    {% endif %}
