@@ -14,13 +14,11 @@ class Migration(migrations.Migration):
             name="HubMeta",
             fields=[
                 (
-                    "id",
+                    'nr',
                     models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
+                        default=None, 
+                        primary_key=True, 
+                        serialize=False)
                 ),
                 ("model", models.CharField(max_length=255)),
                 ("loc_la", models.FloatField()),
@@ -41,13 +39,10 @@ class Migration(migrations.Migration):
             name="SensorMeta",
             fields=[
                 (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
+                    'nr',
+                    models.BigAutoField(default=None,
+                    primary_key=True, 
+                    serialize=False),
                 ),
                 ("model", models.CharField(max_length=255)),
                 (
