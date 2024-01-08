@@ -7,7 +7,7 @@ class HubMeta(m.Model):
     loc_lo = m.FloatField()
     loc_ro = m.FloatField()
     hub = m.ForeignKey('self', null=True, blank=True, on_delete=m.SET_NULL)
-    is_fake = m.BooleanField()
+    is_real = m.BooleanField(default=False)
 
 class SensorMeta(m.Model):
     the_measure_enum=[
@@ -38,4 +38,4 @@ class SensorMeta(m.Model):
     loc_la = m.FloatField()
     loc_lo = m.FloatField()
     loc_ro = m.FloatField()
-    is_fake = m.BooleanField()
+    is_real = m.BooleanField(default=False)
