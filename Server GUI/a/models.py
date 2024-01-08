@@ -7,6 +7,7 @@ class HubMeta(m.Model):
     loc_lo = m.FloatField()
     loc_ro = m.FloatField()
     hub = m.ForeignKey('self', null=True, blank=True, on_delete=m.SET_NULL)
+    is_fake = m.BooleanField()
 
 class SensorMeta(m.Model):
     the_measure_enum=[
@@ -14,6 +15,10 @@ class SensorMeta(m.Model):
         ('hum', 'Humidity'),
         ('tvoc', 'Total Voilatile Component'),
         ('co2', 'Carbon Dioxide'),
+        ('p', 'Pressure'),
+        ('li', 'Light'),
+        ('snd', 'Sound'),
+        ('mot', 'Motion')
     ]
     the_interfaces_enum=[
         ("SPI", "SPI"),
@@ -33,3 +38,4 @@ class SensorMeta(m.Model):
     loc_la = m.FloatField()
     loc_lo = m.FloatField()
     loc_ro = m.FloatField()
+    is_fake = m.BooleanField()
