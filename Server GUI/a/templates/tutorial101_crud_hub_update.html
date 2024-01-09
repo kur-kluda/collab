@@ -1,4 +1,4 @@
-{% extends "tutorial101_blogspot_com_base.html" %}
+{% extends "tutorial101_base.html" %}
   
 {% block title %}Add New / Edit Sensor Meta Data Record{% endblock title %}
   
@@ -8,11 +8,11 @@
     {% if ispost and errorText %}
 {{ errorText|safe }}
 {% endif %}
-    <form method="POST" class="post-form" action="{% url 'ciud_update' SensorMeta.nr %}">  
+    <form method="POST" class="post-form" action="{% url 'crud_hub_update' HubMeta.nr %}">  
     {% csrf_token %}  
     <div class="container">   
         <div class="col-12">  
-            <h3>Update Details</h3>  
+            <h3>Update Hub Details</h3>  
         </div> 
  <!--       <div class="mb-3"> 
             <label>nr:</label>  
@@ -30,18 +30,6 @@
             {{ form.hub.errors }}
             {{ form.hub.label_tag }}
             {{form.hub}}
-        </div>
-
-        <div class="mb-3"> 
-            {{ form.interface.errors }}
-            {{ form.interface.label_tag }} 
-            {{ form.interface }}    
-        </div>
-
-        <div class="mb-3"> 
-            {{ form.measurements.errors }}
-            {{ form.measurements.label_tag }}  
-            {{ form.measurements }}  
         </div>
 
         <div class="mb-3"> 

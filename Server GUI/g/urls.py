@@ -20,7 +20,8 @@ from a import grafiki as g
 from a import config as c
 from a import bluffer as bl
 from a import meklet_tables2 as t2
-from a import tutorial101_blogspot_com as tu
+from a import tutorial101_ciud_sensors as tu
+from a import tutorial101_crud_hubs as ch
 
 urlpatterns = [
     path('', g.render_templ_grafs, name='dbGplotApp'),
@@ -37,10 +38,14 @@ urlpatterns = [
     #path('1/a.txt', redirect(to="/static/e.txt"))
     #path('t/<str:file_name>/', av.view_text, name='viewText'),
     #originally was AIUD (Addnew/Index/Update||Edit/Delete)
+#Sensor CIUD
     path('ciud/', tu.index, name='ciud_index'),  
-    path('ciud/create',tu.addnew, name='ciud_addnew'),  
-    path('ciud/edit/<int:nr>', tu.edit, name='ciud_edit'),  
-    path('ciud/update/<int:nr>', tu.update, name='ciud_update'),  
+    path('ciud/create/',tu.create, name='ciud_create'),     
     path('ciud/update/<int:nr>/', tu.update, name='ciud_update'), 
-    path('ciud/delete/<int:nr>', tu.destroy, name='ciud_destroy'),  
+    path('ciud/delete/<int:nr>', tu.destroy, name='ciud_destroy'),
+# hub CRUD
+    path('crud/', ch.index, name='crud_hub_index'),  
+    path('crud/create/',ch.create, name='crud_hub_create'),      
+    path('crud/update/<int:nr>/', ch.update, name='crud_hub_update'), 
+    path('crud/delete/<int:nr>', ch.destroy, name='crud_hub_destroy'),   
 ]

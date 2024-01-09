@@ -44,27 +44,26 @@ class SensorMetaForm(forms.ModelForm):
 
 from django.shortcuts import render, redirect   
  
-# Create your views here.  
-def addnew(request):  
+def create(request):  
     if request.method == "POST":  
         form = SensorMetaForm(request.POST)  
         if form.is_valid():  
             try:  
                 form.save()  
-                return redirect(reverse('ciud_index')) 
+                return redirect(reverse('ciud_index'),
+                                success=f"<p style='font-size: larger;'>Add new Sensor Meta status: <span style='color:green'>OK</span> With id {form.nr}</p>"
+                                ) 
             except:  
                 pass
     else:  
         form = SensorMetaForm()  
-    return render(request,'tutorial101_blogspot_com_new.html',{'form':form})  
+    return render(request,'tutorial101_ciud_create.html',{'form':form})  
  
-def index(request):  
+def index(request, **kwargs):  
+    syccess = kwargs.get("success")
     o_SensorMetas = SensorMeta.objects.all()  
-    return render(request,"tutorial101_blogspot_com_list.html",{'SensorMetas':o_SensorMetas})  
- 
-def edit(request, nr):  
-    o_SensorMeta = SensorMeta.objects.get(nr=nr)  
-    return render(request,'tutorial101_blogspot_com_edit.html', {'SensorMeta':o_SensorMeta})  
+    return render(request,"tutorial101_ciud_list.html",{'SensorMetas':o_SensorMetas,
+                                                        'prevMSG': syccess})  
  
 def update(request, nr):
     if request.method == "POST":   
@@ -72,11 +71,12 @@ def update(request, nr):
         form = SensorMetaForm(request.POST, instance = o_SensorMeta)  
         if form.is_valid():  
             form.save()  
-            return redirect(reverse('ciud_index')) 
+            return redirect(reverse('ciud_index'), 
+                            success=f"<p style='font-size: larger;'>Update Sensor Meta status: <span style='color:green'>OK</span> With id {nr}</p>") 
     else:
          o_SensorMeta = SensorMeta.objects.get(nr=nr) 
          form = SensorMetaForm(instance= o_SensorMeta)
-    return render(request, 'tutorial101_blogspot_com_edit.html', {'SensorMeta': o_SensorMeta,
+    return render(request, 'tutorial101_ciud_update.html', {'SensorMeta': o_SensorMeta,
                                                                   'form': form,
                                                                   "errorText": f"invalid form {form.errors}",
                                                                   "ispost": True if request.POST else False,})  
@@ -84,4 +84,5 @@ def update(request, nr):
 def destroy(request, nr):  
     o_SensorMeta = SensorMeta.objects.get(nr=nr)  
     o_SensorMeta.delete()  
-    return redirect(reverse('ciud_index'))  
+    return redirect(reverse('ciud_index'), 
+                    success=f"<p style='font-size: larger;'>Delete Sensor Meta status: <span style='color:green'>OK</span> With id {nr}</p>")  

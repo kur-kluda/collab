@@ -1,0 +1,82 @@
+{% extends "tutorial101_base.html" %}
+  
+{% block title %}Add New / Edit Sensor Meta Data Record{% endblock title %}
+  
+{% block content %}
+
+<div class="col-md-12">
+    {% if ispost and errorText %}
+{{ errorText|safe }}
+{% endif %}
+    <form method="POST" class="post-form" action="{% url 'ciud_update' SensorMeta.nr %}">  
+    {% csrf_token %}  
+    <div class="container">   
+        <div class="col-12">  
+            <h3>Update Sensor Details</h3>  
+        </div> 
+ <!--       <div class="mb-3"> 
+            <label>nr:</label>  
+            {{form.nr}}
+              
+        </div>
+    -->
+        <div class="mb-3"> 
+            {{ form.model.errors }}
+        {{ form.model.label_tag }}
+            {{form.model}}  
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.hub.errors }}
+            {{ form.hub.label_tag }}
+            {{form.hub}}
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.interface.errors }}
+            {{ form.interface.label_tag }} 
+            {{ form.interface }}    
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.measurements.errors }}
+            {{ form.measurements.label_tag }}  
+            {{ form.measurements }}  
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.loc_la.errors }}
+            {{ form.loc_la.label_tag }}  
+            {{ form.loc_la }} 
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.loc_lo.errors }}
+            {{ form.loc_lo.label_tag }}  
+            {{ form.loc_lo }}  
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.loc_ro.errors }}
+            {{ form.loc_ro.label_tag }}  
+            {{ form.loc_ro }}   
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.comment.errors }}
+            {{ form.comment.label_tag }}  
+            {{ form.comment }} 
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.is_real.errors }}
+            {{ form.is_real.label_tag }}  
+            {{ form.is_real }}   
+        </div>
+
+        <div class="mb-3"> 
+            <button type="submit" class="btn btn-success btn-lg">Update</button>  
+        </div> 
+    </div>  
+    </form>  
+{% endblock content %}   

@@ -1,0 +1,63 @@
+{% extends "tutorial101_base.html" %}
+  
+{% block title %}Add New HubMeta Records{% endblock title %}
+  
+{% block content %}
+<div class="col-md-12">    
+    <form method="POST" class="post-form" action="{% url 'crud_hub_create' %}">  
+    {% csrf_token %}  
+    <div class="container">  
+        <div class="col-12">  
+        <h3>Enter Sensor Meta:</h3>  
+        </div>    
+
+        <div class="mb-3"> 
+            {{ form.model.errors }}
+            {{ form.model.label_tag }}   
+            {{ form.model }}   
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.hub.errors }}
+            {{ form.hub.label_tag }}  
+            {{ form.hub }}   
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.loc_la.errors }}
+            {{ form.loc_la.label_tag }}  
+            {{ form.loc_la }}   
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.loc_lo.errors }}
+            {{ form.loc_lo.label_tag }}  
+            {{ form.loc_lo }}   
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.loc_ro.errors }}
+            {{ form.loc_ro.label_tag }} 
+            {{ form.loc_ro }}   
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.comment.errors }}
+            {{ form.comment.label_tag }}  
+            {{ form.comment }}   
+        </div>
+
+        <div class="mb-3"> 
+            {{ form.is_real.errors }}
+            {{ form.is_real.label_tag }}   
+            {{ form.is_real }}   
+        </div>
+
+
+        <div class="mb-3"> 
+            <button type="submit" class="btn btn-primary">Submit</button>    
+        </div> 
+    </div>  
+    </form>  
+</div> 
+{% endblock content %} 
