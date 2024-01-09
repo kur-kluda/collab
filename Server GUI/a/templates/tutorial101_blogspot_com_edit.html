@@ -1,31 +1,69 @@
 {% extends "tutorial101_blogspot_com_base.html" %}
   
-{% block title %}Add New Employee Records{% endblock title %}
+{% block title %}Add New / Edit Sensor Meta Data Record{% endblock title %}
   
 {% block content %}
 <div class="col-md-12">
-    <form method="POST" class="post-form" action="/update/{{SensorMeta.id}}">  
+    {% if ispost and errorText %}
+{{ errorText|safe }}
+{% endif %}
+    <form method="POST" class="post-form" action="{% url 'ciud_update' SensorMeta.nr %}">  
     {% csrf_token %}  
     <div class="container">   
         <div class="col-12">  
             <h3>Update Details</h3>  
         </div> 
         <div class="mb-3"> 
-            <label>Employee ID:</label>  
-            <input type="text" class="form-control" name="id" id="id_id" required maxlength="20" value="{{ SensorMeta.nr }}"/>    
-        </div> 
+            <label>nr:</label>  
+            {{form.nr}}
+              
+        </div>
+
         <div class="mb-3"> 
-            <label>Name:</label>  
-            <input type="text" class="form-control" name="name" id="id_name" required maxlength="100" value="{{ employee.name }}" />  
-        </div> 
+            <label>model:</label>  
+            
+            {{form.model}}  
+        </div>
+
         <div class="mb-3"> 
-            <label>Email:</label>  
-            <input type="email" class="form-control" name="email" id="id_email" required maxlength="254" value="{{ employee.email }}" />  
-        </div> 
+            {{form.hub}}
+        </div>
+
         <div class="mb-3"> 
-            <label>Contact:</label>  
-            <input type="text" class="form-control" name="contact" id="id_contact" required maxlength="15" value="{{ employee.contact }}" />  
-        </div> 
+            <label>interface:</label>  
+            <input type="text" class="form-control" name="interface" id="id_interface" required maxlength="20" value="{{ SensorMeta.interface }}"/>    
+        </div>
+
+        <div class="mb-3"> 
+            <label>measurements:</label>  
+            <input type="text" class="form-control" name="measurements" id="id_measurements" required maxlength="20" value="{{ SensorMeta.measurements }}"/>    
+        </div>
+
+        <div class="mb-3"> 
+            <label>loc_la:</label>  
+            <input type="number" class="form-control" name="loc_la" id="id_loc_la" required maxlength="20" value="{{ SensorMeta.loc_la }}"/>    
+        </div>
+
+        <div class="mb-3"> 
+            <label>loc_lo:</label>  
+            <input type="number" class="form-control" name="loc_lo" id="id_loc_lo" required maxlength="20" value="{{ SensorMeta.loc_lo }}"/>    
+        </div>
+
+        <div class="mb-3"> 
+            <label>loc_ro:</label>  
+            <input type="number" name="loc_ro" class="form-control" step="1" required maxlength="20" value="{{ SensorMeta.loc_ro }}"/>    
+        </div>
+
+        <div class="mb-3"> 
+            <label>comment:</label>  
+            <input type="text" class="form-control" name="comment" id="id_comment" required maxlength="20" value="{{ SensorMeta.comment }}"/>    
+        </div>
+
+        <div class="mb-3"> 
+            <label>is_real:</label>  
+            <input type="checkbox" class="form-control" name="is_real" id="id_is_real" required maxlength="20" value="{{ SensorMeta.is_real }}"/>    
+        </div>
+
         <div class="mb-3"> 
             <button type="submit" class="btn btn-success btn-lg">Update</button>  
         </div> 

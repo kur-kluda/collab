@@ -15,7 +15,7 @@ class SensorMetaForm(forms.ModelForm):
 'is_real',
 ] 
         widgets = {
-            #'nr':,
+'nr':forms.NumberInput(attrs={ 'class': 'form-control' }),
 'model': forms.TextInput(attrs={ 'class': 'form-control' }),
 'hub': forms.NumberInput(attrs={ 'class': 'form-control' }),
 'interface':forms.NumberInput(attrs={ 'class': 'form-control' }),
@@ -52,13 +52,21 @@ def edit(request, nr):
     o_SensorMeta = SensorMeta.objects.get(nr=nr)  
     return render(request,'tutorial101_blogspot_com_edit.html', {'SensorMeta':o_SensorMeta})  
  
-def update(request, nr):  
-    o_SensorMeta = SensorMeta.objects.get(nr=nr)  
-    form = SensorMetaForm(request.POST, instance = o_SensorMeta)  
-    if form.is_valid():  
-        form.save()  
-        return redirect("/")  
-    return render(request, 'tutorial101_blogspot_com_edit.html', {'SensorMeta': o_SensorMeta})  
+def update(request, nr):
+    if request.method == "POST":   
+        o_SensorMeta = SensorMeta.objects.get(nr=nr)  
+        form = SensorMetaForm(request.POST, instance = o_SensorMeta)  
+    #print(form)
+        if form.is_valid():  
+            form.save()  
+            return redirect("/") 
+    else:
+         o_SensorMeta = SensorMeta.objects.get(nr=nr) 
+         form = SensorMetaForm(instance= o_SensorMeta)
+    return render(request, 'tutorial101_blogspot_com_edit.html', {'SensorMeta': o_SensorMeta,
+                                                                  'form': form,
+                                                                  "errorText": f"invalid form {form.errors}",
+                                                                  "ispost": True if request.POST else False,})  
      
 def destroy(request, nr):  
     o_SensorMeta = SensorMeta.objects.get(nr=nr)  

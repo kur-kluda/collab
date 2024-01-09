@@ -38,8 +38,9 @@ urlpatterns = [
     #path('t/<str:file_name>/', av.view_text, name='viewText'),
     #originally was AIUD (Addnew/Index/Update||Edit/Delete)
     path('ciud/', tu.index, name='index'),  
-    path('ciud/create',tu.addnew, name='addnew'),  
-    path('ciud/edit/<int:id>', tu.edit, name='edit'),  
-    path('ciud/update/<int:id>', tu.update, name='update'),  
-    path('ciud/delete/<int:id>', tu.destroy, name='destroy'),  
+    path('ciud/create',tu.addnew, name='ciud_addnew'),  
+    path('ciud/edit/<int:nr>', tu.edit, name='ciud_edit'),  
+    path('ciud/update/<int:nr>', tu.update, name='ciud_update'),  
+    path('ciud/update/<int:nr>/', tu.update, name='ciud_update'), 
+    path('ciud/delete/<int:nr>', tu.destroy, name='ciud_destroy'),  
 ]

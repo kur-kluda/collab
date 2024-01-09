@@ -1,6 +1,7 @@
 django
 #matplotlib
 #mamba install mysqlclient
+#sudo apt-get install python3-dev default-libmysqlclient-dev build-essential
 mysqlclient
 django-tables2
 django-bootstrap3

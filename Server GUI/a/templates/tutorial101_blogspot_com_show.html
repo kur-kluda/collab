@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="col-md-12">
-<span><a href="/addnew" class="btn btn-primary">Add New Record</a></span>
+<span><a href="{% url 'ciud_addnew' %}/" class="btn btn-primary">Add New Record</a></span>
 <div class="table-responsive">
 <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%">
 <thead>
@@ -36,8 +36,8 @@
 <td>{{ sm.loc_ro }}</td>
 <td>{{ sm.comment }}</td>
 <td>{{ sm.is_real }}</td>
-<td><a href="/edit/{{ sm.nr }}" class="btn btn-primary">Edit</a></td>
-<td><a href="/delete/{{ sm.nr }}" class="btn btn-danger">Delete</a></td>  
+<td><a href="{% url 'ciud_edit' sm.nr %}" class="btn btn-primary">Edit</a></td>
+<td><a href="{% url 'ciud_destroy' sm.nr %}" class="btn btn-danger">Delete</a></td>  
 </tr>
 {% endfor %} 
 </tbody>
