@@ -58,7 +58,7 @@ def gen_recs(n: int):
 "ATmega4809",
 "EFR32",
 "STM32WB",
-"Raspberry Pi 3"
+"Raspberry Pi 3",
 "Raspberry Pi 4",
 "BeagleBone Black Wireless",
 "Odroid-C4",
