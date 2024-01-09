@@ -1,4 +1,5 @@
-from django import forms  
+from django import forms
+from django.urls import reverse  
 from a.models import SensorMeta  
 class SensorMetaForm(forms.ModelForm):  
     class Meta:  
@@ -50,7 +51,7 @@ def addnew(request):
         if form.is_valid():  
             try:  
                 form.save()  
-                return redirect('/')  
+                return redirect(reverse('ciud_index')) 
             except:  
                 pass
     else:  
@@ -71,7 +72,7 @@ def update(request, nr):
         form = SensorMetaForm(request.POST, instance = o_SensorMeta)  
         if form.is_valid():  
             form.save()  
-            return redirect("/") 
+            return redirect(reverse('ciud_index')) 
     else:
          o_SensorMeta = SensorMeta.objects.get(nr=nr) 
          form = SensorMetaForm(instance= o_SensorMeta)
@@ -83,4 +84,4 @@ def update(request, nr):
 def destroy(request, nr):  
     o_SensorMeta = SensorMeta.objects.get(nr=nr)  
     o_SensorMeta.delete()  
-    return redirect("/")  
+    return redirect(reverse('ciud_index'))  

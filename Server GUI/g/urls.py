@@ -37,7 +37,7 @@ urlpatterns = [
     #path('1/a.txt', redirect(to="/static/e.txt"))
     #path('t/<str:file_name>/', av.view_text, name='viewText'),
     #originally was AIUD (Addnew/Index/Update||Edit/Delete)
-    path('ciud/', tu.index, name='index'),  
+    path('ciud/', tu.index, name='ciud_index'),  
     path('ciud/create',tu.addnew, name='ciud_addnew'),  
     path('ciud/edit/<int:nr>', tu.edit, name='ciud_edit'),  
     path('ciud/update/<int:nr>', tu.update, name='ciud_update'),  
