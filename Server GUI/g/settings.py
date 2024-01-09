@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'v.fakevalidator',
     'a',
-    'django_tables2'
+    'django_tables2',
+    'bootstrap3',
     #'v.templatetags.metadata'
 ]
 
