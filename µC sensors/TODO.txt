@@ -1,0 +1,2 @@
+mby take look at that struct?
+try to get rid of hungs and not retrying when too long time has passed..

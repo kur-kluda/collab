@@ -1,0 +1,2 @@
+Integrēt kā servisu ar GUI uzstādāmiem parametriem arch un dzēš
+Integrēt kā pogu kur var ārpus parametriem archive now.

@@ -1,7 +1,8 @@
-from django.urls import path
-
-from . import views
+from django.urls import path, re_path
+from . import meklet_sens as s
+from . import grafiki
 
 urlpatterns = [
-    path('', views.dbplot_date, name='index'),
+    #path('<str:renderer>/', s.search_sensors),
+    re_path(r'(?P<renderer>.*)', s.search_sensors),
 ]

@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from . import secret
+#from . import dbrouter
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,6 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'v.fakevalidator',
+    'a'
+    #'v.templatetags.metadata'
 ]
 
 MIDDLEWARE = [
@@ -72,7 +77,12 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries':{
+            'metadata': 'v.templatetags.metadata',
+            'list2str': 'v.templatetags.list2str',
+        }
         },
+
     },
 ]
 
@@ -86,15 +96,29 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    },
+    'meta-db': secret.db_setting()
 }
 
 
+DATABASE_ROUTERS = [
+    'g.dbrouter.DbRouter'
+]
+
+DATABASE_APPS_MAPPING : {
+    'a': 'meta-db',
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
+AUTH_EMAIL_VALIDATORS = [
+    {'NAME': 'v.fakevalidator.FakeValidator'},
+]
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
+    {'NAME': 'v.fakevalidator.FakeValidator'},
+]
+"""{
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
@@ -105,10 +129,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+    },"""
 
-
+#print(AUTH_PASSWORD_VALIDATORS[0]["NAME"])
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -124,7 +147,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'cdn/'
 
 #STATICFILES_DIRS = [
 #    ("main", os.path.join(BASE_DIR, "static")),

@@ -2,3 +2,5 @@
 __pycache__
 /Server API endpoints/db.yaml
 /µC camera/utils/data1.py
+Server GUI/db.sqlite3
+/Server GUI/g/secret.py

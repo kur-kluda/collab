@@ -1,0 +1,16 @@
+{% load list2str %}
+<table width="100%" height="100%">
+    <tbody><tr>
+        <th width="22%"></th>
+        <th width="66%"></th>
+        <th width="22%"></th>
+    </tr>
+    {% for i in all_sensors %}
+    <tr>
+        <td>{{i.model}}</td>
+        <td>{{i.measurements|list2str}}</td>
+        <td>{{i.hub_ids|list2str}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
