@@ -20,7 +20,7 @@ from a import grafiki as g
 from a import config as c
 from a import bluffer as bl
 from a import meklet_tables2 as t2
-
+from a import tutorial101_blogspot_com as tu
 
 urlpatterns = [
     path('', g.render_templ_grafs, name='dbGplotApp'),
@@ -36,4 +36,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #path('1/a.txt', redirect(to="/static/e.txt"))
     #path('t/<str:file_name>/', av.view_text, name='viewText'),
+    #originally was AIUD (Addnew/Index/Update||Edit/Delete)
+    path('ciud/', tu.index, name='index'),  
+    path('ciud/create',tu.addnew, name='addnew'),  
+    path('ciud/edit/<int:id>', tu.edit, name='edit'),  
+    path('ciud/update/<int:id>', tu.update, name='update'),  
+    path('ciud/delete/<int:id>', tu.destroy, name='destroy'),  
 ]

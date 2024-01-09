@@ -1,0 +1,47 @@
+{% extends "tutorial101_blogspot_com_base.html" %}
+
+{% block title %}Sensor Meta Data Records{% endblock title %}
+
+{% block content %}
+<div class="col-md-12">
+<span><a href="/addnew" class="btn btn-primary">Add New Record</a></span>
+<div class="table-responsive">
+<table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%">
+<thead>
+<th><input type="checkbox" id="checkall" /></th>
+<th>nr</th>
+<th>model</th>
+<th>hub</th>
+<th>interface</th>
+<th>measurements</th>
+<th>loc_la</th>
+<th>loc_lo</th>
+<th>loc_ro</th>
+<th>comment</th>
+<th>is_real</th>
+<th>Edit</th>
+<th>Delete</th>
+</thead>
+<tbody>
+{% for sm in SensorMetas %}
+<tr>
+<td><input type="checkbox" class="checkthis" /></td>
+<td>{{ sm.nr }}</td>
+<td>{{ sm.model }}</td>
+<td>{{ sm.hub.model }}</td>
+<td>{{ sm.interface.interface }}</td>
+<td>{{ sm.measurements }}</td>
+<td>{{ sm.loc_la }}</td>
+<td>{{ sm.loc_lo }}</td>
+<td>{{ sm.loc_ro }}</td>
+<td>{{ sm.comment }}</td>
+<td>{{ sm.is_real }}</td>
+<td><a href="/edit/{{ sm.nr }}" class="btn btn-primary">Edit</a></td>
+<td><a href="/delete/{{ sm.nr }}" class="btn btn-danger">Delete</a></td>  
+</tr>
+{% endfor %} 
+</tbody>
+</table>
+</div>
+</div>
+{% endblock content %}
