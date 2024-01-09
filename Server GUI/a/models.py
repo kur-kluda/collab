@@ -12,7 +12,10 @@ class HubMeta(m.Model):
     hub = m.ForeignKey('self', null=True, blank=True, on_delete=m.SET_NULL)
     is_real = m.BooleanField(default=False)
     def __str__(s):
-        return f"{"_F_ " if not s.is_real else "" }hub: [{s.nr}] {s.model}; r: ({s.loc_ro if s.loc_ro else "???"}){"; parent: [{s.hub.nr}]" if s.hub else ""}"
+        wsgi_error = f"; parent: [{s.hub.nr}]" if s.hub else ""
+        wsgi_err_f_string_expecting = s.loc_ro if s.loc_ro else "???"
+        wsgi_wtf = "_F_ " if not s.is_real else ""
+        return f"{wsgi_wtf }hub: [{s.nr}] {s.model}; r: ({wsgi_err_f_string_expecting}){wsgi_error}"
 
 class Connection_InterfaceMeta(m.Model):
     nr = m.AutoField(primary_key=True, default=None)
@@ -43,7 +46,10 @@ class SensorMeta(m.Model):
     comment = m.TextField(null=True)
     is_real = m.BooleanField(default=False)
     def __str__(s):
-        return f"{"_F_ " if not s.is_real else "" }sens: [{s.nr}] {s.model}; r: ({s.loc_ro if s.loc_ro else "???"}); hub: [{s.hub.nr}]{" at {s.interface.interface}" if s.interface else ""}"
+        wsgi_wtf = "_F_ " if not s.is_real else ""
+        wsgi_cant_bear_tenary = s.loc_ro if s.loc_ro else "???"
+        wsgi_oh_no = f" at {s.interface.interface}" if s.interface else ""
+        return f"{wsgi_wtf }sens: [{s.nr}] {s.model}; r: ({wsgi_cant_bear_tenary}); hub: [{s.hub.nr}]{wsgi_oh_no}"
 
 class MeasureMeta(m.Model):
     nr = m.AutoField(primary_key=True, default=None)
