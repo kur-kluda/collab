@@ -3,8 +3,9 @@
 {% block title %}Sensor Meta Data Records{% endblock title %}
 
 {% block content %}
+
 {% if prevMSG %}
-prevMSG|safe
+{{prevMSG|safe}}
 {% endif %}
 <div class="col-md-12">
 <span><a href="{% url 'ciud_create' %}" class="btn btn-primary">Add New Sensor Meta</a></span>

@@ -22,6 +22,7 @@ from a import bluffer as bl
 from a import meklet_tables2 as t2
 from a import tutorial101_ciud_sensors as tu
 from a import tutorial101_crud_hubs as ch
+from a import tutorial101_clud_measure as cl
 
 urlpatterns = [
     path('', g.render_templ_grafs, name='dbGplotApp'),
@@ -48,4 +49,9 @@ urlpatterns = [
     path('crud/create/',ch.create, name='crud_hub_create'),      
     path('crud/update/<int:nr>/', ch.update, name='crud_hub_update'), 
     path('crud/delete/<int:nr>', ch.destroy, name='crud_hub_destroy'),   
+# hub CLUD ([kļūd])
+    path('clud/', cl.index, name='clud_index'),  
+    path('clud/create/',cl.create, name='clud_create'),      
+    path('clud/update/<int:nr>/', cl.update, name='clud_update'), 
+    path('clud/delete/<int:nr>', cl.destroy, name='clud_destroy'), 
 ]
