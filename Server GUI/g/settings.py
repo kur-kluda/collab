@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'v.fakevalidator',
-    'a'
+    'a',
+    'django_tables2'
     #'v.templatetags.metadata'
 ]
 

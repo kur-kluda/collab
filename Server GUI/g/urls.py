@@ -19,11 +19,13 @@ from django.urls import path, include
 from a import grafiki as g
 from a import config as c
 from a import bluffer as bl
+from a import meklet_tables2 as t2
 
 
 urlpatterns = [
     path('', g.render_templ_grafs, name='dbGplotApp'),
     path('bl', bl.render_bluff, name='bluffApp'),
+    path('t', t2.sensor_list, name='t2App'),
     path('s', include("a.urls")),
     path('ad', c.config, name='configApp'),
     path('g/', g.render_templ_grafs, name='dbGplotApp'),
