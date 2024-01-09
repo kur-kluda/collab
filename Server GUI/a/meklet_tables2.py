@@ -3,7 +3,7 @@ from a import models as m
 from django.shortcuts import render
 
 def sensor_list(request):
-    table = t.SensorTable(m.SensorMeta.objects.all()[:30])
+    table = t.SensorTable(m.SensorMeta.objects.all())
 
     return render(request, "meklet_tables2_list.html", {
         "table": table
