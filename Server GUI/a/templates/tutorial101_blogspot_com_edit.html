@@ -3,6 +3,7 @@
 {% block title %}Add New / Edit Sensor Meta Data Record{% endblock title %}
   
 {% block content %}
+
 <div class="col-md-12">
     {% if ispost and errorText %}
 {{ errorText|safe }}
@@ -13,55 +14,64 @@
         <div class="col-12">  
             <h3>Update Details</h3>  
         </div> 
-        <div class="mb-3"> 
+ <!--       <div class="mb-3"> 
             <label>nr:</label>  
             {{form.nr}}
               
         </div>
-
+    -->
         <div class="mb-3"> 
-            <label>model:</label>  
-            
+            {{ form.model.errors }}
+        {{ form.model.label_tag }}
             {{form.model}}  
         </div>
 
         <div class="mb-3"> 
+            {{ form.hub.errors }}
+            {{ form.hub.label_tag }}
             {{form.hub}}
         </div>
 
         <div class="mb-3"> 
-            <label>interface:</label>  
-            <input type="text" class="form-control" name="interface" id="id_interface" required maxlength="20" value="{{ SensorMeta.interface }}"/>    
+            {{ form.interface.errors }}
+            {{ form.interface.label_tag }} 
+            {{ form.interface }}    
         </div>
 
         <div class="mb-3"> 
-            <label>measurements:</label>  
-            <input type="text" class="form-control" name="measurements" id="id_measurements" required maxlength="20" value="{{ SensorMeta.measurements }}"/>    
+            {{ form.measurements.errors }}
+            {{ form.measurements.label_tag }}  
+            {{ form.measurements }}  
         </div>
 
         <div class="mb-3"> 
-            <label>loc_la:</label>  
-            <input type="number" class="form-control" name="loc_la" id="id_loc_la" required maxlength="20" value="{{ SensorMeta.loc_la }}"/>    
+            {{ form.loc_la.errors }}
+            {{ form.loc_la.label_tag }}  
+            {{ form.loc_la }} 
         </div>
 
         <div class="mb-3"> 
-            <label>loc_lo:</label>  
-            <input type="number" class="form-control" name="loc_lo" id="id_loc_lo" required maxlength="20" value="{{ SensorMeta.loc_lo }}"/>    
+            {{ form.loc_lo.errors }}
+            {{ form.loc_lo.label_tag }}  
+            {{ form.loc_lo }}  
         </div>
 
         <div class="mb-3"> 
-            <label>loc_ro:</label>  
-            <input type="number" name="loc_ro" class="form-control" step="1" required maxlength="20" value="{{ SensorMeta.loc_ro }}"/>    
+            {{ form.loc_ro.errors }}
+            {{ form.loc_ro.label_tag }}  
+            {{ form.loc_ro }}   
         </div>
 
         <div class="mb-3"> 
-            <label>comment:</label>  
-            <input type="text" class="form-control" name="comment" id="id_comment" required maxlength="20" value="{{ SensorMeta.comment }}"/>    
+            {{ form.comment.errors }}
+            {{ form.comment.label_tag }}  
+            {{ form.comment }} 
         </div>
 
         <div class="mb-3"> 
-            <label>is_real:</label>  
-            <input type="checkbox" class="form-control" name="is_real" id="id_is_real" required maxlength="20" value="{{ SensorMeta.is_real }}"/>    
+            {{ form.is_real.errors }}
+            {{ form.is_real.label_tag }}  
+            {{ form.is_real }}   
         </div>
 
         <div class="mb-3"> 

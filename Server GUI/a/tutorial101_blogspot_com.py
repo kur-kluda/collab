@@ -14,6 +14,19 @@ class SensorMetaForm(forms.ModelForm):
 'comment',
 'is_real',
 ] 
+        labels={
+#'nr': 'nr',
+'model': 'model',
+'hub': 'hub',
+'interface': 'interface',
+'measurements': 'measurements',
+'loc_la': 'loc_la',
+'loc_lo': 'loc_lo',
+'loc_ro': 'loc_ro',
+'comment': 'comment',
+'is_real': 'is_real',
+        }
+"""
         widgets = {
 'nr':forms.NumberInput(attrs={ 'class': 'form-control' }),
 'model': forms.TextInput(attrs={ 'class': 'form-control' }),
@@ -26,7 +39,7 @@ class SensorMetaForm(forms.ModelForm):
 'comment':forms.TextInput(attrs={ 'class': 'form-control' }),
 'is_real':forms.CheckboxInput(attrs={ 'class': 'form-control' }),
       }
-        
+"""        
 
 from django.shortcuts import render, redirect   
  
@@ -42,11 +55,11 @@ def addnew(request):
                 pass
     else:  
         form = SensorMetaForm()  
-    return render(request,'tutorial101_blogspot_com_index.html',{'form':form})  
+    return render(request,'tutorial101_blogspot_com_new.html',{'form':form})  
  
 def index(request):  
     o_SensorMetas = SensorMeta.objects.all()  
-    return render(request,"tutorial101_blogspot_com_show.html",{'SensorMetas':o_SensorMetas})  
+    return render(request,"tutorial101_blogspot_com_list.html",{'SensorMetas':o_SensorMetas})  
  
 def edit(request, nr):  
     o_SensorMeta = SensorMeta.objects.get(nr=nr)  
@@ -56,7 +69,6 @@ def update(request, nr):
     if request.method == "POST":   
         o_SensorMeta = SensorMeta.objects.get(nr=nr)  
         form = SensorMetaForm(request.POST, instance = o_SensorMeta)  
-    #print(form)
         if form.is_valid():  
             form.save()  
             return redirect("/") 
