@@ -1,4 +1,4 @@
-﻿## <center> Universitātes telpu gaisa kvalitātes pārraudzības sistēma </center>
+﻿# <center> Universitātes telpu gaisa kvalitātes pārraudzības sistēma </center>
 
 ```mermaid
 graph LR
