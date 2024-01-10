@@ -1,11 +1,12 @@
-import gzip
-from io import StringIO, BytesIO
+import gzip                         #lasa un raksta gzip formāta failus, automātiski saspiežot vai atspiežot datus
+from io import StringIO, BytesIO    #metodes, kas manipulē ar virkņu (StringIO) un baitu (BytesIO) datiem atmiņā
 import data1
 
 # https://stackoverflow.com/q/69714533/435878
-# function author: Fumanchu3000
+# funkcijas autors: Fumanchu3000
 # https://stackoverflow.com/users/8245737/fumanchu3000
-# no changes where made.
+# nekādas izmaiņas netika veiktas.
+
 def string_to_bytes(input_str: str) -> bytes:
     """
         Read the given string, encode it in utf-8, gzip compress
@@ -40,9 +41,10 @@ def bytes_to_4string(in_by: bytes) -> str:
     return "".join(outstr)
 
 # https://stackoverflow.com/q/69714533/435878
-# function author: Fumanchu3000
+# funkcijas autors: Fumanchu3000
 # https://stackoverflow.com/users/8245737/fumanchu3000
-# no changes where made.
+# nekādas izmaiņas netika veiktas.
+
 def bytes_to_string(input_bytes: bytes) -> str:
     """
         Decompress the given byte array (which must be valid
