@@ -1,18 +1,18 @@
 #rRrrrrrrrrrrrrrrrrrrrrrr
-from aiohttp import web
-from aiohttp import MultipartWriter
-import aiohttp
-import asyncio
-import requests
-import sys
-if(sys.platform.startswith('win')):
+from aiohttp import web              #tīmekļa klienta un servera izveide, izmantojot Python un asyncio.
+from aiohttp import MultipartWriter  #izmanto, lai apvienotu jaunas ķermeņa daļas vienā plūsmā
+import aiohttp                      
+import asyncio                        #ļauj rakstīt vienlaicīgu kodu, izmantojot asinhrono/gaidīšanas sintaksi
+import requests                       #HTTP pieprasījumu veikšanai
+import sys                            #nodrošina piekļuvi sistēmai specifiskiem parametriem un funkcijām
+if(sys.platform.startswith('win')):   #veic if else ciklu, skatoties vai sys.platform.startswith('win'), ja jā tad import broke_utils, else broke_utils_linux
     import broke_utils as bu
 else:
     import broke_utils_linux as bu
 from datetime import datetime
 #from aiojobs.aiohttp import setup, spawn
 
-__LAST_UPDATE__ = datetime.now()
+__LAST_UPDATE__ = datetime.now()     #iestata globālus mainīgos
 __LIBRARY_SIZE__ = 120
 __LIBRARY_THREAD_SAFE__ = []
 __LIBRARY_STAMPS_THREAD_SAFE__ = []
@@ -23,23 +23,23 @@ __DBGMSG__ = False
 __DBG_SAVE_IMAGES__ = False
 runtask = None
 
-async def omgnotatask(app=None):
+async def omgnotatask(app=None):  #definē funkciju, kas veic runtask ciklu
     global runtask
     runtask = asyncio.create_task(singletonrun())
     await asyncio.sleep(0)
 
-async def singletonrun():
+async def singletonrun():   #definē funkciju, definējot HOST, portu
     global __STM__, __IMG__
     #s = 'http://c.jtag.me:81/stream'
     HOST="jtag.me"
     PORT=1075
     reader, writer = await asyncio.open_connection(HOST, PORT)
-    if(sys.platform.startswith('win')):
+    if(sys.platform.startswith('win')):                                #veic if else ciklu, skatoties vai ir sys.platform.startswith('win')
         request = f"GET /stream HTTP/1.1\r\nHost: {HOST}\r\n\r\n"
     else:
         request = f"GET /stream HTTP/1.1\nHost: {HOST}\n\n"
     writer.write(request.encode())
-    await writer.drain()
+    await writer.drain()                     #uz laiku aptur izpildi, līdz tiek iztukšots rakstīšanas buferis, drain()automātiski aptur izpildi, līdz atkal būs droši sākt rakstīt buferī.
     #headerris>>
     #hdlen = len(b'HTTP/1.1 200 OK\r\nContent-Type: multipart/x-mixed-replace;boundary=123456789000000000000987654321\r\nTransfer-Encoding: chunked\r\n')
     #response = await reader.read(hdlen)
@@ -60,12 +60,12 @@ async def singletonrun():
         print("TODOO: handle cont type not here exception")
     seper = okstr.split("=")[1]
 
-    more_headers = [
+    more_headers = [           # more_headers sastāv no trīs virknes elementiem, katra no šīm virknēm apzīmē HTTP galvenes lauka nosaukumu
         "Transfer-Encoding",
         "Access-Control-Allow-Origin",
         "X-Framerate"
     ]
-    for h in more_headers:
+    for h in more_headers:     #cikls, gaida kamēr nav konkŗetais mainīgais okstr      
         okstr = await bu.readUntilNewLine(reader)  
         if(not okstr.startswith(h)):
             print(f"TODOO: handle {h} not here exception")
