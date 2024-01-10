@@ -26,7 +26,7 @@ from a import tutorial101_clud_measure as cl
 #from django.views.generic.base import RedirectView
 from django.conf.urls.static import static
 from django.conf import settings
-
+# tīmekļa šabloni aprakstiti ---turpininājums komentāriem.
 urlpatterns = [
     #re_path(r'^favicon\.ico$',RedirectView.as_view(url='/static/favicon/favicon.ico')),
     path('', g.render_templ_grafs, name='dbGplotApp'),
