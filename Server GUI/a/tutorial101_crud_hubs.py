@@ -27,17 +27,23 @@ class HubMetaForm(forms.ModelForm):
 from django.shortcuts import render, redirect   
   
 def create(request):  
+    errorText=None
     if request.method == "POST":  
         form = HubMetaForm(request.POST)  
         if form.is_valid():  
             try:  
                 form.save()  
                 return redirect(reverse('crud_hub_index')) 
-            except:  
+            except Exception as ex: 
+                errorText= f"Exception: {ex}" 
                 pass
+        else:
+            errorText= f"invalid form {form.errors}"
     else:  
         form = HubMetaForm()  
-    return render(request,'tutorial101_crud_hub_create.html',{'form':form})  
+    return render(request,'tutorial101_crud_hub_create.html',{'form':form,
+                                                          "errorText": errorText,
+                                                           "ispost": True if request.POST else False,})  
  
 def index(request):  
     o_HubMetas = HubMeta.objects.all()  

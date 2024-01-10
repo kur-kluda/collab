@@ -26,8 +26,8 @@
 <td>{{ sm.get_measurement_display }}</td>
 <td>{{ sm.range_low }}</td>
 <td>{{ sm.range_high }}</td>
-<td><a href="{% url 'clud_update' sm.nr %}" class="btn btn-primary">Edit</a></td>
-<td><a href="{% url 'clud_destroy' sm.nr %}" class="btn btn-danger">Delete</a></td>  
+<td><a href="{% url 'clud_update' sm.measurement sm.range_low sm.range_high %}" class="btn btn-primary">Edit</a></td>
+<td><a href="{% url 'clud_destroy' sm.measurement sm.range_low sm.range_high %}" class="btn btn-danger">Delete</a></td>  
 </tr>
 {% endfor %} 
 </tbody>

@@ -45,6 +45,7 @@ class SensorMetaForm(forms.ModelForm):
 from django.shortcuts import render, redirect   
  
 def create(request):  
+    errorText=None
     if request.method == "POST":  
         form = SensorMetaForm(request.POST)  
         if form.is_valid():  
@@ -53,11 +54,16 @@ def create(request):
                 return redirect(reverse('ciud_index'),
                                 success=f"<p style='font-size: larger;'>Add new Sensor Meta status: <span style='color:green'>OK</span> With id {form.nr}</p>"
                                 ) 
-            except:  
+            except Exception as ex:  
+                errorText= f"Exception: {ex}"
                 pass
+        else:
+            errorText= f"invalid form {form.errors}"
     else:  
         form = SensorMetaForm()  
-    return render(request,'tutorial101_ciud_create.html',{'form':form})  
+    return render(request,'tutorial101_ciud_create.html',{'form':form,
+                                                          "errorText": errorText,
+                                                           "ispost": True if request.POST else False,})  
  
 def index(request, **kwargs):  
     syccess = kwargs.get("success")

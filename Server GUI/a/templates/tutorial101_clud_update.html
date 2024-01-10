@@ -8,7 +8,7 @@
     {% if ispost and errorText %}
 {{ errorText|safe }}
 {% endif %}
-    <form method="POST" class="post-form" action="{% url 'clud_update' MeasureMeta.nr %}">  
+    <form method="POST" class="post-form" action="{% url 'clud_update' MeasureMeta.measurement MeasureMeta.range_low MeasureMeta.range_high %}">  
     {% csrf_token %}  
     <div class="container">   
         <div class="col-12">  

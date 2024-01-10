@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 #from a import views as av
 from a import grafiki as g
 from a import config as c
@@ -52,6 +52,6 @@ urlpatterns = [
 # hub CLUD ([kļūd])
     path('clud/', cl.index, name='clud_index'),  
     path('clud/create/',cl.create, name='clud_create'),      
-    path('clud/update/<int:nr>/', cl.update, name='clud_update'), 
-    path('clud/delete/<int:nr>', cl.destroy, name='clud_destroy'), 
+    re_path('^clud/update/(?P<measurement>[^/]+)/(?P<range_low>[+-]?\d+\.\d+)/(?P<range_high>[+-]?\d+\.\d+)/$', cl.update, name='clud_update'), 
+    re_path('^clud/update/(?P<measurement>[^/]+)/(?P<range_low>[+-]?\d+\.\d+)/(?P<range_high>[+-]?\d+\.\d+)/$', cl.destroy, name='clud_destroy'), 
 ]
