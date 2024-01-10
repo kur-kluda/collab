@@ -24,9 +24,9 @@ def create(request):
         form = MeasureMetaForm(request.POST)  
         if form.is_valid():  
             try:  
-                form.save()  
+                new_msr = form.save()  
                 return index(request=request,
-                                success=f"<p style='font-size: larger;'>Add new Measure Meta status: <span style='color:green'>OK</span> .:. {request.POST['measurement']} .:. {request.POST['range_low']} : {request.POST['range_high']}</p>")
+                                success=f"<p style='font-size: larger;'>Add new Measure Meta status: <span style='color:green'>OK</span> .:. {new_msr.get_measurement_display()} .:. {new_msr.range_low} : {new_msr.range_high}</p>")
                 return redirect(reverse('clud_index'),
                                 success=f"<p style='font-size: larger;'>Add new Measure Meta status: <span style='color:green'>OK</span> With {request.POST['measurement']} .:. {request.POST['range_low']} : {request.POST['range_high']}</p>"
                                 ) 

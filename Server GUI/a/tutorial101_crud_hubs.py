@@ -13,6 +13,7 @@ class HubMetaForm(forms.ModelForm):
 'comment',
 'is_real',
 ] 
+       # exclude=["nr"]
         labels={
 #'nr': 'nr',
 'model': 'model',
@@ -32,9 +33,9 @@ def create(request):
         form = HubMetaForm(request.POST)  
         if form.is_valid():  
             try:  
-                form.save()  
+                newhub = form.save()  
                 return index(request=request,
-                                success=f"<p style='font-size: larger;'>Add new Hub Meta status: <span style='color:green'>OK</span> With id {request.POST['nr']}</p>")
+                                success=f"<p style='font-size: larger;'>Add new Hub Meta status: <span style='color:green'>OK</span> With id {newhub.nr}</p>")
                 return redirect(reverse('crud_hub_index'),
                                 success=f"<p style='font-size: larger;'>Add new Hub Meta status: <span style='color:green'>OK</span> With id {request.POST['nr']}</p>") 
             except Exception as ex: 

@@ -50,9 +50,9 @@ def create(request):
         form = SensorMetaForm(request.POST)  
         if form.is_valid():  
             try:  
-                form.save()  
+                new_sens = form.save()  
                 return index(request=request,
-                             success=f"<p style='font-size: larger;'>Add new Sensor Meta status: <span style='color:green'>OK</span> With id {request.POST['nr']}</p>")
+                             success=f"<p style='font-size: larger;'>Add new Sensor Meta status: <span style='color:green'>OK</span> With id {new_sens.nr}</p>")
                 return redirect(reverse('ciud_index'),
                                 success=f"<p style='font-size: larger;'>Add new Sensor Meta status: <span style='color:green'>OK</span> With id {request.POST['nr']}</p>"
                                 ) 
