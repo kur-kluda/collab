@@ -23,8 +23,12 @@ from a import meklet_tables2 as t2
 from a import tutorial101_ciud_sensors as tu
 from a import tutorial101_crud_hubs as ch
 from a import tutorial101_clud_measure as cl
+#from django.views.generic.base import RedirectView
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
+    #re_path(r'^favicon\.ico$',RedirectView.as_view(url='/static/favicon/favicon.ico')),
     path('', g.render_templ_grafs, name='dbGplotApp'),
     path('bl', bl.render_bluff, name='bluffApp'),
     path('t', t2.sensor_list, name='t2App'),
@@ -53,6 +57,6 @@ urlpatterns = [
     path('clud/', cl.index, name='clud_index'),  
     #path('clud/', cl.index, name='clud_index', kwargs={"success": False}), 
     path('clud/create/',cl.create, name='clud_create'),      
-    re_path('^clud/update/(?P<measurement>[^/]+)/(?P<range_low>[\+-]?\d+\.\d+)/(?P<range_high>[\+-]?\d+\.\d+)/(?P<range_step>[\+]?\d+\.\d+)/$', cl.update, name='clud_update'), 
-    re_path('^clud/delete/(?P<measurement>[^/]+)/(?P<range_low>[\+-]?\d+\.\d+)/(?P<range_high>[\+-]?\d+\.\d+)/(?P<range_step>[\+]?\d+\.\d+)/$', cl.destroy, name='clud_destroy'), 
-]
+    re_path(r'^clud/update/(?P<measurement>[^/]+)/(?P<range_low>[\+-]?\d+\.\d+)/(?P<range_high>[\+-]?\d+\.\d+)/(?P<range_step>[\+]?\d+\.\d+)/$', cl.update, name='clud_update'), 
+    re_path(r'^clud/delete/(?P<measurement>[^/]+)/(?P<range_low>[\+-]?\d+\.\d+)/(?P<range_high>[\+-]?\d+\.\d+)/(?P<range_step>[\+]?\d+\.\d+)/$', cl.destroy, name='clud_destroy'), 
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
