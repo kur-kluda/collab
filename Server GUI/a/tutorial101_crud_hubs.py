@@ -10,6 +10,7 @@ class HubMetaForm(forms.ModelForm):
 'loc_la',
 'loc_lo',
 'loc_ro',
+'update_interval',
 'comment',
 'is_real',
 ] 

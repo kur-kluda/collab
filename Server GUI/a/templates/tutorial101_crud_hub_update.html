@@ -51,6 +51,17 @@
         </div>
 
         <div class="mb-3"> 
+            {{ form.update_interval.errors }}
+            {{ form.update_interval.label_tag }}  
+            <input 
+            class="custom-range" 
+            name="measure_interval_slider"
+            type="range" value="1" min="1" max="3600"
+            id="slii"  oninput="this.nextElementSibling.value = this.value">
+            {{ form.update_interval }}   
+        </div>
+
+        <div class="mb-3"> 
             {{ form.comment.errors }}
             {{ form.comment.label_tag }}  
             {{ form.comment }} 

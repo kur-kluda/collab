@@ -10,6 +10,7 @@ class HubMeta(m.Model):
     loc_ro = m.SmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(999),])
     comment = m.TextField(null=True)
     hub = m.ForeignKey('self', null=True, blank=True, on_delete=m.SET_NULL)
+    update_interval = m.SmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(3600),], default=1)
     is_real = m.BooleanField(default=False)
     def __str__(s):
         wsgi_error = f"; parent: [{s.hub.nr}]" if s.hub else ""
@@ -40,6 +41,7 @@ class SensorMeta(m.Model):
     hub = m.ForeignKey(HubMeta, on_delete=m.CASCADE)
     interface = m.ForeignKey(Connection_InterfaceMeta, null=True, on_delete=m.SET_NULL)
     measurements = m.ManyToManyField('MeasureMeta')
+    update_interval = m.SmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(3600),], default=1)
     loc_la = m.FloatField(validators=[MinValueValidator(-90.0), MaxValueValidator(90.0),])
     loc_lo = m.FloatField(validators=[MinValueValidator(-180.0), MaxValueValidator(180.0),])
     loc_ro = m.SmallIntegerField( validators=[MinValueValidator(1), MaxValueValidator(999),])

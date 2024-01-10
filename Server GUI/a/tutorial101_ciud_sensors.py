@@ -9,6 +9,7 @@ class SensorMetaForm(forms.ModelForm):
 'hub',
 'interface',
 'measurements',
+'update_interval',
 'loc_la',
 'loc_lo',
 'loc_ro',
