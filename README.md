@@ -1,11 +1,21 @@
 # collab
 Group collab project
-# [Staging server](https://dj.jtag.me/)
+# [Grafiki realtime](https://dj.jtag.me/)
 
-# [configure gui](https://dj.jtag.me/ad)
+# [Mērījumu meta](https://dj.jtag.me/clud/)
 
+# [Sensoru meta](https://dj.jtag.me/ciud/)
 
+# [Hubu meta](https://dj.jtag.me/crud/)
 
+---
+# [0 mēģinājums bootstrap](https://dj.jtag.me/s)
+# [1. mēģinājums lēni strādā CRUD](https://dj.jtag.me/t)
+# [2. mēģinājums lēni strādā CRUD](https://dj.jtag.me/t/)
+# [more config](https://dj.jtag.me/ad)
+
+## [configure gui fake](https://dj.jtag.me/ad)
+# [configure grefina](http://apa_dumb/)
 
 \
 \
