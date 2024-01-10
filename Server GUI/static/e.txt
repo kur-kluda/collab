@@ -1,0 +1,40 @@
+sensoru - gaidam piegādi no Grabja apskatīsies krājumos (un mby µC? pic nan too vai pi 8gb?)
+"padarboties ar to raspberry pi"
+
+sensors wifi (tātad w vai tomēr pi)
+
+sūta serverim [config] intervālos "datu apmaiņas biežums"
+
+pa vidu starp webserveri un senoru(iem) - µC/µCtīkls
+ievāc asap - sūta serverim [config] intervālos -> retry?
+
+
+
+
+salīdzina ar prasībām public telpā (vai varam to ko .md līkni?? "mhm")
+
+dashboard = "rādītāju panelis"
+
+-------------------------------------"virs elementārākā":
+vēsturisko datu attēlošana (matplotlib ar redirektu kā /1/)
+
+web -> glabā db
+bet [config] ilgākus arhivē
+vēl [config] ilgākus dzēš
+
+"kad to sensoru konfigurējam varēt norādīt, ka 1mēn karstā atmiņā, 1g arhīvā >1g neglabā"
+
+"datu sadalījums karstajos un arhivētajos"
+
+----------------------------"dikti maz"-------------------------
+filtrēt/meklēt sensorus atbilstoši atrašanās vietai
+
+
+----------------------c++
+optionāli - piesaista telpu plānam "fakultātes leņķīti, pateikt sensori šeit" Ļ labi ja būtu,
+nav traģiski ja ne. Varat uzreiz aizstāt ar šo grafisko attēlojumu..
+
+Ir jau pavisam smalkie VR -3D mājas vizualizēt *CAD risinājumi?? - kāds var papētīt. Implementācijas ziņā varētu nebūt triviāls uzdevums. 
+Pierakstu kā pavisam konceptuālu ideju.
+
+karstā relāciju, arhivēšanai var padomāt - tur var daudz ko citu darīt šinī ziņā (lol ***stream + mapju koks mby un miers gn jau)
