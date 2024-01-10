@@ -62,8 +62,13 @@ async def configurator(r, client_socket, client_address, dheader):
         varname = relhref[1].split('?')
         if(len(varname)<2):
              if(relhref[1].find("favicon.ico")>-1):
-                 #TODO print favicon//redirect??
-                 client_socket.send("403 FORBIDDEN\n".encode())
+                favicon_path = "favicon.ico"
+                response = 'HTTP/1.1 200 OK\n'
+                with open(f"{favicon_path}", "rb") as f:
+                    d = f.read()
+                response += f"Content-Type: image/x-icon\r\nContent-Length: {len(d)}\n\n"
+                client_socket.send(response.encode())
+                client_socket.sendall(d)
              r.close()
              client_socket.close()
              return

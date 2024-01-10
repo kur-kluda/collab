@@ -466,7 +466,7 @@ async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
             await asyncio.sleep(__MEAS_INTERVAL__+1)
             
 async def main():
-    global __MEAS_INTERVAL__
+    global __MEAS_INTERVAL__, onewire_devs5, onewire5
     just_was_exception = False
     
     print(f"{t(time.gmtime())} Welcome! Booting up by connecting to the network")
@@ -496,8 +496,12 @@ async def main():
     await asyncio.sleep(0)
     if(__DEBUG_LEVEL_2__):
         print(f"{t(time.gmtime())} launch s5")
-    measure_5 = asyncio.create_task(measure(li_mem_clog5, push_data, onewire5, 5, onewire_devs5[0]))
-    await asyncio.sleep(0)
+    onewire_fail = len(onewire_devs5) <1
+    if not onewire_fail:
+        measure_5 = asyncio.create_task(measure(li_mem_clog5, push_data, onewire5, 5, onewire_devs5[0]))
+        await asyncio.sleep(0)
+    else:
+        print(f'{t(time.gmtime())} sensor 5 (onewire) failed.')
     
     while True: #i<__LOOP_DEBUG_LEN__:
       try:
@@ -505,6 +509,14 @@ async def main():
             tsk = asyncio.create_task(tsk_con_net())
             await asyncio.sleep(5)
             continue
+        if onewire_fail:
+            print(f'{t(time.gmtime())} sensor 5 (onewire) failed. retrying the connection:')
+            onewire5 = ds18x20.DS18X20(onewire.OneWire(Pin(32)))
+            onewire_devs5 = onewire5.scan()
+            if len(onewire_devs5) > 0:
+                onewire_fail = False
+                measure_5 = asyncio.create_task(measure(li_mem_clog5, push_data, onewire5, 5, onewire_devs5[0]))
+                await asyncio.sleep(0)
         lig = asyncio.create_task(light(1/2))
         await asyncio.sleep(0)
         if(tsk2.done()):
