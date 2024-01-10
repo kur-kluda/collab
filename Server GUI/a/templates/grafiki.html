@@ -1,3 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% load static %} 
+
+<link rel="apple-touch-icon" sizes="180x180" href="{% static '/favicon/apple-touch-icon.png' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static '/favicon/favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static '/favicon/favicon-16x16.png' %}">
+<link rel="manifest" href="{% static '/favicon/site.webmanifest' %}">
+<link rel="mask-icon" href="{% static '/favicon/safari-pinned-tab.svg' %}" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+</head>
 <body>
 <script
   src="https://code.jquery.com/jquery-3.7.1.min.js"
@@ -33,7 +47,7 @@ let newtitles =[
 'Gāzu mērījumi @pg1'
 ];
 
-frames_sels.forEach((f, fn) => tohide_sels.forEach(v, i) => but_hider(f, v, i==0? newtitles[fn] : '' ));
+frames_sels.forEach((f, fn) => tohide_sels.forEach((v, i) => but_hider(f, v, i==0? newtitles[fn] : '' )));
 });</script>
 
 <iframe width="100%" id="fr_gr1" height="100%" src="https://dj.jtag.me/d/BQySPLDSz/temperatura-dht11-dht22?orgId=1&refresh=5s&from=now-3h&to=now&viewPanel=2&kiosk=tv"></iframe>
@@ -49,3 +63,4 @@ frames_sels.forEach((f, fn) => tohide_sels.forEach(v, i) => but_hider(f, v, i==0
 <hr>
 <iframe width="100%" height="100%" id="fr_gr5" src="https://dj.jtag.me/d/cX1l5UvIz/gazes?orgId=1&refresh=5s&from=now-3h&to=now&viewPanel=2&kiosk=tv">
 </body>
+</html>
