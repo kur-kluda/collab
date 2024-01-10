@@ -8,7 +8,7 @@
     {% if ispost and errorText %}
 {{ errorText|safe }}
 {% endif %}
-    <form method="POST" class="post-form" action="{% url 'clud_update' MeasureMeta.measurement MeasureMeta.range_low MeasureMeta.range_high %}">  
+    <form method="POST" class="post-form" action="{% url 'clud_update' MeasureMeta.measurement MeasureMeta.range_low MeasureMeta.range_high MeasureMeta.range_step %}">  
     {% csrf_token %}  
     <div class="container">   
         <div class="col-12">  
@@ -33,6 +33,12 @@
             {{ form.range_high }}    
         </div>
 
+        <div class="mb-3"> 
+            {{ form.range_step.errors }}
+            {{ form.range_step.label_tag }}   
+            {{ form.range_step }}   
+        </div>
+        
         <div class="mb-3"> 
             <button type="submit" class="btn btn-success btn-lg">Update</button>  
         </div> 

@@ -53,6 +53,6 @@ urlpatterns = [
     path('clud/', cl.index, name='clud_index'),  
     #path('clud/', cl.index, name='clud_index', kwargs={"success": False}), 
     path('clud/create/',cl.create, name='clud_create'),      
-    re_path('^clud/update/(?P<measurement>[^/]+)/(?P<range_low>[+-]?\d+\.\d+)/(?P<range_high>[+-]?\d+\.\d+)/$', cl.update, name='clud_update'), 
-    re_path('^clud/delete/(?P<measurement>[^/]+)/(?P<range_low>[+-]?\d+\.\d+)/(?P<range_high>[+-]?\d+\.\d+)/$', cl.destroy, name='clud_destroy'), 
+    re_path('^clud/update/(?P<measurement>[^/]+)/(?P<range_low>[\+-]?\d+\.\d+)/(?P<range_high>[\+-]?\d+\.\d+)/(?P<range_step>[\+]?\d+\.\d+)/$', cl.update, name='clud_update'), 
+    re_path('^clud/delete/(?P<measurement>[^/]+)/(?P<range_low>[\+-]?\d+\.\d+)/(?P<range_high>[\+-]?\d+\.\d+)/(?P<range_step>[\+]?\d+\.\d+)/$', cl.destroy, name='clud_destroy'), 
 ]

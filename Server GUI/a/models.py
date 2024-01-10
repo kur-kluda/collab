@@ -68,10 +68,15 @@ class MeasureMeta(m.Model):
     measurement = m.CharField(max_length=5, choices=the_measure_enum)
     range_low = m.DecimalField(max_digits=20, decimal_places=5)
     range_high = m.DecimalField(max_digits=20, decimal_places=5)
+    #range_step = m.DecimalField(max_digits=20, decimal_places=5, default=0.00001,
+    #                            validators=[MinValueValidator(range_low.to_python()), MaxValueValidator(range_high.to_python()),])
+    range_step = m.DecimalField(max_digits=20, decimal_places=5, default=0.00001,
+                                validators=[MinValueValidator(0)])
+
     def __str__(s):
         return f"{s.measurement}: {s.range_low} : {s.range_high}"
     
     class Meta:
         constraints = [
-            m.UniqueConstraint(fields=['measurement', 'range_low', 'range_high'], name='measure_pk')
+            m.UniqueConstraint(fields=['measurement', 'range_low', 'range_high', 'range_step'], name='measure_pk')
         ]
