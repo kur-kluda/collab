@@ -51,8 +51,10 @@ def create(request):
         if form.is_valid():  
             try:  
                 form.save()  
+                return index(request=request,
+                             success=f"<p style='font-size: larger;'>Add new Sensor Meta status: <span style='color:green'>OK</span> With id {request.POST['nr']}</p>")
                 return redirect(reverse('ciud_index'),
-                                success=f"<p style='font-size: larger;'>Add new Sensor Meta status: <span style='color:green'>OK</span> With id {form.nr}</p>"
+                                success=f"<p style='font-size: larger;'>Add new Sensor Meta status: <span style='color:green'>OK</span> With id {request.POST['nr']}</p>"
                                 ) 
             except Exception as ex:  
                 errorText= f"Exception: {ex}"
@@ -76,7 +78,9 @@ def update(request, nr):
         o_SensorMeta = SensorMeta.objects.get(nr=nr)  
         form = SensorMetaForm(request.POST, instance = o_SensorMeta)  
         if form.is_valid():  
-            form.save()  
+            form.save() 
+            return index(request=request,
+                         success=f"<p style='font-size: larger;'>Update Sensor Meta status: <span style='color:green'>OK</span> With id {nr}</p>") 
             return redirect(reverse('ciud_index'), 
                             success=f"<p style='font-size: larger;'>Update Sensor Meta status: <span style='color:green'>OK</span> With id {nr}</p>") 
     else:
@@ -90,5 +94,7 @@ def update(request, nr):
 def destroy(request, nr):  
     o_SensorMeta = SensorMeta.objects.get(nr=nr)  
     o_SensorMeta.delete()  
+    return index(request=request,
+                success=f"<p style='font-size: larger;'>Delete Sensor Meta status: <span style='color:green'>OK</span> With id {nr}</p>")  
     return redirect(reverse('ciud_index'), 
                     success=f"<p style='font-size: larger;'>Delete Sensor Meta status: <span style='color:green'>OK</span> With id {nr}</p>")  

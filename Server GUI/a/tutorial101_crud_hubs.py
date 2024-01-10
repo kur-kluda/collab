@@ -33,7 +33,10 @@ def create(request):
         if form.is_valid():  
             try:  
                 form.save()  
-                return redirect(reverse('crud_hub_index')) 
+                return index(request=request,
+                                success=f"<p style='font-size: larger;'>Add new Hub Meta status: <span style='color:green'>OK</span> With id {request.POST['nr']}</p>")
+                return redirect(reverse('crud_hub_index'),
+                                success=f"<p style='font-size: larger;'>Add new Hub Meta status: <span style='color:green'>OK</span> With id {request.POST['nr']}</p>") 
             except Exception as ex: 
                 errorText= f"Exception: {ex}" 
                 pass
@@ -45,9 +48,11 @@ def create(request):
                                                           "errorText": errorText,
                                                            "ispost": True if request.POST else False,})  
  
-def index(request):  
+def index(request, **kwargs):  
+    syccess = kwargs.get("success")
     o_HubMetas = HubMeta.objects.all()  
-    return render(request,"tutorial101_crud_hub_list.html",{'HubMetas':o_HubMetas})  
+    return render(request,"tutorial101_crud_hub_list.html",{'HubMetas':o_HubMetas,
+                                                        'prevMSG': syccess})  
  
 def update(request, nr):
     if request.method == "POST":   
@@ -55,6 +60,8 @@ def update(request, nr):
         form = HubMetaForm(request.POST, instance = o_HubMeta)  
         if form.is_valid():  
             form.save()  
+            return index(request=request,
+                        success=f"<p style='font-size: larger;'>Update Hub Meta status: <span style='color:green'>OK</span> With id {nr}</p>") 
             return redirect(reverse('crud_hub_index')) 
     else:
          o_HubMeta = HubMeta.objects.get(nr=nr) 
@@ -67,4 +74,6 @@ def update(request, nr):
 def destroy(request, nr):  
     o_HubMeta = HubMeta.objects.get(nr=nr)  
     o_HubMeta.delete()  
+    return index(request=request,
+                 success=f"<p style='font-size: larger;'>Delete Hub Meta status: <span style='color:green'>OK</span> With id {nr}</p>") 
     return redirect(reverse('crud_hub_index'))  

@@ -25,8 +25,10 @@ def create(request):
         if form.is_valid():  
             try:  
                 form.save()  
+                return index(request=request,
+                                success=f"<p style='font-size: larger;'>Add new Measure Meta status: <span style='color:green'>OK</span> .:. {request.POST['measurement']} .:. {request.POST['range_low']} : {request.POST['range_high']}</p>")
                 return redirect(reverse('clud_index'),
-                                success=f"<p style='font-size: larger;'>Add new Measure Meta status: <span style='color:green'>OK</span> With {form.measurement} .:. {form.range_low} : {form.range_high}</p>"
+                                success=f"<p style='font-size: larger;'>Add new Measure Meta status: <span style='color:green'>OK</span> With {request.POST['measurement']} .:. {request.POST['range_low']} : {request.POST['range_high']}</p>"
                                 ) 
             except Exception as ex:  
                 errorText= f"Exception: {ex}"
@@ -51,8 +53,10 @@ def update(request, measurement, range_low, range_high):
         form = MeasureMetaForm(request.POST, instance = o_MeasureMeta)  
         if form.is_valid():  
             form.save()  
-            return redirect(reverse('clud_index'), 
-                            success=f"<p style='font-size: larger;'>Update Measure Meta status: <span style='color:green'>OK</span> With {measurement} .:. {range_low} : {range_high}</p>") 
+            return index(request=request,
+                         success= f"<p style='font-size: larger;'>Update Measure Meta status: <span style='color:green'>OK</span> .:. {o_MeasureMeta.get_measurement_display()} .:. {range_low} : {range_high}</p>") 
+            return redirect(reverse("clud_index"), 
+                            success= f"<p style='font-size: larger;'>Update Measure Meta status: <span style='color:green'>OK</span> With {measurement} .:. {range_low} : {range_high}</p>") 
     else:
          o_MeasureMeta = MeasureMeta.objects.get(measurement=measurement, range_low=range_low, range_high=range_high) 
          form = MeasureMetaForm(instance= o_MeasureMeta)
@@ -63,6 +67,9 @@ def update(request, measurement, range_low, range_high):
      
 def destroy(request, measurement, range_low, range_high):  
     o_MeasureMeta = MeasureMeta.objects.get(measurement=measurement, range_low=range_low, range_high=range_high)  
+    mdis = o_MeasureMeta.get_measurement_display()
     o_MeasureMeta.delete()  
+    return index(request=request,
+                    success=f"<p style='font-size: larger;'>Delete Measure Meta status: <span style='color:green'>OK</span> .:. {mdis} .:. {range_low} : {range_high}</p>")  
     return redirect(reverse('clud_index'), 
                     success=f"<p style='font-size: larger;'>Delete Measure Meta status: <span style='color:green'>OK</span> With {measurement} .:. {range_low} : {range_high}</p>")  
