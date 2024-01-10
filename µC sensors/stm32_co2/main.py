@@ -1,5 +1,7 @@
 debuglevel1 = 0
 __DEBUG_LEVEL_1__ = True if debuglevel1==1 else False
+debuglevel1pp = 0
+__DEBUG_LEVEL_1pp__ = True if debuglevel1pp==1 else False
 debuglevel2 = 0
 __DEBUG_LEVEL_2__ = True if debuglevel1==1 else False
 import os, machine
@@ -24,6 +26,7 @@ __MEAS_INTERVAL__ = 1
 __MINIMUM_MEASURES_TO_SEND__=10
 __MAXIMUM_SECS_BEFORE_SEND__=20
 #__LOOP_DEBUG_LEN__ = 999
+HOSTNAME= 2
 __LED__='LED'
 HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 912       # Port to connect to
@@ -35,7 +38,17 @@ wlan = network.WLAN(network.STA_IF) # create station interface
 
 li_mem_clog = []
 
+def strftime(tup: tuple):
+    return "{}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
+
+def t(tup: tuple):
+    return strftime(tup)
+
+__STATUS_CONNECTING__ = False
 async def tsk_con_net():
+    global __STATUS_CONNECTING__
+    if(__STATUS_CONNECTING__): return
+    __STATUS_CONNECTING__ = True
     global uptime_stamp
     wlan.active(True)       # activate the interface
     #l = wlan.scan()
@@ -46,11 +59,13 @@ async def tsk_con_net():
                 wlan.connect("ff", "")
                 while not wlan.isconnected():
                     await asyncio.sleep(1)
+            __STATUS_CONNECTING__ = False
             ntptime.settime()
             uptime_stamp = time.mktime(time.gmtime())
             return True
         except Exception as e:
-            print(str(e))  
+            print(f"{t(time.gmtime())} tsk con net {str(e)}")
+            await asyncio.sleep(1)
     #print('network config:', wlan.ifconfig())
 
 async def measure_interval_updater():
@@ -58,7 +73,7 @@ async def measure_interval_updater():
     while(True):
         try:
             reader, writer = await asyncio.open_connection(HOST, PORT)
-            writer.write("NET\n".encode())
+            writer.write(f"NET_{HOSTNAME}\n".encode())
             await writer.drain()
             await asyncio.sleep(1)
             response = await reader.read(1024)
@@ -67,9 +82,10 @@ async def measure_interval_updater():
             writer.close()
             await writer.wait_closed()
             reader.close()
-            await asyncio.sleep(4)
+            await asyncio.sleep(3)
         except Exception as e:
-            print(str(e))
+            print(f"{t(time.gmtime())} meaure interval updater: {str(e)}")
+            await asyncio.sleep(2)
             
 async def alarm_clock():
     global __MEAS_INTERVAL__
@@ -102,7 +118,7 @@ async def push_data_net():
         response = await reader.read(1024)
         #k = await reader.drain()
         if(__DEBUG_LEVEL_1__):
-            print('pd Close the connection')
+            print(f'{t(time.gmtime())}  pd Close the connection')
         writer.close()
         await writer.wait_closed()
         reader.close()
@@ -112,8 +128,8 @@ async def push_data_net():
             return
         #s.close()
     except Exception as e:
-        print(str(e))      
-    print("failed to sync")
+        print(f"{t(time.gmtime())}  push 1 {str(e)}")      
+    print("{t(time.gmtime())} failed to sync 1")
     return
     
 async def push_data():
@@ -127,9 +143,13 @@ async def push_data():
                 try:
                     nets = asyncio.create_task(push_data_net())
                     await asyncio.sleep(0)
+                    seccounter = 0
                     while (not nets.done()):
                         if(__DEBUG_LEVEL_1__):
-                            print("waiting for send data to finish...")
+                            print(f"{t(time.gmtime())} waiting...{seccounter}")
+                        seccounter = seccounter +1
+                        if(seccounter > 120):
+                            return False
                         await asyncio.sleep(1)
                     #nets_w = asyncio.wait_for(nets, 3)
                     #await asyncio.sleep(0)
@@ -138,16 +158,20 @@ async def push_data():
                     #    print(res)
                     await asyncio.sleep(1)       
                 except Exception as e:
-                    print("failed to sync")
-                    print(e)
+                    print("{t(time.gmtime())} failed to sync all")
+                    print(f"{t(time.gmtime())}  push all {e}")
         return True
 
 
 led_on = False
-async def light(howlong, led_on):
+async def light(howlong):
+    global led_on
     if(led_on):
+        cnt = 0
         while(led_on):
             await asyncio.sleep(howlong/2)
+            cnt = cnt+1
+            if(cnt>20): return
     led_on=True
     led = Pin(__LED__, Pin.OUT)
     led.on()
@@ -171,8 +195,9 @@ async def lineparser(uart):
                     d = uart.readline()
                     print(d)
                     """
-        reader = asyncio.StreamReader(uart)
-        while(True):
+        try:
+            reader = asyncio.StreamReader(uart)
+            while(True):
                 d = await reader.readline()
                 if not d:
                     await asyncio.sleep(0.3)
@@ -181,9 +206,12 @@ async def lineparser(uart):
                     print("Received:", d)
                     print(d.decode())
                 arr = json.loads(d)
-                if(__DEBUG_LEVEL_1__):
+                if(__DEBUG_LEVEL_1pp__):
                     print(arr[0])
                 li_mem_clog.append([time.mktime(time.gmtime()), arr[0], arr[1]])
+        except Exception as ex:
+            print(f'{t(time.gmtime())} Fail to read UART {str(ex)}')
+            await asyncio.sleep(1)
 
 async def main():
     global __MEAS_INTERVAL__
@@ -198,10 +226,13 @@ async def main():
     await asyncio.sleep(0)
     tsk_inter = asyncio.create_task(measure_interval_updater())
     await asyncio.sleep(0)
-    #i=0
-    while True : # i<__LOOP_DEBUG_LEN__:
-      try:
 
+    while True :
+      try:
+        if not wlan.isconnected():
+            tsk = asyncio.create_task(tsk_con_net())
+            await asyncio.sleep(5)
+            continue
         if(__MEAS_INTERVAL__ > 1):
             waker = asyncio.create_task(alarm_clock())
             await asyncio.sleep(0)
@@ -212,15 +243,17 @@ async def main():
         if len(li_mem_clog) >230 :
             await asyncio.sleep(1)
             continue
-        asyncio.create_task(light(__MEAS_INTERVAL__/2, led_on))
+        asyncio.create_task(light(__MEAS_INTERVAL__/2))
         await asyncio.sleep(0)
         if(tsk2.done()):
             tsk2 = asyncio.create_task(push_data())
             await asyncio.sleep(0)
+        if(parser.done()):  
+            parser = asyncio.create_task(lineparser(uart))
+            await asyncio.sleep(0)
       except OSError as e:
-        print('Failed to read sensor.')
+        print('{t(time.gmtime())} Main loop: OSerror, probably Failed to read sensor:')
         print(e)
-      #i=i+1
 
-light(2, led_on)
+light(2)
 asyncio.run(main())
