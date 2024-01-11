@@ -99,6 +99,33 @@ async def rdr(r, client_socket, client_address, dheader):
     r.close()
     client_socket.close()
 
+async def rdr_meta_out_of_memory(r, client_socket, client_address, dheader):
+        try:
+            intt = int(dheader)#.strip(";"))
+            db = mysql.connector.connect(
+                port = cfg_meta["db"]["port"],
+                host=cfg_meta["db"]["host"],
+                user=cfg_meta["db"]["user"],
+                password=cfg_meta["db"]["password"],
+                database=cfg_meta["db"]["database"]
+            )
+            cur = db.cursor()
+            sql = "SELECT `update_interval` FROM `a_hubmeta` WHERE `a_hubmeta`.`nr` = %s"
+            cur.execute(sql, (intt,))
+            res = cur.fetchall()
+            dic = 0
+            for r in res:
+                dic = r[0]^ord('d')
+            #client_socket.send((json.dumps(dic)+"\n").encode())
+            client_socket.send((str(dic)+"\n").encode())
+            db.close()
+            client_socket.close()
+        except Exception as ex:
+            print(ex)
+            try:
+                db.close()
+            finally:
+                ...
 async def rdr_meta(r, client_socket, client_address, dheader):
         try:
             intt = int(dheader)#.strip(";"))
@@ -212,7 +239,8 @@ async def loop():
             elif(dheader.startswith("NET")):
                 if(len(dheader)>4):
                     if(dheader[3]=="_"):
-                        asyncio.create_task(rdr_meta(r, client_socket, client_address, dheader.split("_")[1]))
+                        #asyncio.create_task(rdr_meta(r, client_socket, client_address, dheader.split("_")[1]))
+                        asyncio.create_task(rdr_meta_out_of_memory(r, client_socket, client_address, dheader.split("_")[1]))
                         await asyncio.sleep(0)
                         continue
                 asyncio.create_task(rdr(r, client_socket, client_address, dheader))

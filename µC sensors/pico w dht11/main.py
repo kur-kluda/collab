@@ -149,7 +149,7 @@ async def push_data_net():
         #s.close()
     except Exception as e:
         print(f"{t(time.gmtime())}  push 1 {str(e)}")      
-    print("{t(time.gmtime())} failed to sync 1")
+    print(f"{t(time.gmtime())} failed to sync 1")
     return
 
 async def push_data_net2():
@@ -193,7 +193,7 @@ async def push_data_net2():
         #s.close()
     except Exception as e:
         print(f"{t(time.gmtime())}  push 2 {str(e)}")      
-    print("{t(time.gmtime())} failed to sync 2")
+    print(f"{t(time.gmtime())} failed to sync 2")
     return
 
 async def push_data_net3():
@@ -237,7 +237,7 @@ async def push_data_net3():
         #s.close()
     except Exception as e:
         print(f"{t(time.gmtime())}  push 3 {str(e)}")      
-    print("{t(time.gmtime())} failed to sync 3")
+    print(f"{t(time.gmtime())} failed to sync 3")
     return
 
 async def push_data_net4():
@@ -282,7 +282,7 @@ async def push_data_net4():
     except Exception as e:
         print(f"{t(time.gmtime())}  push 4 {str(e)}")
         #print(li_mem_clog4)
-    print("{t(time.gmtime())} failed to sync 4")
+    print(f"{t(time.gmtime())} failed to sync 4")
     return
 
 async def push_data_net5():
@@ -332,7 +332,7 @@ async def push_data_net5():
         #s.close()
     except Exception as e:
         print(f"{t(time.gmtime())}  push 5 {str(e)}")      
-    print("{t(time.gmtime())} failed to sync 5")
+    print(f"{t(time.gmtime())} failed to sync 5")
     return
 
 async def push_data():
@@ -370,7 +370,7 @@ async def push_data():
                     #    print(res)
                     await asyncio.sleep(1)       
                 except Exception as e:
-                    print("{t(time.gmtime())} failed to sync all")
+                    print(f"{t(time.gmtime())} failed to sync all")
                     print(f"{t(time.gmtime())}  push all {e}")
         return True
 
@@ -524,14 +524,14 @@ async def main():
         #print(json.loads(json.dumps(time.localtime()))[5])
         #print(f'lis1: {len(li_mem_clog)} lis2: {len(li_mem_clog2)} lis3: {len(li_mem_clog3)}')
       except OSError as e:
-        print('{t(time.gmtime())} Main loop: OSerror, probably Failed to read sensor:')
+        print(f'{t(time.gmtime())} Main loop: OSerror, probably Failed to read sensor:')
         print(e)
         print(laststates)
         print(t(time.gmtime()))
         just_was_exception = True
         await asyncio.sleep(1)
       except Exception as ex:
-        print('{t(time.gmtime())} Main loop Exception:')
+        print(f'{t(time.gmtime())} Main loop Exception:')
         print(ex)
         print(laststates)
         print(t(time.gmtime()))
