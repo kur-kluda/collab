@@ -1,5 +1,4 @@
 from django.db import migrations
-from models import SensorMeta
 
 class Migration(migrations.Migration):
 
@@ -105,6 +104,7 @@ class Migration(migrations.Migration):
     comment = "4th hub ESP NODE mcu",
     is_real = True
             )
+        SensorMeta = apps.get_model("a", "SensorMeta")
         SensorMeta.objects.bulk_create([
             SensorMeta(
     nr = 1,

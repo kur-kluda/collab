@@ -39,7 +39,7 @@ class SensorMeta(m.Model):
     nr = m.BigAutoField(primary_key=True, default=None)
     model = m.CharField(max_length=127)
     #hubs = m.ManyToManyField('HubMeta')
-    hub = m.ForeignKey(HubMeta, on_delete=m.CASCADE)
+    hub = m.ForeignKey(HubMeta, null=True, on_delete=m.SET_NULL)
     interface = m.ForeignKey(Connection_InterfaceMeta, null=True, on_delete=m.SET_NULL)
     measurements = m.ManyToManyField('MeasureMeta')
     update_interval = m.SmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(3600),], default=1)
