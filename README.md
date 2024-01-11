@@ -19,6 +19,11 @@ Group collab project
 
 Mūsu sistēmas MVP iekļauj sevī vairākus ISO25010:2011 aspektus:
 
+![image](https://github.com/kur-kluda/collab/assets/104323709/0573e629-321e-4201-a2ff-bc62ed07d2bd)
+![image](https://github.com/kur-kluda/collab/assets/104323709/335ddf50-cd99-49a4-bacf-0c4f6ae221a6)
+
+
+
 **Funkcionālie:**
 Sistēma ir labi piemērota sensoru mērījumu apskatei un pārraudzībai, kamēr vien tiek ievadīti realitātei atbilstoši metadati. Sistēmā ir iekļauti vairāki būtībā atšķirīgi sensoru tipi, tātad tā ir tuvināta reālajai situācijāi (lauka apstākļiem).
 
