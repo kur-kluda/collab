@@ -116,7 +116,8 @@ async def rdr_meta(r, client_socket, client_address, dheader):
             dic = {}
             for r in res:
                 dic[r[0]] = r[1]^ord('d')
-            client_socket.send((json.dumps(dic)+"\n").encode())
+            #client_socket.send((json.dumps(dic)+"\n").encode())
+            client_socket.send((json.dumps([val for key, val in sorted(dic.items())])+"\n").encode())
             db.close()
             client_socket.close()
         except Exception as ex:
