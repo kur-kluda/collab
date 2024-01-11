@@ -20,7 +20,7 @@ import onewire, ds18x20
 #import webrepl
 #webrepl.start()
 
-__MEAS_INTERVAL__ = 1
+
 __MINIMUM_MEASURES_TO_SEND__=10
 __MAXIMUM_SECS_BEFORE_SEND__=30
 __LED__='LED'
@@ -44,6 +44,13 @@ onewire_devs5 = onewire5.scan()
 if(__DEBUG_LEVEL_1__):
     print('Found DS devices: ', onewire_devs5)
 
+__MEAS_INTERVAL__ = {
+CLI_ID : 1,
+CLI_ID2 : 1,
+CLI_ID3 : 1,
+CLI_ID4 : 1,
+CLI_ID5 : 1
+    }
 wlan = network.WLAN(network.STA_IF) # create station interface
 
 li_mem_clog = []
@@ -90,8 +97,13 @@ async def measure_interval_updater():
             await writer.drain()
             await asyncio.sleep(1)
             response = await reader.read(1024)
-            if(int(response)^ord('d') > 0):
-                __MEAS_INTERVAL__ = int(response)^ord('d')
+            if(len(response) > 5):
+                __MEAS_INTERVAL__ = json.loads(response)
+                __MEAS_INTERVAL__[CLI_ID ] = __MEAS_INTERVAL__[CLI_ID ]^ord('d')
+                __MEAS_INTERVAL__[CLI_ID2] = __MEAS_INTERVAL__[CLI_ID2]^ord('d')
+                __MEAS_INTERVAL__[CLI_ID3] = __MEAS_INTERVAL__[CLI_ID3]^ord('d')
+                __MEAS_INTERVAL__[CLI_ID4] = __MEAS_INTERVAL__[CLI_ID4]^ord('d')
+                __MEAS_INTERVAL__[CLI_ID5] = __MEAS_INTERVAL__[CLI_ID5]^ord('d')
             writer.close()
             await writer.wait_closed()
             reader.close()
@@ -373,14 +385,14 @@ async def push_data():
                     print(f"{t(time.gmtime())}  push all {e}")
         return True
 
-async def alarm_clock():
+async def alarm_clock(CLI_ID):
     global __MEAS_INTERVAL__
     counter = 0
-    while(counter< __MEAS_INTERVAL__):
+    while(counter< __MEAS_INTERVAL__[CLI_ID]):
         await asyncio.sleep(1)
         counter = counter+1
         if(__DEBUG_LEVEL_1__):
-            print(f'{t(time.gmtime())} count: {counter} meas: {__MEAS_INTERVAL__}')
+            print(f'{t(time.gmtime())} alarm {CLI_ID} count: {counter} meas: {__MEAS_INTERVAL__[CLI_ID]}')
     
 led_on = False
 async def light(howlong):
@@ -398,12 +410,12 @@ async def light(howlong):
     
 laststates = [False, False, False, False, False]
 
-async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
+async def measure(li_mem_clog, push_data, sensor, number, cli_id, onewire_special):
     print(f"{t(time.gmtime())} {number} init__")
     just_was_exception = False
     global laststates, __MEAS_INTERVAL__
-    if(__MEAS_INTERVAL__ > 1):
-        waker = asyncio.create_task(alarm_clock())
+    if(__MEAS_INTERVAL__[cli_id] > 1):
+        waker = asyncio.create_task(alarm_clock(cli_id))
         await asyncio.sleep(0)
         while (not waker.done()):
             await asyncio.sleep(1)
@@ -440,27 +452,30 @@ async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
                 print(f"{t(time.gmtime())} sensor {number} now OK!")
             just_was_exception = False
             laststates[number-1] = False
-            if(__MEAS_INTERVAL__ > 1):
-                waker = asyncio.create_task(alarm_clock())
+            if(__MEAS_INTERVAL__[cli_id] > 1):
+                waker = asyncio.create_task(alarm_clock(cli_id))
                 await asyncio.sleep(0)
                 while (not waker.done()):
                     await asyncio.sleep(1)
             else:
-                await asyncio.sleep(1)
+                if(onewire_special):
+                    ...
+                else:
+                    await asyncio.sleep(1)
         except OSError as e:
             print(f'{t(time.gmtime())} Sensor {number}: OSerror, probably Failed to read sensor:')
             print(e)
             print(laststates)
             print(t(time.gmtime()))
             just_was_exception = True
-            await asyncio.sleep(__MEAS_INTERVAL__+1)
+            await asyncio.sleep(__MEAS_INTERVAL__[cli_id]+1)
         except Exception as ex:
             print(f'{t(time.gmtime())} Sensor {number}: general exc')
             print(ex)
             print(laststates)
             print(t(time.gmtime()))
             just_was_exception = True
-            await asyncio.sleep(__MEAS_INTERVAL__+1)
+            await asyncio.sleep(__MEAS_INTERVAL__[cli_id]+1)
             
 async def main():
     global __MEAS_INTERVAL__
@@ -477,23 +492,23 @@ async def main():
     #i=0
     if(__DEBUG_LEVEL_2__):
         print(f"{t(time.gmtime())} launch s1")
-    measure_1 = asyncio.create_task(measure(li_mem_clog, push_data, sensor, 1, False))
+    measure_1 = asyncio.create_task(measure(li_mem_clog, push_data, sensor, 1, CLI_ID, False))
     await asyncio.sleep(0)
     if(__DEBUG_LEVEL_2__):
         print(f"{t(time.gmtime())} launch s2")
-    measure_2 = asyncio.create_task(measure(li_mem_clog2, push_data, sensor2, 2, False))
+    measure_2 = asyncio.create_task(measure(li_mem_clog2, push_data, sensor2, 2, CLI_ID2, False))
     await asyncio.sleep(0)
     if(__DEBUG_LEVEL_2__):
         print(f"{t(time.gmtime())} launch s3")
-    measure_3 = asyncio.create_task(measure(li_mem_clog3, push_data, sensor3, 3, False))
+    measure_3 = asyncio.create_task(measure(li_mem_clog3, push_data, sensor3, 3, CLI_ID3, False))
     await asyncio.sleep(0)
     if(__DEBUG_LEVEL_2__):
         print(f"{t(time.gmtime())} launch s4")
-    measure_4 = asyncio.create_task(measure(li_mem_clog4, push_data, sensor4, 4, False))
+    measure_4 = asyncio.create_task(measure(li_mem_clog4, push_data, sensor4, 4, CLI_ID4, False))
     await asyncio.sleep(0)
     if(__DEBUG_LEVEL_2__):
         print(f"{t(time.gmtime())} launch s5")
-    measure_5 = asyncio.create_task(measure(li_mem_clog5, push_data, onewire5, 5, onewire_devs5[0]))
+    measure_5 = asyncio.create_task(measure(li_mem_clog5, push_data, onewire5, 5, CLI_ID5, onewire_devs5[0]))
     await asyncio.sleep(0)
     
     while True: #i<__LOOP_DEBUG_LEN__:
@@ -515,7 +530,7 @@ async def main():
         if(just_was_exception):
             print(f"{t(time.gmtime())} main now OK!")
         just_was_exception = False
-        await asyncio.sleep(__MEAS_INTERVAL__)
+        await asyncio.sleep(1/2)
         #print(time.localtime())
         #print(json.loads(json.dumps(time.localtime()))[5])
         #print(f'lis1: {len(li_mem_clog)} lis2: {len(li_mem_clog2)} lis3: {len(li_mem_clog3)}')
@@ -525,14 +540,14 @@ async def main():
         print(laststates)
         print(t(time.gmtime()))
         just_was_exception = True
-        await asyncio.sleep(__MEAS_INTERVAL__)
+        await asyncio.sleep(1)
       except Exception as ex:
         print('{t(time.gmtime())} Main loop Exception:')
         print(ex)
         print(laststates)
         print(t(time.gmtime()))
         just_was_exception = True
-        await asyncio.sleep(__MEAS_INTERVAL__)
+        await asyncio.sleep(1)
       #i=i+1
 
 light(2)

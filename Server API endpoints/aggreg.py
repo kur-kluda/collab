@@ -33,7 +33,8 @@ for r in answer:
 #with open('..\\serv\\db.yaml', 'r') as f:
 with open('db.yaml', 'r') as f: 
    cfg = json.load(f)           
-
+with open('db_meta.yaml', 'r') as f: 
+   cfg_meta = json.load(f) 
 # Create a socket object TODO: closewait??
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #
 server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)                                                                  #
@@ -98,6 +99,33 @@ async def rdr(r, client_socket, client_address, dheader):
     r.close()
     client_socket.close()
 
+async def rdr_meta(r, client_socket, client_address, dheader):
+        try:
+            intt = int(dheader)#.strip(";"))
+            db = mysql.connector.connect(
+                port = cfg_meta["db"]["port"],
+                host=cfg_meta["db"]["host"],
+                user=cfg_meta["db"]["user"],
+                password=cfg_meta["db"]["password"],
+                database=cfg_meta["db"]["database"]
+            )
+            cur = db.cursor()
+            sql = "SELECT `a_sensormeta`.`nr`, `a_sensormeta`.`update_interval` FROM `a_sensormeta` LEFT JOIN `a_hubmeta` ON `a_sensormeta`.`hub_id` = `a_hubmeta`.`nr` WHERE `a_hubmeta`.`nr` = %s"
+            cur.execute(sql, (intt,))
+            res = cur.fetchall()
+            dic = {}
+            for r in res:
+                dic[r[0]] = r[1]^ord('d')
+            client_socket.send((json.dumps(dic)+"\n").encode())
+            db.close()
+            client_socket.close()
+        except Exception as ex:
+            print(ex)
+            try:
+                db.close()
+            finally:
+                ...
+    
 
 async def sync(r, client_socket, client_address, header):
     global SENSORS_IDS_SINGLE_DIMENSIONS
@@ -181,6 +209,11 @@ async def loop():
                 await asyncio.sleep(0)
                 continue
             elif(dheader.startswith("NET")):
+                if(len(dheader)>4):
+                    if(dheader[3]=="_"):
+                        asyncio.create_task(rdr_meta(r, client_socket, client_address, dheader.split("_")[1]))
+                        await asyncio.sleep(0)
+                        continue
                 asyncio.create_task(rdr(r, client_socket, client_address, dheader))
                 await asyncio.sleep(0)
                 continue
