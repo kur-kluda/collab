@@ -28,6 +28,7 @@ class Connection_InterfaceMeta(m.Model):
         ("WiFi", "WiFi"),
         ("4-20mA", "4-20mA"),
         ("MODBUS", "MODBUS"),
+        ("1wire", "1wire"),
     ]
     interface = m.CharField(max_length=30,choices=the_interfaces_enum)
     
