@@ -44,7 +44,8 @@ onewire_devs5 = onewire5.scan()
 if(__DEBUG_LEVEL_1__):
     print('Found DS devices: ', onewire_devs5)
 
-__MEAS_INTERVAL__ = [1,1,1,1,1]
+#__MEAS_INTERVAL__ = [1,1,1,1,1]
+__MEAS_INTERVAL__ = 1
 wlan = network.WLAN(network.STA_IF) # create station interface
 
 li_mem_clog = []
@@ -53,6 +54,9 @@ li_mem_clog3 = []
 li_mem_clog4 = []
 li_mem_clog5 = []
 
+#what is the maximum length of one clog list in buffer - memory (only first one's length is being checked)
+# 65+ 20ish was critical for rpi pico w 2023-01-11
+__MAX_SINGLE_LIST_SIZE__ = 32
 def strftime(tup: tuple):
     return "{}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
 
@@ -91,8 +95,11 @@ async def measure_interval_updater():
             await writer.drain()
             await asyncio.sleep(1)
             response = await reader.read(1024)
-            if(len(response) > 5):
-                __MEAS_INTERVAL__ = [a^ord('d') for a in json.loads(response)]
+            num = int(response.decode())^ord('d')
+            if(__DEBUG_LEVEL_1__):
+                print(f"interval_num: {num}")
+            if(num > 0):
+                __MEAS_INTERVAL__ = num#[a^ord('d') for a in json.loads(response)]
             writer.close()
             await writer.wait_closed()
             reader.close()
@@ -148,6 +155,8 @@ async def push_data_net():
                 print(f"{t(time.gmtime())} fail to send 1. response was {response}")
         #s.close()
     except Exception as e:
+        if(e == 12):
+            print("IRRRR")
         print(f"{t(time.gmtime())}  push 1 {str(e)}")      
     print(f"{t(time.gmtime())} failed to sync 1")
     return
@@ -192,6 +201,8 @@ async def push_data_net2():
                 print(f"{t(time.gmtime())} fail to send 2. response was {response}")
         #s.close()
     except Exception as e:
+        if(e == 12):
+            print("IRRRR")
         print(f"{t(time.gmtime())}  push 2 {str(e)}")      
     print(f"{t(time.gmtime())} failed to sync 2")
     return
@@ -236,6 +247,8 @@ async def push_data_net3():
                 print(f"{t(time.gmtime())} fail to send 3. response was {response}")
         #s.close()
     except Exception as e:
+        if(e == 12):
+            print("IRRRR")
         print(f"{t(time.gmtime())}  push 3 {str(e)}")      
     print(f"{t(time.gmtime())} failed to sync 3")
     return
@@ -280,6 +293,8 @@ async def push_data_net4():
                 print(f"{t(time.gmtime())} fail to send 4. response was {response}")
         #s.close()
     except Exception as e:
+        if(e == 12):
+            print("IRRRR")
         print(f"{t(time.gmtime())}  push 4 {str(e)}")
         #print(li_mem_clog4)
     print(f"{t(time.gmtime())} failed to sync 4")
@@ -331,6 +346,8 @@ async def push_data_net5():
                 print(f"{t(time.gmtime())} fail to send 5. response was {response}")
         #s.close()
     except Exception as e:
+        if(e == 12):
+            print("IRRRR")
         print(f"{t(time.gmtime())}  push 5 {str(e)}")      
     print(f"{t(time.gmtime())} failed to sync 5")
     return
@@ -347,13 +364,13 @@ async def push_data():
                     nets = asyncio.create_task(push_data_net())
                     await asyncio.sleep(0)
                     nets2 = asyncio.create_task(push_data_net2())
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(2)
                     nets3 = asyncio.create_task(push_data_net3())
                     await asyncio.sleep(0)
                     nets4 = asyncio.create_task(push_data_net4())
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(2)
                     nets5 = asyncio.create_task(push_data_net5())
-                    await asyncio.sleep(0)
+                    await asyncio.sleep(1)
                     if(__DEBUG_LEVEL_1__):
                         seccounter = 0
                     while (not nets.done() and not nets2.done() and not nets3.done() and not nets4.done() and not nets5.done()):
@@ -374,14 +391,16 @@ async def push_data():
                     print(f"{t(time.gmtime())}  push all {e}")
         return True
 
-async def alarm_clock(CLI_ID):
+async def alarm_clock():
     global __MEAS_INTERVAL__
     counter = 0
-    while(counter< __MEAS_INTERVAL__[CLI_ID]):
+    #while(counter< __MEAS_INTERVAL__[CLI_ID]):
+    while(counter< __MEAS_INTERVAL__):
         await asyncio.sleep(1)
         counter = counter+1
         if(__DEBUG_LEVEL_1__):
-            print(f'{t(time.gmtime())} alarm {CLI_ID} count: {counter} meas: {__MEAS_INTERVAL__[CLI_ID]}')
+            #print(f'{t(time.gmtime())} alarm {CLI_ID} count: {counter} meas: {__MEAS_INTERVAL__[CLI_ID]}')
+            print(f'{t(time.gmtime())} alarm {CLI_ID} count: {counter} meas: {__MEAS_INTERVAL__}')
     
 led_on = False
 async def light(howlong):
@@ -403,8 +422,10 @@ async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
     print(f"{t(time.gmtime())} {number} init__")
     just_was_exception = False
     global laststates, __MEAS_INTERVAL__
-    if(__MEAS_INTERVAL__[number-1] > 1):
-        waker = asyncio.create_task(alarm_clock(number-1))
+    #if(__MEAS_INTERVAL__[number-1] > 1):
+    if(__MEAS_INTERVAL__ > 1):
+        #waker = asyncio.create_task(alarm_clock(number-1))
+        waker = asyncio.create_task(alarm_clock())
         await asyncio.sleep(0)
         while (not waker.done()):
             await asyncio.sleep(1)
@@ -414,13 +435,19 @@ async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
         try:
             if(__DEBUG_LEVEL_2__):
                 print(f"{t(time.gmtime())} {number} init")
-            if len(li_mem_clog) > 64:
+            if len(li_mem_clog) > __MAX_SINGLE_LIST_SIZE__:
                 tsk2 = asyncio.create_task(push_data())
                 await asyncio.sleep(3)
                 continue
             if(onewire_special):
                 sensor.convert_temp()
-                asyncio.sleep_ms(750)
+                if(__MEAS_INTERVAL__ > 1):
+                #waker = asyncio.create_task(alarm_clock(number-1))
+                    waker = asyncio.create_task(alarm_clock())
+                    await asyncio.sleep(0)
+                    while (not waker.done()):
+                        await asyncio.sleep(1)
+                else: await asyncio.sleep_ms(1000)
             else:
                 sensor.measure()
             laststates[number-1] = True
@@ -441,8 +468,10 @@ async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
                 print(f"{t(time.gmtime())} sensor {number} now OK!")
             just_was_exception = False
             laststates[number-1] = False
-            if(__MEAS_INTERVAL__[number-1] > 1):
-                waker = asyncio.create_task(alarm_clock(number-1))
+            #if(__MEAS_INTERVAL__[number-1] > 1):
+            if(__MEAS_INTERVAL__ > 1):
+                #waker = asyncio.create_task(alarm_clock(number-1))
+                waker = asyncio.create_task(alarm_clock())
                 await asyncio.sleep(0)
                 while (not waker.done()):
                     await asyncio.sleep(1)
@@ -457,14 +486,16 @@ async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
             print(laststates)
             print(t(time.gmtime()))
             just_was_exception = True
-            await asyncio.sleep(__MEAS_INTERVAL__[number-1]+1)
+            #await asyncio.sleep(__MEAS_INTERVAL__[number-1]+1)
+            await asyncio.sleep(__MEAS_INTERVAL__+1)
         except Exception as ex:
             print(f'{t(time.gmtime())} Sensor {number}: general exc')
             print(ex)
             print(laststates)
             print(t(time.gmtime()))
             just_was_exception = True
-            await asyncio.sleep(__MEAS_INTERVAL__[number-1]+1)
+            #await asyncio.sleep(__MEAS_INTERVAL__[number-1]+1)
+            await asyncio.sleep(__MEAS_INTERVAL__+1)
             
 async def main():
     global __MEAS_INTERVAL__
@@ -511,7 +542,13 @@ async def main():
         if(tsk2.done()):
             tsk2 = asyncio.create_task(push_data())
             await asyncio.sleep(0)
-        
+        if(__MEAS_INTERVAL__ > 1):
+                #waker = asyncio.create_task(alarm_clock(number-1))
+            waker = asyncio.create_task(alarm_clock())
+            await asyncio.sleep(0)
+            while (not waker.done()):
+                await asyncio.sleep(1)
+        else: await asyncio.sleep_ms(1000)
         #for sensor in onewire_devs5:
         #    print(f"sensor unique address: {sensor}")
         #    print(onewire5.read_temp(sensor))
