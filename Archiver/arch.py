@@ -90,7 +90,7 @@ def getJobList() -> dict:
         print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} .::. Fetched {len(answer)} relevant sensors.')
         return answer
 
-def doJob(): 
+def doJob(nums: dict): 
     db = {'connected': False} #Inicializē 'db' vārdnīcu ar atslēgu 'connected', kas ir iestatīts uz 'False'. Tas ir vajadzīgs, lai noteiktu vai ir datubāzes savienojums. 
     try:                                #Mēģinājumi nolasīt datubāzes konfigurācijas no
         with open('db.yaml', 'r') as f: #YAML faila ar nosaukumu 'db.yaml'. 
