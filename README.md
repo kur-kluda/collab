@@ -17,20 +17,38 @@ Group collab project
 ## [configure gui fake](https://dj.jtag.me/ad)
 # [configure grefina](http://apa_dumb/)
 
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
-\
+Mūsu sistēmas MVP iekļauj sevī vairākus ISO25010:2011 aspektus:
 
----
+**Funkcionālie:**
+Sistēma ir labi piemērota sensoru mērījumu apskatei un pārraudzībai, kamēr vien tiek ievadīti realitātei atbilstoši metadati. Sistēmā ir iekļauti vairāki būtībā atšķirīgi sensoru tipi, tātad tā ir tuvināta reālajai situācijāi (lauka apstākļiem).
 
-# [Dev server 1](http://jtag.me:919/4/)
+Sistēmas precizitāte ir atbilstoša konkrēto mikrokontrolieru precizitātei. Digitāliem sensoriem, protams tas ir iekšējs rādītājs, taču analogajam sensora piemēram mēs izmantojam 12 bitu ADC, kas ļauj iegūt 4096 vērtības.
 
-dev server might be down etc. but sometimes reflect fresher version of project.
+Sistēma spēj sadarboties ar Raspberry pi, ja to lieto kā centrmezglu vai pat kā wifi nodrošinātāju pārējie centrmezgliem.
+
+**Drošība**: sistēmā ir iekļauts jaukšanas moments, kas neļauj ļaunprāšiem viegli paredzamā veidā iejaukties atjaunināšanas datos. Līdzīgus momentus iespējams jo viegli iekļaut arī sensoru datu pārraidē. Gadījumā ja pazūd tīkls, centrmezgli cenšas atkārtoti savienoties ar tīklu, un attiecīgi mērījumu ievākšana tiek apturēta, kad mērījumu saraksti aizņem tuvu kritiskajām atmiņas lielumus. Kad parādās tīkls, datu buferi tiek iztukšoti un mērījumi atsākti.
+
+**Funkcionalitāte**: sasniedzām visas obligātās funkcijas, bet atmetām 3d vizualizāciju.
+
+Sistēma atbilst tiem standartiem, kuru atbilstību ir deklarējuši attiecīgo iekārtu ražotāji. Analogajam mēram ir iekļauta rezerve gadījumiem kad strāva būtu virs 20mA, pie tam centrmezglam ir sava iekšējā aizsardzība pret īssavienojumiem.
+
+**Uzticamības**:
+
+Sistēma pārbaudīti nodrošina savas funkcijas, tomēr ir samērā plašas izaugsmes iespējas.
+
+Kā jau pieminēts, ir aizsardzība pret īssavienojumiem un rezerve augstākām strāvām. Tāpat jau minēts par tīkla darbības atjaunošanu.
+
+**Lietojamības**:
+Metadatu ievade ir attēlota ar pārbaudīto datatables saskarni, tāpat lietotāja grafiki ar pārbaudīto Grafana saskarni.
+Mūsuprāt grafiki ir daudz pievilcīgāki par sākotnējo matplotlib versiju.
+
+**Efektivitātes**:
+Sistēma pēc ielādes ļauj responsīvi kārtot, šķirot metadatus. Ielādes laiku gan neizdevās uzlabot, jo pēc python3 atjaunināšanas kešošanai piedāvā tikai memcached vai redis, proti ārējus risinājumus.
+
+Mikrokontrolieru atmiņa tiek lietota maksimālā līmenī, kā redzams OUT OF MEMORY video.
+
+**Uzturamības**:
+Kods ir samērā viegli un mazāk kā stundas laikā saslēdzams ar jebkuru centrmezglu, kas spēj darbināt micropython, jo mainās tikai porti un varbūt LED specifika.
+ 
+**Kustināmības (Portability)**:
+Tāpat ir viegli paplašināmi metadati un pievienojami jauni objekti pēc nepieciešamības
