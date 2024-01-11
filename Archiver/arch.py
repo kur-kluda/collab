@@ -36,18 +36,20 @@ def getDiffs(d: datetime) -> datetime: #Tiek definēta funkcija 'getDiffs', kas 
 	return	d
 
 def getDiffs_via(d: datetime, dfrom: datetime, dto: datetime) -> datetime:
+      print(dateutil.relativedelta.relativedelta(dto, dfrom))
       return d - dateutil.relativedelta.relativedelta(dto, dfrom)
 
 def archive_db(i: int, refdate: datetime, cur: object): #Tiek nodefinēta funkcija 'archive_db', kas arhivē ierakstus no datubāzes tabulas. 'i' ir integer parametrs, 'refdate' ir 'datetime' objekts, kurš pārstāv atsauces datumu. 'cur' ir datubāzes kursora objekts.  
 	print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} .::. loading table s_{str(i)} records...') 
 	sql = "SELECT * FROM `s_"+str(i)+"` WHERE `rcv` <= %(refdate)s ORDER BY `time` ASC" #Uzbūvē SQL vaicājumu, kas atlasa visus ierakstus '*' no tabulas, kuras nosaukums ir 's_1', kur 'rcv' kolonna ir mazāka vai vienāda par norādīto datumu. Rezultāti tiek salikti ar 'time' kolonnu augošā secībā.
 #Could not process parameters: str(2023-12-02 16:47:44), it must be of type list, tuple or dict
+	nowdir = os.path.join(__PATH_TO_ARCHIVES__, str(i))
 	val = {"refdate": refdate.strftime('%Y-%m-%d %H:%M:%S')} #Sagatavo parametru SQL vaicājumam, kur '%s' tiek substitēts ar formatēto simbolu virknes 'refdata'.
 	cur.execute(sql, val) #Izpilda SQL vaicājumu ar dotajiem parametriem, izmantojot datubāzes kursoru.
 	result = cur.fetchall() #Paņem visas rindas no izpildītā vaicājuma un glabā tos 'result' mainīgajā.
-	if not os.path.exists(refdate.strftime('%Y-%m-%d_%H-%M-%S')): #Pārbauda vai direktorija, 
-		os.makedirs(refdate.strftime('%Y-%m-%d_%H-%M-%S'))        #kas ir nosaukta ar formatētu atsauces datumu eksistē.
-	with gzip.open(refdate.strftime('%Y-%m-%d_%H-%M-%S')+"/"+refdate.strftime('%Y-%m-%d_%H-%M-%S')+"_s_"+str(i)+'.gz', 'at') as zipp: #Arhivē paņemtos ierakstus saspiestā CSV failā, 
+	if not os.path.exists(nowdir): #Pārbauda vai direktorija, 
+		os.makedirs(nowdir)        #kas ir nosaukta ar formatētu atsauces datumu eksistē.
+	with gzip.open(nowdir+"/"+refdate.strftime('%Y-%m-%d_%H-%M-%S')+"_s_"+str(i)+'.gz', 'at') as zipp: #Arhivē paņemtos ierakstus saspiestā CSV failā, 
 		csvw = csv.writer(zipp)                                                                                                       #kurš atrodas
 		csvw.writerows(result)                                                                                                        #iepriekš izveidotajā direktorijā.                  
 	print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} .::. archived {len(result)} records') #Izvada ziņu, kas parāda laiku, datumu un sasniegto ierakstu skaitu. 
@@ -64,9 +66,15 @@ def delete_from_archives(i: int, refdate: datetime):
                 #safeguard datetime
                 df.iloc[:, 1] = pd.to_datetime(df.iloc[:, 1])
                 newset = df[df.iloc[:, 1] > refdate]
-                print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} .::. legth before: {len(df)} after: {len(newset)}')
-                newset.to_csv(nowdir+"/"+f, index=False, compression='gzip')
-                print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} .::. deleted exceess records, now: {len(newset)}' )
+                if(len(newset)<1): continue
+                print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} .::. first record: {newset.iloc[0, 1].strftime("%Y-%m-%d %H:%M:%S")} ref: {refdate.strftime("%Y-%m-%d %H:%M:%S")}')
+                if(len(df) == len(newset)):
+                    print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} .::. skipping write, as all records are recent enough')
+                    continue
+                else:
+                    print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} .::. legth before: {len(df)} after: {len(newset)}')
+                    newset.to_csv(nowdir+"/"+f, index=False, compression='gzip')
+                    print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} .::. deleted old {len(df) - len(newset)} records' )
 
 
 def getJobList() -> dict:
@@ -117,6 +125,7 @@ def doJob(nums: dict):
                 #TODO : unarchive and undump to temp db and delete and then arhchive and finally delete initial archive
                 if(__DEL_DB_RECORDS__):
                     print(f"DELETING records before {refdate.strftime('%Y-%m-%d %H:%M:%S')} from database..")
+                    #sql inject??
                     sql = "DELETE FROM `s_"+str(i)+"` WHERE `rcv` <= %(refdate)s ORDER BY `time` ASC"
                     cur.execute(sql)
                     db.commit()
