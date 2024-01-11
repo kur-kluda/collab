@@ -3,8 +3,10 @@ from io import StringIO, BytesIO    #metodes, kas manipulē ar virkņu (StringIO
 import data1
 
 # https://stackoverflow.com/q/69714533/435878
+# function author: Fumanchu3000
 # funkcijas autors: Fumanchu3000
 # https://stackoverflow.com/users/8245737/fumanchu3000
+# no changes where made.
 # nekādas izmaiņas netika veiktas.
 
 def string_to_bytes(input_str: str) -> bytes:
@@ -41,8 +43,10 @@ def bytes_to_4string(in_by: bytes) -> str:
     return "".join(outstr)
 
 # https://stackoverflow.com/q/69714533/435878
+# function author: Fumanchu3000
 # funkcijas autors: Fumanchu3000
 # https://stackoverflow.com/users/8245737/fumanchu3000
+# no changes where made.
 # nekādas izmaiņas netika veiktas.
 
 def bytes_to_string(input_bytes: bytes) -> str:

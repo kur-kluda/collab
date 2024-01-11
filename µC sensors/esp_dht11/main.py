@@ -1,9 +1,9 @@
 # at this moment 5 new records appear while waiting for db to write so first 10=> send (+5 in the meanwhile), then @10=>send so it sends each 
 #5 measurements instead of intended 10 @1sec interval measuring
 #esp.osdebug(None)
-debuglevel1 = 1
+debuglevel1 = 0
 __DEBUG_LEVEL_1__ = True if debuglevel1==1 else False
-debuglevel2 = 1
+debuglevel2 = 0
 __DEBUG_LEVEL_2__ = True if debuglevel2==1 else False
 import os, machine
 #os.dupterm(None, 1) # disable REPL on UART(0)
@@ -16,32 +16,33 @@ import asyncio
 import json
 import socket
 import ntptime
-import onewire, ds18x20
+#import onewire, ds18x20
 #import webrepl
 #webrepl.start()
 
-__MEAS_INTERVAL__ = 1
+__MEAS_INTERVAL__ = 4
 __MINIMUM_MEASURES_TO_SEND__=10
 __MAXIMUM_SECS_BEFORE_SEND__=30
-__LED__='LED'
+__LED__=2
 #__LOOP_DEBUG_LEN__ = 99999
+HOSTNAME = 4
 HOST = 'jtag.me'  # The server's hostname or IP address
 PORT = 911       # Port to connect to
-CLI_ID = 7		#device id to send
-CLI_ID2 = 8		#device id to send
+CLI_ID = 12		#device id to send
+CLI_ID2 = 13		#device id to send
 #CLI_ID3 = 9		#device id to send
 #CLI_ID4 = 10		#device id to send
-CLI_ID5 = 9		#device id to send
-pin = Pin(12)#, Pin.OUT, Pin.PULL_DOWN)
-sensor = dht.DHT11(pin)
-sensor2 = dht.DHT22(Pin(2))
+#CLI_ID5 = 9		#device id to send
+#, Pin.OUT, Pin.PULL_DOWN)
+sensor = dht.DHT11(Pin(4))
+sensor2 = dht.DHT22(Pin(5))
 #sensor3 = dht.DHT22(Pin(3))
 #sensor4 = dht.DHT11(Pin(4))
-onewire5 = ds18x20.DS18X20(onewire.OneWire(Pin(14)))
+#onewire5 = ds18x20.DS18X20(onewire.OneWire(Pin(14)))
 
-onewire_devs5 = onewire5.scan()
-if(__DEBUG_LEVEL_1__):
-    print('Found DS devices: ', onewire_devs5)
+#onewire_devs5 = onewire5.scan()
+#if(__DEBUG_LEVEL_1__):
+#    print('Found DS devices: ', onewire_devs5)
 
 wlan = network.WLAN(network.STA_IF) # create station interface
 
@@ -49,8 +50,14 @@ li_mem_clog = []
 li_mem_clog2 = []
 #li_mem_clog3 = []
 #li_mem_clog4 = []
-li_mem_clog5 = []
+#li_mem_clog5 = []
 
+
+def strftime(tup: tuple):
+    return "{}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}".format(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
+
+def t(tup: tuple):
+    return strftime(tup)
 
 async def tsk_con_net():
     wlan.active(True)       # activate the interface
@@ -66,7 +73,7 @@ async def tsk_con_net():
             uptime_stamp = time.mktime(time.gmtime())
             return True
         except Exception as e:
-            print(f"tsk con net {str(e)}")  
+            print(f"{t(time.gmtime())} tsk con net {str(e)}")  
     #print('network config:', wlan.ifconfig())
 
 async def measure_interval_updater():
@@ -74,7 +81,7 @@ async def measure_interval_updater():
     while(True):
         try:
             reader, writer = await asyncio.open_connection(HOST, PORT)
-            writer.write("NET\n".encode())
+            writer.write(f"NET_{HOSTNAME}\n".encode())
             await writer.drain()
             await asyncio.sleep(1)
             response = await reader.read(1024)
@@ -85,7 +92,8 @@ async def measure_interval_updater():
             reader.close()
             await asyncio.sleep(1)
         except Exception as e:
-            print(f"meaure interval updater: {str(e)}") 
+            print(f"{t(time.gmtime())} messaure interval updater: {str(e)}")
+            await asyncio.sleep(2)
         
 async def push_data_net():
     #global __MEAS_INTERVAL__
@@ -131,11 +139,11 @@ async def push_data_net():
             return
         else:
             if(__DEBUG_LEVEL_1__):
-                print(f"fail to send 1. response was {response}")
+                print(f"{t(time.gmtime())} fail to send 1. response was {response}")
         #s.close()
     except Exception as e:
-        print(f" push 1 {str(e)}")      
-    print("failed to sync 1")
+        print(f"{t(time.gmtime())}  push 1 {str(e)}")      
+    print(f"{t(time.gmtime())} failed to sync 1")
     return
 
 async def push_data_net2():
@@ -175,150 +183,11 @@ async def push_data_net2():
             return
         else:
             if(__DEBUG_LEVEL_1__):
-                print(f"fail to send 2. response was {response}")
+                print(f"{t(time.gmtime())} fail to send 2. response was {response}")
         #s.close()
     except Exception as e:
-        print(f" push 2 {str(e)}")      
-    print("failed to sync 2")
-    return
-"""
-async def push_data_net3():
-    await asyncio.sleep(1)
-    try:
-        #with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
-        #addr = socket.getaddrinfo(HOST, PORT)[0][-1]
-        #s.connect((HOST, PORT))
-        reader, writer = await asyncio.open_connection(HOST, PORT)
-        #avoid race conds/?? ja nu kas :D
-        length = len(li_mem_clog3)
-        if(__DEBUG_LEVEL_1__):
-            print(f'Send 3: {!r}')
-        writer.write(json.dumps({"epoch" : time.gmtime(0)[0],
-                                 "id": CLI_ID3,
-                                 "len": length
-                                 }).encode() + b'\n')
-        writer.write(json.dumps(li_mem_clog3[0:length]).encode() + b'\n')
-        await writer.drain()
-        await asyncio.sleep(1)
-        #await s.connect(addr)
-        #s.sendall(json.dumps(li_mem_clog[0:length]).encode() + b'\n')
-        #s.send(bytes(json.dumps(li_mem_clog[0:length]).encode() + b'\n'), 'utf-8')
-        #response = s.recv(1024)
-        #print(response)
-        response = await reader.read(1024)
-        #k = await reader.drain()
-        if(__DEBUG_LEVEL_1__):
-            print('Close the connection 3')
-        writer.close()
-        await writer.wait_closed()
-        reader.close()
-        if(int(response) == length):
-            del li_mem_clog3[0:length]
-            await asyncio.sleep(1)
-            return
-        else:
-            if(__DEBUG_LEVEL_1__):
-                print(f"fail to send 3. response was {response}")
-        #s.close()
-    except Exception as e:
-        print(f" push 3 {str(e)}")      
-    print("failed to sync 3")
-    return
-
-async def push_data_net4():
-    await asyncio.sleep(1)
-    try:
-        #with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
-        #addr = socket.getaddrinfo(HOST, PORT)[0][-1]
-        #s.connect((HOST, PORT))
-        reader, writer = await asyncio.open_connection(HOST, PORT)
-        #avoid race conds/?? ja nu kas :D
-        length = len(li_mem_clog4)
-        if(__DEBUG_LEVEL_1__):
-            print(f'Send 4: {!r}')
-        writer.write(json.dumps({"epoch" : time.gmtime(0)[0],
-                                 "id": CLI_ID4,
-                                 "len": length
-                                 }).encode() + b'\n')
-        writer.write(json.dumps(li_mem_clog4[0:length]).encode() + b'\n')
-        await writer.drain()
-        await asyncio.sleep(1)
-        #await s.connect(addr)
-        #s.sendall(json.dumps(li_mem_clog[0:length]).encode() + b'\n')
-        #s.send(bytes(json.dumps(li_mem_clog[0:length]).encode() + b'\n'), 'utf-8')
-        #response = s.recv(1024)
-        #print(response)
-        response = await reader.read(1024)
-        #k = await reader.drain()
-        if(__DEBUG_LEVEL_1__):
-            print('Close the connection 4')
-        writer.close()
-        await writer.wait_closed()
-        reader.close()
-        if(int(response) == length):
-            del li_mem_clog4[0:length]
-            await asyncio.sleep(1)
-            return
-        else:
-            if(__DEBUG_LEVEL_1__):
-                print(f"fail to send 4. response was {response}")
-        #s.close()
-    except Exception as e:
-        print(f" push 4 {str(e)}")
-        #print(li_mem_clog4)
-    print("failed to sync 4")
-    return
-"""
-async def push_data_net5():
-    await asyncio.sleep(1)
-    try:
-        #with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        #s = socket.socket()#socket.AF_INET, socket.SOCK_STREAM)
-        #addr = socket.getaddrinfo(HOST, PORT)[0][-1]
-        #s.connect((HOST, PORT))
-        if(__DEBUG_LEVEL_2__):
-            print("aa 0")
-        reader, writer = await asyncio.open_connection(HOST, PORT)
-        if(__DEBUG_LEVEL_2__):
-            print("aa 1")
-        #avoid race conds/?? ja nu kas :D
-        length = len(li_mem_clog5)
-        if(__DEBUG_LEVEL_2__):
-            print("aa 2")
-        if(__DEBUG_LEVEL_1__):
-            print(f'Send 5: {!r}')
-        writer.write(json.dumps({"epoch" : time.gmtime(0)[0],
-                                 "id": CLI_ID5,
-                                 "len": length
-                                 }).encode() + b'\n')
-        writer.write(json.dumps(li_mem_clog5[0:length]).encode() + b'\n')
-        await writer.drain()
-        await asyncio.sleep(1)
-        #await s.connect(addr)
-        #s.sendall(json.dumps(li_mem_clog[0:length]).encode() + b'\n')
-        #s.send(bytes(json.dumps(li_mem_clog[0:length]).encode() + b'\n'), 'utf-8')
-        #response = s.recv(1024)
-        #print(response)
-        response = await reader.read(1024)
-        #k = await reader.drain()
-        if(__DEBUG_LEVEL_1__):
-            print('Close the connection 5')
-        writer.close()
-        await writer.wait_closed()
-        reader.close()
-        if(int(response) == length):
-            del li_mem_clog5[0:length]
-            await asyncio.sleep(1)
-            return
-        else:
-            if(__DEBUG_LEVEL_1__):
-                print(f"fail to send 5. response was {response}")
-        #s.close()
-    except Exception as e:
-        print(f" push 5 {str(e)}")      
-    print("failed to sync 5")
+        print(f"{t(time.gmtime())}  push 2 {str(e)}")      
+    print(f"{t(time.gmtime())} failed to sync 2")
     return
 
 async def push_data():
@@ -338,15 +207,13 @@ async def push_data():
                     #await asyncio.sleep(0)
                     #nets4 = asyncio.create_task(push_data_net4())
                     #await asyncio.sleep(1)
-                    nets5 = asyncio.create_task(push_data_net5())
-                    await asyncio.sleep(0)
+                    #nets5 = asyncio.create_task(push_data_net5())
+                    #await asyncio.sleep(0)
                     if(__DEBUG_LEVEL_1__):
                         seccounter = 0
-                    while (not nets.done() and not nets2.done()
-                           #and not nets3.done() and not nets4.done()
-                           and not nets5.done()):
+                    while (not nets.done() and not nets2.done()):# and not nets3.done() and not nets4.done() and not nets5.done()):
                         if(__DEBUG_LEVEL_1__):
-                            print(f"waiting...{seccounter}")
+                            print(f"{t(time.gmtime())} waiting...{seccounter}")
                             seccounter = seccounter +1
                             if(seccounter > 120):
                                 return False
@@ -358,8 +225,8 @@ async def push_data():
                     #    print(res)
                     await asyncio.sleep(1)       
                 except Exception as e:
-                    print("failed to sync all")
-                    print(f" push all {e}")
+                    print("{t(time.gmtime())} failed to sync all")
+                    print(f"{t(time.gmtime())}  push all {e}")
         return True
 
 async def alarm_clock():
@@ -369,7 +236,7 @@ async def alarm_clock():
         await asyncio.sleep(1)
         counter = counter+1
         if(__DEBUG_LEVEL_1__):
-            print(f'count: {counter} meas: {__MEAS_INTERVAL__}')
+            print(f'{t(time.gmtime())} count: {counter} meas: {__MEAS_INTERVAL__}')
     
 led_on = False
 async def light(howlong):
@@ -384,10 +251,78 @@ async def light(howlong):
     led.off()
     led = Pin(__LED__, Pin.IN)
     led_on=False
+    
+laststates = [False, False, False, False, False]
 
+async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
+    print(f"{t(time.gmtime())} {number} init__")
+    just_was_exception = False
+    global laststates, __MEAS_INTERVAL__
+    if(__MEAS_INTERVAL__ > 1):
+        waker = asyncio.create_task(alarm_clock())
+        await asyncio.sleep(0)
+        while (not waker.done()):
+            await asyncio.sleep(1)
+    else:
+        await asyncio.sleep(1)
+    while True: #i<__LOOP_DEBUG_LEN__:
+        try:
+            if(__DEBUG_LEVEL_2__):
+                print(f"{t(time.gmtime())} {number} init")
+            if len(li_mem_clog) > 54:
+                tsk2 = asyncio.create_task(push_data())
+                await asyncio.sleep(3)
+                continue
+            if(onewire_special):
+                sensor.convert_temp()
+                asyncio.sleep_ms(750)
+            else:
+                sensor.measure()
+            laststates[number-1] = True
+            if(__DEBUG_LEVEL_1__):
+                print(number)
+            if(onewire_special):
+                temp = sensor.read_temp(onewire_special)
+                if(__DEBUG_LEVEL_2__):
+                    print(f"{t(time.gmtime())} {number} t: {temp} hum: n/a")
+                li_mem_clog.append([time.mktime(time.gmtime()), temp])
+            else:
+                temp = sensor.temperature()
+                hum = sensor.humidity()
+                if(__DEBUG_LEVEL_2__):
+                    print(f"{t(time.gmtime())} {number} t: {temp} hum: {hum}")
+                li_mem_clog.append([time.mktime(time.gmtime()), temp, hum])
+            if(just_was_exception):
+                print(f"{t(time.gmtime())} sensor {number} now OK!")
+            just_was_exception = False
+            laststates[number-1] = False
+            if(__MEAS_INTERVAL__ > 1):
+                waker = asyncio.create_task(alarm_clock())
+                await asyncio.sleep(0)
+                while (not waker.done()):
+                    await asyncio.sleep(1)
+            else:
+                await asyncio.sleep(1)
+        except OSError as e:
+            print(f'{t(time.gmtime())} Sensor {number}: OSerror, probably Failed to read sensor:')
+            print(e)
+            print(laststates)
+            print(t(time.gmtime()))
+            just_was_exception = True
+            await asyncio.sleep(__MEAS_INTERVAL__+1)
+        except Exception as ex:
+            print(f'{t(time.gmtime())} Sensor {number}: general exc')
+            print(ex)
+            print(laststates)
+            print(t(time.gmtime()))
+            just_was_exception = True
+            await asyncio.sleep(__MEAS_INTERVAL__+1)
+            
 async def main():
     global __MEAS_INTERVAL__
-    print("Welcome! Booting up by connecting to the network")
+    just_was_exception = False
+    
+    print(f"{t(time.gmtime())} Welcome! Booting up by connecting to the network")
     tsk = asyncio.create_task(tsk_con_net())
     #shis palaiz tsk!!!11
     await asyncio.sleep(0)
@@ -396,95 +331,69 @@ async def main():
     tsk_inter = asyncio.create_task(measure_interval_updater())
     await asyncio.sleep(0)
     #i=0
+    if(__DEBUG_LEVEL_2__):
+        print(f"{t(time.gmtime())} launch s1")
+    measure_1 = asyncio.create_task(measure(li_mem_clog, push_data, sensor, 1, False))
+    await asyncio.sleep(0)
+    if(__DEBUG_LEVEL_2__):
+        print(f"{t(time.gmtime())} launch s2")
+    measure_2 = asyncio.create_task(measure(li_mem_clog2, push_data, sensor2, 2, False))
+    await asyncio.sleep(0)
+    #if(__DEBUG_LEVEL_2__):
+    #    print(f"{t(time.gmtime())} launch s3")
+    #measure_3 = asyncio.create_task(measure(li_mem_clog3, push_data, sensor3, 3, False))
+    #await asyncio.sleep(0)
+    #if(__DEBUG_LEVEL_2__):
+    #    print(f"{t(time.gmtime())} launch s4")
+    #measure_4 = asyncio.create_task(measure(li_mem_clog4, push_data, sensor4, 4, False))
+    #await asyncio.sleep(0)
+    #if(__DEBUG_LEVEL_2__):
+    #    print(f"{t(time.gmtime())} launch s5")
+    #measure_5 = asyncio.create_task(measure(li_mem_clog5, push_data, onewire5, 5, onewire_devs5[0]))
+    #await asyncio.sleep(0)
+    
     while True: #i<__LOOP_DEBUG_LEN__:
       try:
         if not wlan.isconnected():
             tsk = asyncio.create_task(tsk_con_net())
-            await asyncio.sleep(0)
+            await asyncio.sleep(5)
+            continue
         lig = asyncio.create_task(light(1/2))
+        await asyncio.sleep(0)
         if(tsk2.done()):
             tsk2 = asyncio.create_task(push_data())
             await asyncio.sleep(0)
-        if len(li_mem_clog) > 64:
-            tsk2 = asyncio.create_task(push_data())
-            await asyncio.sleep(3)
-            lg = asyncio.create_task(light(1/2))
-            await asyncio.sleep(0)
-            continue
-        #await asyncio.sleep(0)
-        #print(__MEAS_INTERVAL__)
-        # why not this::::
-        #await alarm_clock()
-        if(__MEAS_INTERVAL__ > 1):
-            waker = asyncio.create_task(alarm_clock())
-            await asyncio.sleep(0)
-            while (not waker.done()):
-                await asyncio.sleep(1)
-        else:
-            await asyncio.sleep(1)
-        sensor.measure()
-        if(__DEBUG_LEVEL_1__):
-            print("1")
-        sensor2.measure()
-        if(__DEBUG_LEVEL_1__):
-            print("2")
-        #sensor3.measure()
-        #if(__DEBUG_LEVEL_1__):
-        #    print("3")
-        #sensor4.measure()
-        #if(__DEBUG_LEVEL_1__):
-        #    print("4")
-        onewire5.convert_temp()
-        asyncio.sleep_ms(750)
+        
         #for sensor in onewire_devs5:
         #    print(f"sensor unique address: {sensor}")
         #    print(onewire5.read_temp(sensor))
-        temp5 = onewire5.read_temp(onewire_devs5[0])
-        if(__DEBUG_LEVEL_1__):
-            print("5")
-        if(__DEBUG_LEVEL_2__):
-            print(f"5 t: {temp5} hum: {'n/a'}")
-        temp = sensor.temperature()
-        hum = sensor.humidity()
-        if(__DEBUG_LEVEL_2__):
-            print(f"1 t: {temp} hum: {hum}")
-        temp2 = sensor2.temperature()
-        hum2 = sensor2.humidity()
-        if(__DEBUG_LEVEL_2__):
-            print(f"2 t: {temp2} hum: {hum2}")
-        #temp3 = sensor3.temperature()
-        #hum3 = sensor3.humidity()
-        #if(__DEBUG_LEVEL_2__):
-        #    print(f"3 t: {temp3} hum: {hum3}")
-        #temp4 = sensor4.temperature()
-        #hum4 = sensor4.humidity()
-        #if(__DEBUG_LEVEL_2__):
-        #    print(f"4 t: {temp4} hum: {hum4}")
-        # 5 is onewire with only temperature and another kind of flow...
-        #print(f'temp1: {temp} temp2: {temp2} temp3: {temp3}')
-        #print(f'hum1: {hum} hum2: {hum2} hum3: {hum3}')
-        #temp_f = temp * (9/5) + 32.0
-        #print(time.gmtime(0)[0])
-        #yr, Month, date, h, m, s, weekday, yearday
-        li_mem_clog.append([time.mktime(time.gmtime()), temp, hum])
-        li_mem_clog2.append([time.mktime(time.gmtime()), temp2, hum2])
-        #li_mem_clog3.append([time.mktime(time.gmtime()), temp3, hum3])
-        #li_mem_clog4.append([time.mktime(time.gmtime()), temp4, hum4])
-        li_mem_clog5.append([time.mktime(time.gmtime()), temp5])
+
+        if(just_was_exception):
+            print(f"{t(time.gmtime())} main now OK!")
+        just_was_exception = False
+        await asyncio.sleep(__MEAS_INTERVAL__)
         #print(time.localtime())
         #print(json.loads(json.dumps(time.localtime()))[5])
-        #print('Temperature: %3.1f C' %temp)
-        #print('Temperature: %3.1f F' %temp_f)
-        #print('Humidity: %3.1f %%' %hum)
         #print(f'lis1: {len(li_mem_clog)} lis2: {len(li_mem_clog2)} lis3: {len(li_mem_clog3)}')
       except OSError as e:
-        print('Main loop: Failed to read sensor.')
+        print(f'{t(time.gmtime())} Main loop: OSerror, probably Failed to read sensor:')
         print(e)
+        print(laststates)
+        print(t(time.gmtime()))
+        just_was_exception = True
+        await asyncio.sleep(__MEAS_INTERVAL__)
       except Exception as ex:
-        print('Main loop Exception:')
+        print(f'{t(time.gmtime())} Main loop Exception:')
         print(ex)
+        print(laststates)
+        print(t(time.gmtime()))
+        just_was_exception = True
+        await asyncio.sleep(__MEAS_INTERVAL__)
       #i=i+1
 
 light(2)
+#NotImplementedError: attributes not supported
+#print("{0[0]}/{0[1]}/{0[2]} {0[3]}:{0[4]}".format(time.gmtime()))
+#NotImplementedError: attributes not supported
 asyncio.run(main())
 
