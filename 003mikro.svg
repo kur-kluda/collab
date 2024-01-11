@@ -32,7 +32,8 @@
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg182" />
+     inkscape:current-layer="g181"
+     showgrid="false" />
   <defs
      id="defs2">
     <style
@@ -393,10 +394,11 @@ a { color: #007bff; }
     <g
        shape-node=""
        text-node=""
-       id="g18">
+       id="g18"
+       transform="translate(4,-6)">
       <g
          cell-id="4oANgzF-vDj3A1AGU-iw-10"
-         transform="translate(-0.5 -0.5)"
+         transform="translate(-0.5,-0.5)"
          id="g17">
         <switch
            cell-id="4oANgzF-vDj3A1AGU-iw-10"
@@ -427,12 +429,12 @@ a { color: #007bff; }
                id="defs16">
               <path
                  id="Q8b8nzGGawniygKn"
-                 d="M305.83331298828125,97 h91.33334350585938" />
+                 d="m 305.83331,97 h 91.33335" />
             </defs>
             <text
-               fill="rgb(0, 0, 0)"
+               fill="#000000"
                font-size="20px"
-               font-family="&quot;Open Sans&quot;, &quot;VP Default&quot;"
+               font-family="'Open Sans', 'VP Default'"
                font-weight="400"
                id="text16"><textPath
                  xlink:href="#Q8b8nzGGawniygKn"
@@ -810,7 +812,9 @@ a { color: #007bff; }
                 <xhtml:div
                    ani=""
                    style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;, &quot;VP Default&quot;; color: #000000; line-height: 1.2; pointer-events: none; word-break: break-word; white-space: normal; word-wrap: normal; ">Izveidot sūtīšanas uzdevumus un tos<xhtml:br />
+
 palaist izvairoties no OUT OF<xhtml:br />
+
 MEMORY<xhtml:br />
 </xhtml:div>
               </xhtml:div>
@@ -1266,7 +1270,9 @@ MEMORY<xhtml:br />
                 <xhtml:div
                    ani=""
                    style="display: inline-block; font-size: 12px; font-family: &quot;Helvetica&quot;, &quot;VP Default&quot;; color: #000000; line-height: 1.2; pointer-events: none; word-break: break-word; white-space: normal; word-wrap: normal; ">gulēt noteikto intervālu;<xhtml:br />
+
 ja &gt;1s izsaukt un <xhtml:br />
+
 gaidīt modinātāju</xhtml:div>
               </xhtml:div>
             </xhtml:div>
@@ -2401,10 +2407,11 @@ gaidīt modinātāju</xhtml:div>
     <g
        shape-node=""
        text-node=""
-       id="g141">
+       id="g141"
+       transform="translate(5.5530303,-1.3882576)">
       <g
          cell-id="4oANgzF-vDj3A1AGU-iw-70"
-         transform="translate(-0.5 -0.5)"
+         transform="translate(-0.5,-0.5)"
          id="g140">
         <switch
            cell-id="4oANgzF-vDj3A1AGU-iw-70"
@@ -2435,12 +2442,12 @@ gaidīt modinātāju</xhtml:div>
                id="defs139">
               <path
                  id="3ib8nzGGawniygLD"
-                 d="M592.11669921875,334 h215.76666259765625" />
+                 d="M 592.1167,334 H 807.88336" />
             </defs>
             <text
-               fill="rgb(0, 0, 0)"
+               fill="#000000"
                font-size="20px"
-               font-family="&quot;Open Sans&quot;, &quot;VP Default&quot;"
+               font-family="'Open Sans', 'VP Default'"
                font-weight="400"
                id="text139"><textPath
                  xlink:href="#3ib8nzGGawniygLD"
