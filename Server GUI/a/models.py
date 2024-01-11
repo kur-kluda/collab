@@ -1,5 +1,6 @@
 from django.db import models as m
 from django.core.validators import MinValueValidator, MaxValueValidator
+import datetime
 
 class HubMeta(m.Model):
     nr = m.BigAutoField(primary_key=True, default=None)
@@ -28,6 +29,7 @@ class Connection_InterfaceMeta(m.Model):
         ("WiFi", "WiFi"),
         ("4-20mA", "4-20mA"),
         ("MODBUS", "MODBUS"),
+        ("1wire", "1wire"),
     ]
     interface = m.CharField(max_length=30,choices=the_interfaces_enum)
     
@@ -38,7 +40,7 @@ class SensorMeta(m.Model):
     nr = m.BigAutoField(primary_key=True, default=None)
     model = m.CharField(max_length=127)
     #hubs = m.ManyToManyField('HubMeta')
-    hub = m.ForeignKey(HubMeta, on_delete=m.CASCADE)
+    hub = m.ForeignKey(HubMeta, null=True, on_delete=m.SET_NULL)
     interface = m.ForeignKey(Connection_InterfaceMeta, null=True, on_delete=m.SET_NULL)
     measurements = m.ManyToManyField('MeasureMeta')
     update_interval = m.SmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(3600),], default=1)
@@ -47,6 +49,8 @@ class SensorMeta(m.Model):
     loc_ro = m.SmallIntegerField( validators=[MinValueValidator(1), MaxValueValidator(999),])
     comment = m.TextField(null=True)
     is_real = m.BooleanField(default=False)
+    archiv_t_comp = m.DateTimeField(default = datetime.datetime.utcfromtimestamp(0)+ datetime.timedelta(days=15))
+    archiv_t_del = m.DateTimeField(default = datetime.datetime.utcfromtimestamp(0).replace(month=2))
     def __str__(s):
         wsgi_wtf = "_F_ " if not s.is_real else ""
         wsgi_cant_bear_tenary = s.loc_ro if s.loc_ro else "???"

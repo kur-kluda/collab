@@ -26,7 +26,7 @@ from a import tutorial101_clud_measure as cl
 #from django.views.generic.base import RedirectView
 from django.conf.urls.static import static
 from django.conf import settings
-
+# tīmekļa šabloni aprakstiti ---turpininājums komentāriem.
 urlpatterns = [
     #re_path(r'^favicon\.ico$',RedirectView.as_view(url='/static/favicon/favicon.ico')),
     path('', g.render_templ_grafs, name='dbGplotApp'),
@@ -44,7 +44,7 @@ urlpatterns = [
     #path('t/<str:file_name>/', av.view_text, name='viewText'),
     #originally was AIUD (Addnew/Index/Update||Edit/Delete)
 #Sensor CIUD
-    path('ciud/', tu.index, name='ciud_index'),  
+    path('ciud/', tu.index, name='ciud_index'), #Lietotājam piekļūstot URL, kas atbilst paraugam 'ciud/', Django izsauks 'tu.index' skata funkciju, lai apstrādātu pieprasījumu. Pie tam šim URL rakstam ir piešķirts nosaukums 'ciud_index'.
     path('ciud/create/',tu.create, name='ciud_create'),     
     path('ciud/update/<int:nr>/', tu.update, name='ciud_update'), 
     path('ciud/delete/<int:nr>', tu.destroy, name='ciud_destroy'),
@@ -57,6 +57,6 @@ urlpatterns = [
     path('clud/', cl.index, name='clud_index'),  
     #path('clud/', cl.index, name='clud_index', kwargs={"success": False}), 
     path('clud/create/',cl.create, name='clud_create'),      
-    re_path(r'^clud/update/(?P<measurement>[^/]+)/(?P<range_low>[\+-]?\d+\.\d+)/(?P<range_high>[\+-]?\d+\.\d+)/(?P<range_step>[\+]?\d+\.\d+)/$', cl.update, name='clud_update'), 
+    re_path(r'^clud/update/(?P<measurement>[^/]+)/(?P<range_low>[\+-]?\d+\.\d+)/(?P<range_high>[\+-]?\d+\.\d+)/(?P<range_step>[\+]?\d+\.\d+)/$', cl.update, name='clud_update'), #'re_path' ir funkcija Django, kas tiek izmantota, lai definētu URL saiti ar normālām izteiksmēm. 'r'^clud/update/(?P<measurement>[^/]+)/(?P<range_low>[\+-]?\d+\.\d+)/(?P<range_high>[\+-]?\d+\.\d+)/(?P<range_step>[\+]?\d+\.\d+)/$'' Tā ir izteiksme, kurai URL ir jāatbilst. Tātad, pa daļām: '^clud/update/' šī daļa no izteiksmes nodrošina to, ka URL sākas ar 'clud/update'; '(?P<measurement>[^/]+)' šī daļa no izteiksmes nosauc daļu no URL par 'measurement' un tā izmanto izteiksmi '[^/]+', lai tā sakristu ar vienu vai vairākām rakstzīmēm, kas nav '/'; '/(?P<range_low>[\+-]?\d+\.\d+)' šī daļa no izteiksmes nosauc daļu no URL par 'range_low', tas atļauj neobligātu plusa un mīnusa izmantošanu '[\+-]?', vēl var izmantot vienu vai vairākus ciparus '\d+', vēl var izmantot punktu '\.' un vienu vairākus ciparus '\d+'; '/(?P<range_high>[\+-]?\d+\.\d+)' strādā tāpat kā iepriekšējais, vienkārši nosaukts atšķirīgi, tas ir, 'range_high'; '/(?P<range_step>[\+]?\d+\.\d+)/$' šī daļa no izteiksmes nosauc daļu no URL par 'range_step' ar neobligātu plusa zīmi, pie tam cipariem, punktu un vēl cipariem, '$' beigās nodrošina to, ka šablons sakrīt ar URL beigām. 'cl.update' ir skata funkcija, kas tiks izsaukta, kad norādītais URL šablons ir atbilstošs. 'name='člud_update'' ir izteiksme, kas piešķir nosaukumu URL šablonam, kas ir vajadzīgs, lai to izmantotu, kā atsauci citās koda daļās, nosaukums ir iestatīts uz 'clud_update'.
     re_path(r'^clud/delete/(?P<measurement>[^/]+)/(?P<range_low>[\+-]?\d+\.\d+)/(?P<range_high>[\+-]?\d+\.\d+)/(?P<range_step>[\+]?\d+\.\d+)/$', cl.destroy, name='clud_destroy'), 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) #static() ir funkcija Django, lai pasniegtu statiskos failus izstrādes procesā. 'statiskie faili'ietver gan parastos statiskos failus, gan multivides failus. 'settings.MEDIA_URL' ir URL prefikss multivides failu apkalpošanai, tas ir nodefinēts Django projekta iestatījumos. 'document_root=settings.MEDIA_ROOT', kas norāda lokālo failu sistēmas ceļu, kur multivides faili tiek glabāti un 'settings.MEDIA_ROOT' ir viens no iestatījumiem Django projektā, kas glabā pilnīgu failu sistēmas ceļu uz direktoriju, kur multivides faili tiek augšupielādēti.
