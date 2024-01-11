@@ -102,6 +102,7 @@ async def rdr(r, client_socket, client_address, dheader):
 async def sync(r, client_socket, client_address, header):
     global SENSORS_IDS_SINGLE_DIMENSIONS
     try:
+        db = None
         data = json.loads(r.readline())
         metadata = json.loads(header)
         #print(metadata)

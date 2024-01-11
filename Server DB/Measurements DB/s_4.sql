@@ -33,8 +33,8 @@ CREATE TABLE `s_4` (
 --
 -- Indexes for table `s_3`
 --
-ALTER TABLE `s_4`--ar atribūtu izmaiņām saistīts
-  ADD KEY `time_index` (`time`);
+ALTER TABLE `s_4`
+  ADD KEY `time_index` (`time`); --ar atribūtu izmaiņām saistīts
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
