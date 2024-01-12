@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include, re_path
+from django.contrib.auth import views as auth_views
 #from a import views as av
 from a import grafiki as g
 from a import config as c
@@ -26,6 +27,8 @@ from a import tutorial101_clud_measure as cl
 #from django.views.generic.base import RedirectView
 from django.conf.urls.static import static
 from django.conf import settings
+from django.contrib.auth.views import LoginView
+from a import view_auth
 # tīmekļa šabloni aprakstiti ---turpininājums komentāriem.
 urlpatterns = [
     #re_path(r'^favicon\.ico$',RedirectView.as_view(url='/static/favicon/favicon.ico')),
@@ -40,6 +43,20 @@ urlpatterns = [
     #path('4/', av.dbplot_date, name='dbplotApp'),
     path('4/', g.render_templ_grafs, name='dbGplotApp'),
     path('admin/', admin.site.urls),
+    re_path(r'^accounts/login/$',
+        view_auth.Login.as_view(
+            #template_name='admin/login.html',
+            extra_context={
+                'site_header': 'Gaisa kvalitātes sistēma',
+            })),
+    path("register/", view_auth.UserRegistration.as_view(), name="user_registration"),
+    path("login/", view_auth.Login.as_view(
+            #template_name='admin/login.html',
+            extra_context={
+                'site_header': 'Gaisa kvalitātes sistēma',
+            }), name="login"),
+    path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+    path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout_accs"),
     #path('1/a.txt', redirect(to="/static/e.txt"))
     #path('t/<str:file_name>/', av.view_text, name='viewText'),
     #originally was AIUD (Addnew/Index/Update||Edit/Delete)

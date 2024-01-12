@@ -15,6 +15,7 @@ from . import secret
 #from . import dbrouter
 import os
 
+#STATIC_ROOT = '/var/www/dj/g/static'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
