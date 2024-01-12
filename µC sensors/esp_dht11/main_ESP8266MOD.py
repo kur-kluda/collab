@@ -85,6 +85,8 @@ async def measure_interval_updater():
             await writer.drain()
             await asyncio.sleep(1)
             response = await reader.read(1024)
+            print(f"decoded: {response.decode()}")
+            print(f"original: {response}")
             if(int(response)^ord('d') > 0):
                 __MEAS_INTERVAL__ = int(response)^ord('d')
             writer.close()
@@ -190,17 +192,20 @@ async def push_data_net2():
     print(f"{t(time.gmtime())} failed to sync 2")
     return
 
+__PUSH_DATA_LOCK__ = False
 async def push_data():
+    if(__PUSH_DATA_LOCK__): return
+    __PUSH_DATA_LOCK__ = True
     if not wlan.isconnected():
         await asyncio.sleep(1)
     else:
-        if(len(li_mem_clog) > 0):
-            if(len(li_mem_clog) >= __MINIMUM_MEASURES_TO_SEND__ or time.time()-li_mem_clog[0][0] >= __MAXIMUM_SECS_BEFORE_SEND__):
+        if(len(li_mem_clog2) > 0):
+            if(len(li_mem_clog2) >= __MINIMUM_MEASURES_TO_SEND__ or time.time()-li_mem_clog2[0][0] >= __MAXIMUM_SECS_BEFORE_SEND__):
             #print(li_mem_clog.pop(0))
             #print(li_mem_clog.pop(0))
                 try:
-                    nets = asyncio.create_task(push_data_net())
-                    await asyncio.sleep(0)
+                    #nets = asyncio.create_task(push_data_net())
+                    #await asyncio.sleep(0)
                     nets2 = asyncio.create_task(push_data_net2())
                     await asyncio.sleep(1)
                     #nets3 = asyncio.create_task(push_data_net3())
@@ -211,7 +216,7 @@ async def push_data():
                     #await asyncio.sleep(0)
                     if(__DEBUG_LEVEL_1__):
                         seccounter = 0
-                    while (not nets.done() and not nets2.done()):# and not nets3.done() and not nets4.done() and not nets5.done()):
+                    while (not nets2.done()):# and not nets2.done()):# and not nets3.done() and not nets4.done() and not nets5.done()):
                         if(__DEBUG_LEVEL_1__):
                             print(f"{t(time.gmtime())} waiting...{seccounter}")
                             seccounter = seccounter +1
@@ -223,8 +228,10 @@ async def push_data():
                     #i = nets.data
                     #for res in i:
                     #    print(res)
+                    __PUSH_DATA_LOCK__ = False
                     await asyncio.sleep(1)       
                 except Exception as e:
+                    __PUSH_DATA_LOCK__ = False
                     print("{t(time.gmtime())} failed to sync all")
                     print(f"{t(time.gmtime())}  push all {e}")
         return True
