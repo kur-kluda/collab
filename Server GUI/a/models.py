@@ -1,5 +1,6 @@
 from django.db import models as m
 from django.core.validators import MinValueValidator, MaxValueValidator
+import datetime
 
 class HubMeta(m.Model):
     nr = m.BigAutoField(primary_key=True, default=None)
@@ -48,6 +49,8 @@ class SensorMeta(m.Model):
     loc_ro = m.SmallIntegerField( validators=[MinValueValidator(1), MaxValueValidator(999),])
     comment = m.TextField(null=True)
     is_real = m.BooleanField(default=False)
+    archiv_t_comp = m.DateTimeField(default = datetime.datetime.utcfromtimestamp(0)+ datetime.timedelta(days=15))
+    archiv_t_del = m.DateTimeField(default = datetime.datetime.utcfromtimestamp(0).replace(month=2))
     def __str__(s):
         wsgi_wtf = "_F_ " if not s.is_real else ""
         wsgi_cant_bear_tenary = s.loc_ro if s.loc_ro else "???"

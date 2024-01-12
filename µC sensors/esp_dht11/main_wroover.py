@@ -67,7 +67,11 @@ def strftime(tup: tuple):
 def t(tup: tuple):
     return strftime(tup)
 
+__STATUS_CONNECTING__ = False
 async def tsk_con_net():
+    global __STATUS_CONNECTING__
+    if(__STATUS_CONNECTING__): return
+    __STATUS_CONNECTING__ = True
     wlan.active(True)       # activate the interface
     #l = wlan.scan()
     #print(l)
@@ -77,6 +81,7 @@ async def tsk_con_net():
                 wlan.connect("ff", "")
                 while not wlan.isconnected():
                     await asyncio.sleep(1)
+            __STATUS_CONNECTING__ = False
             ntptime.settime()
             uptime_stamp = time.mktime(time.gmtime())
             return True

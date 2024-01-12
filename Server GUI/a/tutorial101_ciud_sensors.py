@@ -1,6 +1,7 @@
 from django import forms
 from django.urls import reverse  
 from a.models import SensorMeta  
+from django.contrib.auth.decorators import login_required
 class SensorMetaForm(forms.ModelForm):  
     class Meta:  
         model = SensorMeta  
@@ -44,7 +45,8 @@ class SensorMetaForm(forms.ModelForm):
 """        
 
 from django.shortcuts import render, redirect   
- 
+
+@login_required 
 def create(request):  
     errorText=None
     if request.method == "POST":  
@@ -67,13 +69,13 @@ def create(request):
     return render(request,'tutorial101_ciud_create.html',{'form':form,
                                                           "errorText": errorText,
                                                            "ispost": True if request.POST else False,})  
- 
+@login_required 
 def index(request, **kwargs):  
     syccess = kwargs.get("success")
     o_SensorMetas = SensorMeta.objects.all()  
     return render(request,"tutorial101_ciud_list.html",{'SensorMetas':o_SensorMetas,
                                                         'prevMSG': syccess})  
- 
+@login_required 
 def update(request, nr):
     if request.method == "POST":   
         o_SensorMeta = SensorMeta.objects.get(nr=nr)  
@@ -91,7 +93,7 @@ def update(request, nr):
                                                                   'form': form,
                                                                   "errorText": f"invalid form {form.errors}",
                                                                   "ispost": True if request.POST else False,})  
-     
+@login_required     
 def destroy(request, nr):  
     o_SensorMeta = SensorMeta.objects.get(nr=nr)  
     o_SensorMeta.delete()  

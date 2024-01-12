@@ -4,3 +4,5 @@ __pycache__
 /µC camera/utils/data1.py
 Server GUI/db.sqlite3
 /Server GUI/g/secret.py
+/Server GUI/g/static/django_tables2/*
+/Server GUI/g/static/admin/*

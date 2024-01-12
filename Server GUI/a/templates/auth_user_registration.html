@@ -1,0 +1,78 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static "admin/css/login.css" %}">
+{{ form.media }}
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+
+{% block usertools %}{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block nav-sidebar %}{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block nav-breadcrumbs %}{% endblock %}
+
+{% block content %}
+
+{% if form.errors and not form.non_field_errors %}
+<p class="errornote">
+{% blocktranslate count counter=form.errors.items|length %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+</p>
+{% endif %}
+
+{% if form.non_field_errors %}
+{% for error in form.non_field_errors %}
+<p class="errornote">
+    {{ error }}
+</p>
+{% endfor %}
+{% endif %}
+
+<div id="content-main">
+
+{% if user.is_authenticated %}
+<p class="errornote">
+{% blocktranslate trimmed %}
+    You are authenticated as {{ username }}, but are not authorized to
+    access this page. Would you like to login to a different account?
+{% endblocktranslate %}
+</p>
+{% endif %}
+
+<a href="{% url 'login' %}">Log In</a>
+
+<h1>Sign Up</h1>
+<style type="text/css">
+    #id_username_helptext{
+        display: none;
+    }
+    p:has(#id_password1) ul{
+        display: none;
+    }
+</style>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Register">
+</form>
+
+
+</div>
+<script type="text/javascript">
+    document.querySelector("[id*='help']").remove();
+    document.querySelector("#id_password1").parentNode.nextElementSibling.remove();
+
+</script>
+{% endblock %}
+<!--<script type="text/javascript">
+    setTimeout(()=>{
+    document.querySelector("[id*='help']").remove();
+    document.querySelector("#id_password1").parentNode.nextElementSibling.remove();
+    }, 1000);
+
+</script>-->

@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 class hubmeta:
     def __init__(self):
@@ -24,7 +25,7 @@ view_resolver= {
     "b": "meklet_strap.html",
     "t": "meklet_table.html",
 }
-
+@login_required
 def search_sensors(r, renderer):
     #print(list2str(sensormeta().hub_ids))
     view_model = {

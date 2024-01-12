@@ -1,6 +1,8 @@
 from django import forms
 from django.urls import reverse  
 from a.models import MeasureMeta  
+from django.contrib.auth.decorators import login_required
+
 class MeasureMetaForm(forms.ModelForm):  
     class Meta:  
         model = MeasureMeta  
@@ -19,7 +21,7 @@ class MeasureMetaForm(forms.ModelForm):
 }   
 
 from django.shortcuts import render, redirect   
- 
+@login_required
 def create(request):  
     errorText=None
     if request.method == "POST":  
@@ -42,13 +44,13 @@ def create(request):
     return render(request,'tutorial101_clud_create.html',{'form':form,
                                                           "errorText": errorText,
                                                            "ispost": True if request.POST else False,})  
- 
+@login_required 
 def index(request, **kwargs):  
     syccess = kwargs.get("success")
     o_MeasureMetas = MeasureMeta.objects.all()  
     return render(request,"tutorial101_clud_list.html",{'MeasureMetas':o_MeasureMetas,
                                                         'prevMSG': syccess})  
- 
+@login_required 
 def update(request, measurement, range_low, range_high, range_step):
     if request.method == "POST":   
         o_MeasureMeta = MeasureMeta.objects.get(measurement=measurement, range_low=range_low, range_high=range_high, range_step=range_step)  
@@ -66,7 +68,7 @@ def update(request, measurement, range_low, range_high, range_step):
                                                                   'form': form,
                                                                   "errorText": f"invalid form {form.errors}",
                                                                   "ispost": True if request.POST else False,})  
-     
+@login_required     
 def destroy(request, measurement, range_low, range_high, range_step):  
     o_MeasureMeta = MeasureMeta.objects.get(measurement=measurement, range_low=range_low, range_high=range_high, range_step=range_step)  
     mdis = o_MeasureMeta.get_measurement_display()
