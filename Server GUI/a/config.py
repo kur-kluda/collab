@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
 import socket
+from django.contrib.auth.decorators import login_required
 
 config_yaml = {
 	"s_1": ("127.0.0.1", 911), 
@@ -9,6 +10,7 @@ config_yaml = {
 }
 all_sensors = range(1,3)
 
+@login_required
 def config(r):
 	errorText=None	
 	if r.method == 'POST':

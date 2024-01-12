@@ -3,6 +3,7 @@ from django.template import loader
 from django.http import request
 from . import models as m
 import random as r
+from django.contrib.auth.decorators import login_required
 
 def gen_recs(n: int):
     sensnames=[
@@ -151,7 +152,7 @@ def gen_recs(n: int):
         sen.save()
         
 
-
+@login_required
 def render_bluff(r: request):
     g = r.GET.get("s")
     if(g):
