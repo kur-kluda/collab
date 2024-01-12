@@ -49,7 +49,7 @@ $(frameselector).on("load", () =>{let hadbut=  window.setInterval(
 }
 $(document).ready(()=>{
 let frames_sels = [];
-[1, 2, 3, 4, 5].forEach((v) => frames_sels.push('#fr_gr'+v));
+[1, 2, 3, 4, 5, 6].forEach((v) => frames_sels.push('#fr_gr'+v));
 let tohide_sels = [
 '[aria-label="Breadcrumbs"]',
 '#mega-menu-toggle',
@@ -60,6 +60,7 @@ let newtitles =[
 'Temperatūras mērījumi @p2',
 'Relat. mitruma mērījumi @p1',
 'Relat. mitruma mērījumi @p2',
+'Temperatūras mērījumi @p4',
 'Gāzu mērījumi @pg1'
 ];
 
@@ -77,6 +78,10 @@ frames_sels.forEach((f, fn) => tohide_sels.forEach((v, i) => but_hider(f, v, i==
 <iframe width="100%" height="100%" id="fr_gr4" src="https://dj.jtag.me/d/ad73e1cd-1973-4d2e-9485-7546a6c25c87/rel-mitrums-dht11-dht22-23-2?orgId=1&refresh=5s&from=now-3h&to=now&viewPanel=2&kiosk=tv">
 </iframe>
 <hr>
-<iframe width="100%" height="100%" id="fr_gr5" src="https://dj.jtag.me/d/cX1l5UvIz/gazes?orgId=1&refresh=5s&from=now-3h&to=now&viewPanel=2&kiosk=tv">
+<iframe width="100%" height="100%" id="fr_gr5" src="https://dj.jtag.me/d/b9b0623d-4b3f-471a-a956-4170484a26c7/temperatura-dht11-dht22-mini?orgId=1&refresh=5s&from=now-3h&to=now&viewPanel=2&kiosk=tv">
+</iframe>
+<hr>
+<iframe width="100%" height="100%" id="fr_gr6" src="https://dj.jtag.me/d/cX1l5UvIz/gazes?orgId=1&refresh=5s&from=now-3h&to=now&viewPanel=2&kiosk=tv">
+</iframe>
 </body>
 </html>
