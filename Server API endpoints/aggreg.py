@@ -54,7 +54,7 @@ async def configurator(r, client_socket, client_address, dheader):
     global lastInterval
     try:
         if(__DEBUG_LEVEL_2_):
-            print(dheader)
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} configurator {dheader}")
         relhref = dheader.split(' ')
         if(len(relhref)<2):
             r.close()
@@ -83,23 +83,42 @@ async def configurator(r, client_socket, client_address, dheader):
         if(pi>0):
             lastInterval=int(pi)
             if(__DEBUG_LEVEL_1_):
-                print(f'updated {str(pi)}')
+                print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} configurator: updated {str(pi)}")
         client_socket.send("200 OK\n".encode())
     except Exception as e:
-        print(f"configurator Error: {e}")
+        print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} configurator Error: {e}")
     finally:
+        # Close the client socket
         if(r):
-            r.close()
+            try:
+                r.close()
+            finally:
+                ...
         if(client_socket):
-            client_socket.close()
+            try:
+                client_socket.close()
+            finally:
+                ...
 
 async def rdr(r, client_socket, client_address, dheader):
     global lastInterval
-    client_socket.send(str(lastInterval^ord('d')).encode())
-    r.close()
-    client_socket.close()
+    try:
+        client_socket.send(str(lastInterval^ord('d')).encode())
+    finally:
+        # Close the client socket
+        if(r):
+            try:
+                r.close()
+            finally:
+                ...
+        if(client_socket):
+            try:
+                client_socket.close()
+            finally:
+                ...
 
 async def rdr_meta_out_of_memory(r, client_socket, client_address, dheader):
+        db = None
         try:
             intt = int(dheader)#.strip(";"))
             db = mysql.connector.connect(
@@ -114,19 +133,33 @@ async def rdr_meta_out_of_memory(r, client_socket, client_address, dheader):
             cur.execute(sql, (intt,))
             res = cur.fetchall()
             dic = 0
-            for r in res:
-                dic = r[0]^ord('d')
+            for rr in res:
+                dic = rr[0]^ord('d')
             #client_socket.send((json.dumps(dic)+"\n").encode())
             client_socket.send((str(dic)+"\n").encode())
-            db.close()
-            client_socket.close()
         except Exception as ex:
-            print(ex)
-            try:
-                db.close()
-            finally:
-                ...
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} rdr out of mem: {ex}")
+        
+        finally:
+            if(db):
+                try:
+                    db.close()
+                finally:
+                    ...
+            # Close the client socket
+            if(r):
+                try:
+                    r.close()
+                finally:
+                    ...
+            if(client_socket):
+                try:
+                    client_socket.close()
+                finally:
+                    ...
+
 async def rdr_meta(r, client_socket, client_address, dheader):
+        db = None
         try:
             intt = int(dheader)#.strip(";"))
             db = mysql.connector.connect(
@@ -141,31 +174,42 @@ async def rdr_meta(r, client_socket, client_address, dheader):
             cur.execute(sql, (intt,))
             res = cur.fetchall()
             dic = {}
-            for r in res:
-                dic[r[0]] = r[1]^ord('d')
+            for rr in res:
+                dic[rr[0]] = rr[1]^ord('d')
             #client_socket.send((json.dumps(dic)+"\n").encode())
             client_socket.send((json.dumps([val for key, val in sorted(dic.items())])+"\n").encode())
-            db.close()
-            client_socket.close()
         except Exception as ex:
-            print(ex)
-            try:
-                db.close()
-            finally:
-                ...
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} rdr_meta: {ex}")
+        finally:
+            if(db):
+                try:
+                    db.close()
+                finally:
+                    ...
+            # Close the client socket
+            if(r):
+                try:
+                    r.close()
+                finally:
+                    ...
+            if(client_socket):
+                try:
+                    client_socket.close()
+                finally:
+                    ...
     
 
 async def sync(r, client_socket, client_address, header):
     global SENSORS_IDS_SINGLE_DIMENSIONS
+    db = None
     try:
-        db = None
         data = json.loads(r.readline())
         metadata = json.loads(header)
-        #print(metadata)
+        #print("{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} sync: {metadata}")
         if(metadata.get("y")):
-            print("yyy")
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} yyy")
         if(__DEBUG_LEVEL_1_):
-            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} SYNC @ {client_address[0].split('.')[-1]} se: {metadata['id']} d: {len(data)}")
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} SYNC @ {client_address[0].split('.')[-1]} sens: {metadata['id']} d_len: {len(data)}")
         if(metadata["len"]==len(data)):
             db = mysql.connector.connect(
                 host=cfg["db"]["host"],
@@ -181,8 +225,8 @@ async def sync(r, client_socket, client_address, header):
             ts = datetime.timestamp(date_time)
             base_ts = ts+epots
             sql=""
-            #print(f"id: {metadata['id']} len: {len(metadata)} longq: {metadata['id']!=6}")
-            #print(data)
+            #print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} id: {metadata['id']} len: {len(metadata)} longq: {metadata['id']!=6}")
+            #print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} data")
             has_more_than_one_column = metadata["id"] not in SENSORS_IDS_SINGLE_DIMENSIONS
             if(has_more_than_one_column):
                 sql = "INSERT INTO `s_"+str(metadata["id"])+ "` (`time`, `rcv`, `1`, `2`) VALUES (%s, %s, %s, %s)"
@@ -206,60 +250,93 @@ async def sync(r, client_socket, client_address, header):
             client_socket.send(str(len(data)).encode())
 
     except Exception as e:
-        print(f"Error sync: {e}")
+        print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Error sync: {e}")
 
     finally:
         if(db):
             try:
                 db.close()
             finally:
-                just_try_no_need_for_finally_or_catch=""
+                ...
         # Close the client socket
-        r.close()
-        client_socket.close()
+        if(r):
+            try:
+                r.close()
+            finally:
+                ...
+        if(client_socket):
+            try:
+                client_socket.close()
+            finally:
+                ...
 
 lastInterval = 0
-async def loop():
-    while True:
-        # Accept a connection from a client
-        client_socket, client_address = server_socket.accept()
 
+async def anti_broken_pipe_halt_loop():
+    while True:
         try:
+            client_socket, client_address = server_socket.accept()
+            asyncio.create_task(loop(client_socket, client_address))
+            await asyncio.sleep(0)
+        except Exception as e:
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Error At ANTIBROKEPIPE main main: {e}")
+
+async def loop(client_socket, client_address):
+    if True:
+        try:
+            #due to broken pipe error it halts?!?!
+            client_socket, client_address = server_socket.accept()
+            await asyncio.sleep(0)
             #with client_socket, client_socket.makefile('rb') as r:
             r = client_socket.makefile('rb')
             # Receive the heading data from the client
             header = r.readline()
-            if not header: continue
+            if not header: 
+                try:
+                    if(r):
+                        r.close()
+                except Exception as e:
+                    print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [nohead] Error GC-ollecting main: {e}")
+                try:
+                    if(client_socket):
+                        client_socket.close()
+                except Exception as e:
+                    print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [nohead] Error Closing cli socket main: {e}")
             dheader = header.decode()
-            #print(dheader)
+            #print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {dheader}")
             if(dheader.startswith("GET")):
                 asyncio.create_task(configurator(r, client_socket, client_address, dheader))
                 await asyncio.sleep(0)
-                continue
+                return
             elif(dheader.startswith("NET")):
                 if(len(dheader)>4):
                     if(dheader[3]=="_"):
                         #asyncio.create_task(rdr_meta(r, client_socket, client_address, dheader.split("_")[1]))
                         asyncio.create_task(rdr_meta_out_of_memory(r, client_socket, client_address, dheader.split("_")[1]))
                         await asyncio.sleep(0)
-                        continue
+                        return
                 asyncio.create_task(rdr(r, client_socket, client_address, dheader))
                 await asyncio.sleep(0)
-                continue
+                return
             asyncio.create_task(sync(r, client_socket, client_address, header))
             await asyncio.sleep(0)
-            continue
+            return
         except Exception as e:
-            print(f"Error main: {e}")
-        finally:
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Error main: {e}")
             try:
                 if(r):
                     r.close()
+            except Exception as e:
+                print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Error GC-ollecting main: {e}")
+            try:
                 if(client_socket):
                     client_socket.close()
             except Exception as e:
-                print(f"Error GC-ollecting main: {e}")
-            finally:
-                just_try_no_need_for_finally_or_catch=""
+                print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} Error Closing cli socket main: {e}")
+        finally:
+            ...
 
-asyncio.run(loop())
+            
+            
+
+asyncio.run(anti_broken_pipe_halt_loop())
