@@ -49,7 +49,7 @@
     {% csrf_token %}
     {{form.as_p}}
     <input type="submit" value="Log In">
-    <a class="button" style="float: right; padding: 12px 10px 12px 10px;" href="{% url 'user_registration' %}">Jauns lietotājs</a>
+    <a class="button" style="float: right; padding: 12px 10px 12px 10px;" href="{% url 'user_registration' %}?{{ request.GET.urlencode }}">Jauns lietotājs</a>
 </form>
 
 </div>

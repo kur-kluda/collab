@@ -11,5 +11,9 @@ class UserRegistration(CreateView):
     template_name = "auth_user_registration.html"
     form_class = UserCreationForm
 
-#    def get_success_url(self):
-#        return reverse("login")
+    def get_success_url(self):
+        for i in self.request.GET:
+            #print(self.request.GET[i])
+            if i=="next":
+                return self.request.GET[i]
+        return reverse("login")
