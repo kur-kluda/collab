@@ -149,6 +149,7 @@ async def push_data_net():
     print(f"{t(time.gmtime())} failed to sync 1")
     return
 
+__WAS_OUT_OF_MEM_FLAG_2__ = False
 async def push_data_net2():
     await asyncio.sleep(1)
     try:
@@ -182,12 +183,17 @@ async def push_data_net2():
         reader.close()
         if(int(response) == length):
             del li_mem_clog2[0:length]
+            __WAS_OUT_OF_MEM_FLAG_2__ = False
             await asyncio.sleep(1)
             return
         else:
             if(__DEBUG_LEVEL_1__):
                 print(f"{t(time.gmtime())} fail to send 2. response was {response}")
         #s.close()
+    except OSError as oe:
+        if(oe.errno==22):
+            __WAS_OUT_OF_MEM_FLAG_2__ = True
+            del li_mem_clog2[len(li_mem_clog2)-1]
     except Exception as e:
         print(f"{t(time.gmtime())}  push 2 {str(e)}")      
     print(f"{t(time.gmtime())} failed to sync 2")
@@ -279,7 +285,7 @@ async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
         try:
             if(__DEBUG_LEVEL_2__):
                 print(f"{t(time.gmtime())} {number} looping list{number} len = {len(li_mem_clog)}")
-            if len(li_mem_clog) > 54:
+            if len(li_mem_clog) > 54 or (number == 2 and __WAS_OUT_OF_MEM_FLAG_2__):
                 tsk2 = asyncio.create_task(push_data())
                 await asyncio.sleep(3)
                 continue
