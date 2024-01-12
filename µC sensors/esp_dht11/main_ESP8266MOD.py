@@ -85,8 +85,9 @@ async def measure_interval_updater():
             await writer.drain()
             await asyncio.sleep(1)
             response = await reader.read(1024)
-            print(f"decoded: {response.decode()}")
-            print(f"original: {response}")
+            if(__DEBUG_LEVEL_2__):
+                print(f"decoded: {int(response.decode())^ord('d')}")
+                print(f"original: {int(response)^ord('d')}")
             if(int(response)^ord('d') > 0):
                 __MEAS_INTERVAL__ = int(response)^ord('d')
             writer.close()
@@ -194,8 +195,11 @@ async def push_data_net2():
 
 __PUSH_DATA_LOCK__ = False
 async def push_data():
+    global __PUSH_DATA_LOCK__
     if(__PUSH_DATA_LOCK__): return
     __PUSH_DATA_LOCK__ = True
+    if(__DEBUG_LEVEL_2__):
+        print(f'{t(time.gmtime())} Entered push_data main singleton {!r}')
     if not wlan.isconnected():
         await asyncio.sleep(1)
     else:
@@ -234,6 +238,7 @@ async def push_data():
                     __PUSH_DATA_LOCK__ = False
                     print("{t(time.gmtime())} failed to sync all")
                     print(f"{t(time.gmtime())}  push all {e}")
+        __PUSH_DATA_LOCK__ = False
         return True
 
 async def alarm_clock():
@@ -258,13 +263,11 @@ async def light(howlong):
     led.off()
     led = Pin(__LED__, Pin.IN)
     led_on=False
-    
-laststates = [False, False, False, False, False]
 
 async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
     print(f"{t(time.gmtime())} {number} init__")
     just_was_exception = False
-    global laststates, __MEAS_INTERVAL__
+    global __MEAS_INTERVAL__
     if(__MEAS_INTERVAL__ > 1):
         waker = asyncio.create_task(alarm_clock())
         await asyncio.sleep(0)
@@ -275,7 +278,7 @@ async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
     while True: #i<__LOOP_DEBUG_LEN__:
         try:
             if(__DEBUG_LEVEL_2__):
-                print(f"{t(time.gmtime())} {number} init")
+                print(f"{t(time.gmtime())} {number} looping list{number} len = {len(li_mem_clog)}")
             if len(li_mem_clog) > 54:
                 tsk2 = asyncio.create_task(push_data())
                 await asyncio.sleep(3)
@@ -285,9 +288,8 @@ async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
                 asyncio.sleep_ms(750)
             else:
                 sensor.measure()
-            laststates[number-1] = True
             if(__DEBUG_LEVEL_1__):
-                print(number)
+                print(f"{t(time.gmtime())} number: {number}")
             if(onewire_special):
                 temp = sensor.read_temp(onewire_special)
                 if(__DEBUG_LEVEL_2__):
@@ -302,7 +304,6 @@ async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
             if(just_was_exception):
                 print(f"{t(time.gmtime())} sensor {number} now OK!")
             just_was_exception = False
-            laststates[number-1] = False
             if(__MEAS_INTERVAL__ > 1):
                 waker = asyncio.create_task(alarm_clock())
                 await asyncio.sleep(0)
@@ -313,14 +314,12 @@ async def measure(li_mem_clog, push_data, sensor, number, onewire_special):
         except OSError as e:
             print(f'{t(time.gmtime())} Sensor {number}: OSerror, probably Failed to read sensor:')
             print(e)
-            print(laststates)
             print(t(time.gmtime()))
             just_was_exception = True
             await asyncio.sleep(__MEAS_INTERVAL__+1)
         except Exception as ex:
             print(f'{t(time.gmtime())} Sensor {number}: general exc')
             print(ex)
-            print(laststates)
             print(t(time.gmtime()))
             just_was_exception = True
             await asyncio.sleep(__MEAS_INTERVAL__+1)
@@ -338,8 +337,8 @@ async def main():
     tsk_inter = asyncio.create_task(measure_interval_updater())
     await asyncio.sleep(0)
     #i=0
-    if(__DEBUG_LEVEL_2__):
-        print(f"{t(time.gmtime())} launch s1")
+    #if(__DEBUG_LEVEL_2__):
+    #    print(f"{t(time.gmtime())} launch s1")
     #measure_1 = asyncio.create_task(measure(li_mem_clog, push_data, sensor, 1, False))
     #await asyncio.sleep(0)
     if(__DEBUG_LEVEL_2__):
@@ -362,6 +361,8 @@ async def main():
     while True: #i<__LOOP_DEBUG_LEN__:
       try:
         if not wlan.isconnected():
+            if(__DEBUG_LEVEL_2__):
+                print(f"{t(time.gmtime())} Not connected, retrying...")
             tsk = asyncio.create_task(tsk_con_net())
             await asyncio.sleep(5)
             continue
@@ -391,14 +392,12 @@ async def main():
       except OSError as e:
         print(f'{t(time.gmtime())} Main loop: OSerror, probably Failed to read sensor:')
         print(e)
-        print(laststates)
         print(t(time.gmtime()))
         just_was_exception = True
         await asyncio.sleep(__MEAS_INTERVAL__)
       except Exception as ex:
         print(f'{t(time.gmtime())} Main loop Exception:')
         print(ex)
-        print(laststates)
         print(t(time.gmtime()))
         just_was_exception = True
         await asyncio.sleep(__MEAS_INTERVAL__)
