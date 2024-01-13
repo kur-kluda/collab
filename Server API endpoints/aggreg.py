@@ -8,10 +8,11 @@ from datetime import datetime
 import mysql.connector
 import asyncio
 import base64
-dbg1=1
-dbg2=1
+dbg1=0
+dbg2=0
 __DEBUG_LEVEL_2_ = True if dbg2==1 else False
 __DEBUG_LEVEL_1_ = True if dbg1==1 else False
+__DB_SYNC_UPDATE_INTERVAL__ = 11
 
 SENSORS_IDS_SINGLE_DIMENSIONS = [6, 11]
 dns_se = '8.8.8.8'                               #
@@ -52,6 +53,8 @@ lastInterval = 0
 #TODO: lock??
 async def configurator(r, client_socket, client_address, dheader):
     global lastInterval
+    if(__DEBUG_LEVEL_2_):
+        print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} configurator")
     try:
         if(__DEBUG_LEVEL_2_):
             print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} configurator {dheader}")
@@ -102,6 +105,8 @@ async def configurator(r, client_socket, client_address, dheader):
 
 async def rdr(r, client_socket, client_address, dheader):
     global lastInterval
+    if(__DEBUG_LEVEL_2_):
+        print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} rdr")
     try:
         client_socket.send(str(lastInterval^ord('d')).encode())
     finally:
@@ -119,6 +124,8 @@ async def rdr(r, client_socket, client_address, dheader):
 
 async def rdr_meta_out_of_memory(r, client_socket, client_address, dheader):
         db = None
+        if(__DEBUG_LEVEL_2_):
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} rdr_meta_out_of")
         try:
             intt = int(dheader)#.strip(";"))
             db = mysql.connector.connect(
@@ -159,25 +166,13 @@ async def rdr_meta_out_of_memory(r, client_socket, client_address, dheader):
                     ...
 
 async def rdr_meta(r, client_socket, client_address, dheader):
+        global SYNC_TIMES
+        if(__DEBUG_LEVEL_2_):
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} rdr_meta")
         db = None
         try:
             intt = int(dheader)#.strip(";"))
-            db = mysql.connector.connect(
-                port = cfg_meta["db"]["port"],
-                host=cfg_meta["db"]["host"],
-                user=cfg_meta["db"]["user"],
-                password=cfg_meta["db"]["password"],
-                database=cfg_meta["db"]["database"]
-            )
-            cur = db.cursor()
-            sql = "SELECT `a_sensormeta`.`nr`, `a_sensormeta`.`update_interval` FROM `a_sensormeta` LEFT JOIN `a_hubmeta` ON `a_sensormeta`.`hub_id` = `a_hubmeta`.`nr` WHERE `a_hubmeta`.`nr` = %s"
-            cur.execute(sql, (intt,))
-            res = cur.fetchall()
-            dic = {}
-            for rr in res:
-                dic[rr[0]] = rr[1]^ord('d')
-            #client_socket.send((json.dumps(dic)+"\n").encode())
-            client_socket.send((json.dumps([val for key, val in sorted(dic.items())])+"\n").encode())
+            client_socket.send((str(SYNC_TIMES[intt])+"\n").encode())
         except Exception as ex:
             print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} rdr_meta: {ex}")
         finally:
@@ -201,6 +196,8 @@ async def rdr_meta(r, client_socket, client_address, dheader):
 
 async def sync(r, client_socket, client_address, header):
     global SENSORS_IDS_SINGLE_DIMENSIONS
+    if(__DEBUG_LEVEL_2_):
+        print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} sync fn")
     db = None
     try:
         data = json.loads(r.readline())
@@ -272,9 +269,40 @@ async def sync(r, client_socket, client_address, header):
 
 lastInterval = 0
 
+SYNC_TIMES={}
+async def sync_db():
+    global SYNC_TIMES, __DB_SYNC_UPDATE_INTERVAL__
+    if(__DEBUG_LEVEL_2_):
+        print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} sync_db")
+    db = mysql.connector.connect(
+                port = cfg_meta["db"]["port"],
+                host=cfg_meta["db"]["host"],
+                user=cfg_meta["db"]["user"],
+                password=cfg_meta["db"]["password"],
+                database=cfg_meta["db"]["database"]
+            )
+    cur = db.cursor()
+    sql = "SELECT `a_sensormeta`.`nr`, `a_sensormeta`.`update_interval` FROM `a_sensormeta` LEFT JOIN `a_hubmeta` ON `a_sensormeta`.`hub_id` = `a_hubmeta`.`nr` WHERE `a_hubmeta`.`nr` IN (1, 2, 3, 4)"
+    #cur.execute(sql, (intt,))
+    cur.execute(sql)
+    res = cur.fetchall()
+    dic = {}
+    for rr in res:
+        SYNC_TIMES[rr[0]] = int(rr[1])^ord('d')
+    await asyncio.sleep(__DB_SYNC_UPDATE_INTERVAL__)
+
+            #client_socket.send((json.dumps(dic)+"\n").encode())
+            #client_socket.send((json.dumps([val for key, val in sorted(dic.items())])+"\n").encode())
+
+
 async def anti_broken_pipe_halt_loop():
+    if(__DEBUG_LEVEL_2_):
+        print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} anti_broken)pipe")
+    sync_db_task = asyncio.create_task(sync_db())
+    await asyncio.sleep(0)
     while True:
         try:
+            if(sync_db_task.done()): sync_db_task = asyncio.create_task(sync_db())
             client_socket, client_address = server_socket.accept()
             asyncio.create_task(loop(client_socket, client_address))
             await asyncio.sleep(0)
@@ -283,6 +311,8 @@ async def anti_broken_pipe_halt_loop():
 
 async def loop(client_socket, client_address):
     if True:
+        if(__DEBUG_LEVEL_2_):
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} looop")
         try:
             #with client_socket, client_socket.makefile('rb') as r:
             r = client_socket.makefile('rb')
