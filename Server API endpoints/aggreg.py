@@ -284,9 +284,6 @@ async def anti_broken_pipe_halt_loop():
 async def loop(client_socket, client_address):
     if True:
         try:
-            #due to broken pipe error it halts?!?!
-            client_socket, client_address = server_socket.accept()
-            await asyncio.sleep(0)
             #with client_socket, client_socket.makefile('rb') as r:
             r = client_socket.makefile('rb')
             # Receive the heading data from the client
