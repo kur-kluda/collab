@@ -90,7 +90,7 @@ async def tsk_con_net():
     #print('network config:', wlan.ifconfig())
 
 async def measure_interval_updater():
-    global __MEAS_INTERVAL__, _LOCK_MUPD_
+    global __MEAS_INTERVAL__
     while(True):
         try:
             reader, writer = await asyncio.open_connection(HOST, PORT)
@@ -371,6 +371,7 @@ async def push_data():
                             print(f"{t(time.gmtime())} waiting...{seccounter}")
                             seccounter = seccounter +1
                             if(seccounter > 120):
+                                _LOCK_PUSH_DATA_ = False
                                 return False
                         await asyncio.sleep(1)
                     #nets_w = asyncio.wait_for(nets, 3)
@@ -384,6 +385,7 @@ async def push_data():
                     print(f"{t(time.gmtime())}  push all {e}")
         _LOCK_PUSH_DATA_ = False
         return True
+    _LOCK_PUSH_DATA_ = False
 
 async def alarm_clock():
     global __MEAS_INTERVAL__
