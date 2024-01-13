@@ -1,13 +1,14 @@
-Mūsu komanda bija izvēlējusies veidot projektu Universitātes gaisa kvalitātes pārvaldības sistēma.
+Mūsu komanda bija izvēlējusies veidot projektu Universitātes gaisa kvalitātes pārvaldības sistēma. Pēc sarunas ar “pasūtītāju” iezīmējām galvenos lietotāja stāstus. Tākā viens no stāstiem bija saslēgšana, tad realizējām 3 dažādu interfeisu sensorus, un vienu no tiem kalibrējām paši.
 Lai gan mūsu komandā bija pamanāmi cilvēki ar ideālistiskiem skatījumiem, tomēr jāņem vērā, ka nav dzirdēts par plašai publikai brīvi pieejamiem nemirstības risinājumiem, kas nozīmē, ka projekta izstrādei ir tikai neliels laika resurss, kas nozīmē, ka jākoncentrējas uz MVP sasniegšanu, nevis jāiedziļinās dažādos interesantās blakusnodarbēs kā absolūtās drošības meklējumi, neskaitāmu interfeisu izmēģināšana un tamlīdzīgi.
-
 Rezultātā ieguvām mūsuprāt ievērojami dzīvotspējīgu, pietiekami ērti lietojamu un visnotaļ viegli mērogojamu sistēmas iestrādni. Kurai nav papildus atkarība no kādas attālinātas korporācijas lēmumu mainības vai nemainības. Tātad pielietojama arī attālākos civilizācijas punktos vai sasniedzot briedumu arī citur kosmosā.
-
 Nosakot vadlīnijas, nolēmām, ka sekošanu hype un dažādiem modes zīmoliem šeit neprioritizēsim, bet tieši pretēji - vērsīsim skatus uz pietiekami ilgi esošām sistēmām ar maksimāli iespējamo koda caurredzamību, tajā pašā laikā kā jau ļoti limitētu resursu sistēmās, neaizmirstot par resursu limitiem.
+Tāpēc izvēlējāmies python, un tikai divos gadījumos: webkameras blakus mini projektā un industriālā 4-20mA standartsensora gadījumā, lietojām c++. Pirmajā gadījumā jo kamerai bija kritiski nepieciešama operatīvā atmiņa, bet sensora gadījumā - jo kontrolierim ar augstākas izšķirtspējas ADC micropython netiek uzturēts, kas nozīmē ka liekot savu portu, ļoti ievērojami daudz laika aizietu mappinga, testēšanas un citos uzdevumos, kas acīmredzami nebūtu laika resursa daudzuma ziņā samērīgi ar projekta kopējo laika resursu.
+Mikrokontrolieru kods ir asinhronu uzdevumu struktūrā veidots, un pat zemākā gala kontrolieris (esp32) to spēja izpildīt, pat esot uz operatīvās atmiņas pārpildes robežas. (jāpiezīmē, ka ja kodā atstāja 5 sensorus, jau pie izpildes bija kļūda ka nepietiek RAM. Saīsinot kodu uz 2 sensoriem viss atkal strādāja). 
+Arī API endpointu kods ir tajā pašā asyncio satvarā veidots. Arhivators turpretī ir sinhrons, jo tas ir vienlaikus viens uzdevums, tāpēc asinhromums ir lieks. Savukārt lietotāja saskarne ir salikts projekts, sastāvošs no Grafana, kas rakstīta go valodā un pielieto react un angular javascript satvarus un no Django satvarā veidotas CRUD un maršrutēšanas lietotnes, kas pielieto DataTables javascript satvaru sarakstu kārtošanai un meklēšanai, jo Django diemžēl modeļus atlasīja ievērojami lēni.
 
-Tāpēc izvēlējāmies python, un tikai divos gadījumos: webkameras blakus mini projektā un industriālā 4-20mA standartsensora gadījumā,  lietojām c++. 
-Pirmajā gadījumā jo kamerai bija kritiski nepieciešama operatīvā atmiņa, bet sensora gadījumā - jo kontrolierim ar augstākas izšķirtspējas ADC micropython netiek uzturēts, kas nozīmē ka liekot savu portu, ļoti ievērojami daudz laika aizietu mappinga, testēšanas un citos uzdevumos, kas acīmredzami nebūtu laika resursa daudzuma ziņā samērīgi ar projekta kopējo laika resursu.
-
-Mikrokontrolieru kods ir asinhronu uzdevumu struktūrā veidots, un pat zemākā gala kontrolieris (esp32) to spēja izpildīt, pat esot uz operatīvās atmiņas pārpildes robežas.
-
-
+Darba mērķi bija vairāki, 
+-	Izveidot mājaslapas saslēgumu ar sensoru datiem
+-	Parādīt datus reāllaika, vēlams vizuāli viegli uztveramā formā un iezīmējot kritiskās gāzu vērtības
+-	Dot iespēju regulēt datu ievākšanas biežumu, arhivēšanas biežumu un dzēšanas biežumu
+-	Dot iespēju veidot sensoru aprakstošo datu (metadatu) datubāzi un tai piesaistītās CRUD operācijas
+Novērtēšanas mērķi ir pārliecināties, ka ir funkcionāls MVP pēc iespējas vairākos lietotāja stāstos nosauko prasību aspektos, kā arī vai ir vai arī ja nav, tad vai ir samērā vienkārši un ātri realizējamas drošības prasības. 
