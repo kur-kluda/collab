@@ -1,5 +1,7 @@
-# collab
-Group collab project
+# [Projektēšanas pārskats arī pdf](https://github.com/kur-kluda/collab/raw/main/projektesanas_parskats.pdf)
+\
+\
+
 # [Grafiki realtime](https://dj.jtag.me/)
 
 # [Mērījumu meta](https://dj.jtag.me/clud/)
