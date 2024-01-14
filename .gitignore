@@ -7,3 +7,4 @@ Server GUI/db.sqlite3
 /Server GUI/g/static/django_tables2/*
 /Server GUI/g/static/admin/*
 /~$ojektesanas_parskats.docx
+/*.tmp
