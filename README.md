@@ -3,6 +3,8 @@
 ---
 # [Grafiki realtime](https://dj.jtag.me/)
 
+ļoti lūdzam nedzēst un nelabot hub 1-4 un sensorus 1-13, tie ir reāli. 
+Pārējos drīkstat testēt kā vien labpatīk.
 # [Mērījumu meta](https://dj.jtag.me/clud/)
 
 # [Sensoru meta](https://dj.jtag.me/ciud/)
