@@ -30,6 +30,10 @@ Visiem CRUD pamatā viens kods, mainās tikai atribūti.
 [kods .:.](https://github.com/kur-kluda/collab/blob/a191e43cc3b6f6c0d332745824afb4bf75651dd3/Archiver/arch.py#L68C13-L68C50)
 Tāpēc nav saites, bet lūk ekrānšāviņi:
 
+rezultāts - formāts:
+![rezultāts](https://github.com/kur-kluda/collab/assets/104323709/e2ddac3e-82b1-46fd-931c-521e250fa063)
+
+darbība:
 ![image](https://github.com/kur-kluda/collab/assets/104323709/0573e629-321e-4201-a2ff-bc62ed07d2bd)
 ![image](https://github.com/kur-kluda/collab/assets/104323709/335ddf50-cd99-49a4-bacf-0c4f6ae221a6)
 
