@@ -1,24 +1,24 @@
 # [Projektēšanas pārskats arī pdf](https://github.com/kur-kluda/collab/raw/main/projektesanas_parskats.pdf)
 ---
 ---
-# [Grafiki realtime](https://dj.jtag.me/)
+# [Aplikācija :: Grafiki realtime](https://dj.jtag.me/)
 
 ļoti lūdzam nedzēst un nelabot hub 1-4 un sensorus 1-13, tie ir reāli. 
 Pārējos drīkstat testēt kā vien labpatīk.
-# [Mērījumu meta](https://dj.jtag.me/clud/)
+# [Aplikācija :: Mērījumu meta](https://dj.jtag.me/clud/)
 
-# [Sensoru meta](https://dj.jtag.me/ciud/)
+# [Aplikācija :: Sensoru meta](https://dj.jtag.me/ciud/)
 
-# [Hubu meta](https://dj.jtag.me/crud/)
+# [Aplikācija :: Hubu meta](https://dj.jtag.me/crud/)
 
 ---
-# [0 mēģinājums bootstrap](https://dj.jtag.me/s)
-# [1. mēģinājums lēni strādā CRUD](https://dj.jtag.me/t)
-# [2. mēģinājums lēni strādā CRUD](https://dj.jtag.me/t/)
-# [more config](https://dj.jtag.me/ad)
+## [0 mēģinājums bootstrap](https://dj.jtag.me/s)
+## [1. mēģinājums lēni strādā CRUD](https://dj.jtag.me/t)
+## [2. mēģinājums lēni strādā CRUD](https://dj.jtag.me/t/)
+## [more config](https://dj.jtag.me/ad)
 
 ## [configure gui fake](https://dj.jtag.me/ad)
-# [configure grefina](http://apa_dumb/)
+## [configure grafina](http://apa_dumb/)
 
 Mūsu sistēmas MVP iekļauj sevī vairākus ISO25010:2011 aspektus:
 
