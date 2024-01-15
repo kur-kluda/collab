@@ -60,7 +60,7 @@ Sistēma ir labi piemērota sensoru mērījumu apskatei un pārraudzībai, kamē
 
 Sistēmas precizitāte ir atbilstoša konkrēto mikrokontrolieru precizitātei. Digitāliem sensoriem, protams tas ir iekšējs rādītājs, taču analogajam sensora piemēram mēs izmantojam 12 bitu ADC, kas ļauj iegūt 4096 vērtības.
 
-Sistēma spēj sadarboties ar Raspberry pi, ja to lieto kā centrmezglu vai pat kā wifi nodrošinātāju pārējie centrmezgliem.
+Sistēma spēj sadarboties ar Raspberry pi, ja to lieto kā centrmezglu vai pat kā wifi nodrošinātāju pārējiem centrmezgliem.
 
 **Drošība**: sistēmā ir iekļauts jaukšanas moments, kas neļauj ļaunprāšiem viegli paredzamā veidā iejaukties atjaunināšanas datos. Līdzīgus momentus iespējams jo viegli iekļaut arī sensoru datu pārraidē. Gadījumā ja pazūd tīkls, centrmezgli cenšas atkārtoti savienoties ar tīklu, un attiecīgi mērījumu ievākšana tiek apturēta, kad mērījumu saraksti aizņem tuvu kritiskajām atmiņas lielumus. Kad parādās tīkls, datu buferi tiek iztukšoti un mērījumi atsākti.
 
