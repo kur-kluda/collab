@@ -1,4 +1,4 @@
-# [Projektēšanas pārskats arī pdf](https://github.com/kur-kluda/collab/raw/main/projektesanas_parskats.pdf)
+# [Projektēšanas pārskats ir apkopots pdf (klikšķiniet šeit)](https://github.com/kur-kluda/collab/raw/main/projektesanas_parskats.pdf)
 ---
 ---
 # [Aplikācija :: Grafiki realtime](https://dj.jtag.me/)
