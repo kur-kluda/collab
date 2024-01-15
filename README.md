@@ -11,7 +11,7 @@ Tā ir aizsargāta grafana, ko konfigurēt var tikai saslēdzot datoru ar server
 Hub 1-4 un sensori 1-13 ir reālo situāciju aprakstoši. 
 Pārējie ir ģenerēti, tos droši drīkstat testēt kā vien labpatīk.
 Visiem CRUD pamatā viens kods, mainās tikai atribūti.
-[kods .:. ](https://github.com/kur-kluda/collab/blob/main/Server GUI/a/tutorial101_ciud_sensors.py#75)
+[kods .:. ](https://github.com/kur-kluda/collab/blob/main/Server%20GUI/a/tutorial101_ciud_sensors.py#75)
 
 # [Aplikācija :: Mērījumu meta](https://dj.jtag.me/clud/)
 
@@ -22,7 +22,7 @@ Visiem CRUD pamatā viens kods, mainās tikai atribūti.
 ---
 
 # Aplikācija :: mikrokontrolieru kods ir asinhroni uzdevumi
-[kods .:.](https://github.com/kur-kluda/collab/blob/main/µC sensors/pico w dht11/main.py#265)
+[kods .:.](https://github.com/kur-kluda/collab/blob/main/µC%20sensors/pico%20w%20dht11/main.py#265)
 
 ---
 
@@ -39,7 +39,7 @@ Tāpēc nav saites, bet lūk ekrānšāviņi:
 ## [0 mēģinājums bootstrap](https://dj.jtag.me/s)
 ## [1. mēģinājums lēni strādā CRUD](https://dj.jtag.me/t)
 ## [2. mēģinājums lēni strādā CRUD](https://dj.jtag.me/t/)
-## [kameras sadalītājs (diemžēl par lēnu)](https://github.com/kur-kluda/collab/blob/main/µC camera/broke.py#212)
+## [kameras sadalītājs (diemžēl par lēnu)](https://github.com/kur-kluda/collab/blob/main/µC%20camera/broke.py#212)
 ## [more config](https://dj.jtag.me/ad)
 ## [configure grafana](http://apa_dumb/)
 
