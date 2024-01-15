@@ -10,8 +10,10 @@ import asyncio
 import base64
 dbg1=0
 dbg2=0
+dbg3=1
 __DEBUG_LEVEL_2_ = True if dbg2==1 else False
 __DEBUG_LEVEL_1_ = True if dbg1==1 else False
+__DEBUG_LEVEL_3_ = True if dbg3==1 else False
 __DB_SYNC_UPDATE_INTERVAL__ = 11
 
 SENSORS_IDS_SINGLE_DIMENSIONS = [6, 11]
@@ -242,7 +244,7 @@ async def sync(r, client_socket, client_address, header):
                 cur.execute(sql, val)
             db.commit()
             db.close()
-            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} wrote {len(data)}")
+            print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} s: {metadata['id']} wrote {len(data)}")
             #client_socket.send((str(len(data))+" "+str((lastInterval)^ord('d'))).encode())
             client_socket.send(str(len(data)).encode())
 
@@ -315,27 +317,42 @@ async def loop(client_socket, client_address):
             print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} looop")
         try:
             #with client_socket, client_socket.makefile('rb') as r:
+            if(__DEBUG_LEVEL_3_):
+                print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} loooop: create socketfile")
             r = client_socket.makefile('rb')
             # Receive the heading data from the client
+            if(__DEBUG_LEVEL_3_):
+                print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} loooop: read 1stline")
             header = r.readline()
-            if not header: 
+            if not header:
+                if(__DEBUG_LEVEL_3_):
+                    print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} loooop: NOT header") 
                 try:
                     if(r):
                         r.close()
                 except Exception as e:
                     print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [nohead] Error GC-ollecting main: {e}")
+                if(__DEBUG_LEVEL_3_):
+                    print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} loooop: NOT header :: clientsockclose")
                 try:
                     if(client_socket):
                         client_socket.close()
                 except Exception as e:
                     print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} [nohead] Error Closing cli socket main: {e}")
+                return
+            if(__DEBUG_LEVEL_3_):
+                print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} loooop: header decode")
             dheader = header.decode()
             #print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {dheader}")
             if(dheader.startswith("GET")):
+                if(__DEBUG_LEVEL_3_):
+                    print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} loooop: starts with get")
                 asyncio.create_task(configurator(r, client_socket, client_address, dheader))
                 await asyncio.sleep(0)
                 return
             elif(dheader.startswith("NET")):
+                if(__DEBUG_LEVEL_3_):
+                    print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} loooop: starts with net")
                 if(len(dheader)>4):
                     if(dheader[3]=="_"):
                         #asyncio.create_task(rdr_meta(r, client_socket, client_address, dheader.split("_")[1]))
@@ -345,6 +362,8 @@ async def loop(client_socket, client_address):
                 asyncio.create_task(rdr(r, client_socket, client_address, dheader))
                 await asyncio.sleep(0)
                 return
+            if(__DEBUG_LEVEL_3_):
+                print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} loooop: not net nor get")
             asyncio.create_task(sync(r, client_socket, client_address, header))
             await asyncio.sleep(0)
             return
