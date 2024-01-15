@@ -11,7 +11,7 @@ Tā ir aizsargāta grafana, ko konfigurēt var tikai saslēdzot datoru ar server
 Hub 1-4 un sensori 1-13 ir reālo situāciju aprakstoši. 
 Pārējie ir ģenerēti, tos droši drīkstat testēt kā vien labpatīk.
 Visiem CRUD pamatā viens kods, mainās tikai atribūti.
-[kods .:. ](https://github.com/kur-kluda/collab/blob/main/Server%20GUI/a/tutorial101_ciud_sensors.py#75)
+[kods .:. ](https://github.com/kur-kluda/collab/blob/386eb206dca3de3ad743a9e663c4f1cb40bdde53/Server%20GUI/a/tutorial101_ciud_sensors.py#L75)
 
 # [Aplikācija :: Mērījumu meta](https://dj.jtag.me/clud/)
 
