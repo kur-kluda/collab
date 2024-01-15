@@ -10,7 +10,7 @@ import asyncio
 import base64
 dbg1=0
 dbg2=0
-dbg3=1
+dbg3=0
 __DEBUG_LEVEL_2_ = True if dbg2==1 else False
 __DEBUG_LEVEL_1_ = True if dbg1==1 else False
 __DEBUG_LEVEL_3_ = True if dbg3==1 else False
@@ -306,6 +306,7 @@ async def anti_broken_pipe_halt_loop():
         try:
             if(sync_db_task.done()): sync_db_task = asyncio.create_task(sync_db())
             client_socket, client_address = server_socket.accept()
+            client_socket.settimeout(33)
             asyncio.create_task(loop(client_socket, client_address))
             await asyncio.sleep(0)
         except Exception as e:
