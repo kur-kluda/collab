@@ -1,4 +1,4 @@
-# [Projektēšanas pārskats ir apkopots pdf (klikšķiniet šeit)](https://github.com/kur-kluda/collab/raw/main/projektesanas_parskats.pdf) . Saites uz sistēmu ir zemāk.
+# [Projektēšanas pārskats ir apkopots pdf (klikšķiniet šeit)](https://github.com/kur-kluda/collab/raw/main/projektesanas_parskats.pdf) . Saites uz sistēmu ir zemāk. Saitēs Kods .:. ir konkrētas kodu rindas.
 ---
 ---
 # [Aplikācija :: Grafiki realtime](https://dj.jtag.me/)
