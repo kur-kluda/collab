@@ -3,27 +3,45 @@
 ---
 # [Aplikācija :: Grafiki realtime](https://dj.jtag.me/)
 
-ļoti lūdzam nedzēst un nelabot hub 1-4 un sensorus 1-13, tie ir reāli. 
-Pārējos drīkstat testēt kā vien labpatīk.
+[kods .:. ](https://github.com/kur-kluda/collab/blob/main/Server%20GUI/a/templates/grafiki.html#70)
+Tā ir aizsargāta grafana, ko konfigurēt var tikai saslēdzot datoru ar serveri un lietojot īpašu domēnvārdu.
+
+---
+
+Hub 1-4 un sensori 1-13 ir reālo situāciju aprakstoši. 
+Pārējie ir ģenerēti, tos droši drīkstat testēt kā vien labpatīk.
+Visiem CRUD pamatā viens kods, mainās tikai atribūti.
+[kods .:. ](https://github.com/kur-kluda/collab/blob/main/Server GUI/a/tutorial101_ciud_sensors.py#75)
+
 # [Aplikācija :: Mērījumu meta](https://dj.jtag.me/clud/)
 
 # [Aplikācija :: Sensoru meta](https://dj.jtag.me/ciud/)
 
 # [Aplikācija :: Hubu meta](https://dj.jtag.me/crud/)
 
+---
+
+# Aplikācija :: mikrokontrolieru kods ir asinhroni uzdevumi
+[kods .:.](https://github.com/kur-kluda/collab/blob/main/µC sensors/pico w dht11/main.py#265)
+
+---
+
 # Aplikācija :: Arhivators ir chron uzdevums
+[kods .:.](https://github.com/kur-kluda/collab/blob/main/Archiver/arch.py#67)
 Tāpēc nav saites, bet lūk ekrānšāviņi:
 
 ![image](https://github.com/kur-kluda/collab/assets/104323709/0573e629-321e-4201-a2ff-bc62ed07d2bd)
 ![image](https://github.com/kur-kluda/collab/assets/104323709/335ddf50-cd99-49a4-bacf-0c4f6ae221a6)
+
 ---
+---
+
 ## [0 mēģinājums bootstrap](https://dj.jtag.me/s)
 ## [1. mēģinājums lēni strādā CRUD](https://dj.jtag.me/t)
 ## [2. mēģinājums lēni strādā CRUD](https://dj.jtag.me/t/)
+## [kameras sadalītājs (diemžēl par lēnu)](https://github.com/kur-kluda/collab/blob/main/µC camera/broke.py#212)
 ## [more config](https://dj.jtag.me/ad)
-
-## [configure gui fake](https://dj.jtag.me/ad)
-## [configure grafina](http://apa_dumb/)
+## [configure grafana](http://apa_dumb/)
 
 Mūsu sistēmas MVP iekļauj sevī vairākus ISO25010:2011 aspektus:
 
