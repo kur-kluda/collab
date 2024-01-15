@@ -3,7 +3,7 @@
 ---
 # [Aplikācija :: Grafiki realtime](https://dj.jtag.me/)
 
-[kods .:. ](https://github.com/kur-kluda/collab/blob/main/Server%20GUI/a/templates/grafiki.html#70)
+[kods .:. ](https://github.com/kur-kluda/collab/blob/a191e43cc3b6f6c0d332745824afb4bf75651dd3/Server%20GUI/a/templates/grafiki.html#L70)
 Tā ir aizsargāta grafana, ko konfigurēt var tikai saslēdzot datoru ar serveri un lietojot īpašu domēnvārdu.
 
 ---
@@ -22,12 +22,12 @@ Visiem CRUD pamatā viens kods, mainās tikai atribūti.
 ---
 
 # Aplikācija :: mikrokontrolieru kods ir asinhroni uzdevumi
-[kods .:.](https://github.com/kur-kluda/collab/blob/main/µC%20sensors/pico%20w%20dht11/main.py#265)
+[kods .:.](https://github.com/kur-kluda/collab/blob/a191e43cc3b6f6c0d332745824afb4bf75651dd3/%C2%B5C%20sensors/pico%20w%20dht11/main.py#L265)
 
 ---
 
 # Aplikācija :: Arhivators ir chron uzdevums
-[kods .:.](https://github.com/kur-kluda/collab/blob/main/Archiver/arch.py#67)
+[kods .:.](https://github.com/kur-kluda/collab/blob/a191e43cc3b6f6c0d332745824afb4bf75651dd3/Archiver/arch.py#L68C13-L68C50)
 Tāpēc nav saites, bet lūk ekrānšāviņi:
 
 ![image](https://github.com/kur-kluda/collab/assets/104323709/0573e629-321e-4201-a2ff-bc62ed07d2bd)
