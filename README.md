@@ -11,6 +11,11 @@ Pārējos drīkstat testēt kā vien labpatīk.
 
 # [Aplikācija :: Hubu meta](https://dj.jtag.me/crud/)
 
+# Aplikācija :: Arhivators ir chron uzdevums
+Tāpēc nav saites, bet lūk ekrānšāviņi:
+
+![image](https://github.com/kur-kluda/collab/assets/104323709/0573e629-321e-4201-a2ff-bc62ed07d2bd)
+![image](https://github.com/kur-kluda/collab/assets/104323709/335ddf50-cd99-49a4-bacf-0c4f6ae221a6)
 ---
 ## [0 mēģinājums bootstrap](https://dj.jtag.me/s)
 ## [1. mēģinājums lēni strādā CRUD](https://dj.jtag.me/t)
@@ -22,8 +27,7 @@ Pārējos drīkstat testēt kā vien labpatīk.
 
 Mūsu sistēmas MVP iekļauj sevī vairākus ISO25010:2011 aspektus:
 
-![image](https://github.com/kur-kluda/collab/assets/104323709/0573e629-321e-4201-a2ff-bc62ed07d2bd)
-![image](https://github.com/kur-kluda/collab/assets/104323709/335ddf50-cd99-49a4-bacf-0c4f6ae221a6)
+
 
 
 
