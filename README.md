@@ -1,5 +1,6 @@
 # MAINTENANCE
 
+![IMG_20240124_093756](https://github.com/kur-kluda/collab/assets/85872382/f4cb2558-613d-4311-912c-ecd0c2e434ec)
 
 
 # [Projektēšanas pārskats ir apkopots pdf (klikšķiniet šeit)](https://github.com/kur-kluda/collab/raw/main/projektesanas_parskats.pdf) . Saites uz sistēmu ir zemāk. Saitēs Kods .:. ir konkrētas kodu rindas.
